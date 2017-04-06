@@ -184,17 +184,17 @@ namespace SeigaParsePlugin
 
         public bool IsLogoutUrl(string url)
         {
-            return new Regex("(http://.+?.nicovideo.jp/logout.*)").Match(url).Success;
+            return new Regex("https?://.+?.nicovideo.jp/logout.*").Match(url).Success;
         }
 
         public bool IsParseUrl(string url)
         {
-            return new Regex("http://seiga.nicovideo.jp/.+").Match(url).Success;
+            return new Regex("https?://seiga.nicovideo.jp/.+").Match(url).Success;
         }
 
         private string GetSeigaDisplayMode(UrlContainer.UrlContainer uc)
         {
-            Regex re = new Regex("http://seiga.nicovideo.jp/(?<Mode>seiga|watch)");
+            Regex re = new Regex("https?://seiga.nicovideo.jp/(?<Mode>seiga|watch)");
             Match m = re.Match(uc.Url);
             if (m.Success)
                 return m.Groups["Mode"].Value;
@@ -208,7 +208,7 @@ namespace SeigaParsePlugin
 
             if (mode == "seiga")
             {
-                Regex re = new Regex("http://seiga.nicovideo.jp/seiga/im(?<Id>[0-9]+)$");
+                Regex re = new Regex("https?://seiga.nicovideo.jp/seiga/im(?<Id>[0-9]+)$");
                 Match m = re.Match(uc.Url);
                 if (m.Success)
                 {

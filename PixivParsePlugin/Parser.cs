@@ -217,12 +217,12 @@ namespace PixivParsePlugin
 
         public bool IsLogoutUrl(string url)
         {
-            return new Regex("(http://www.pixiv.net/logout.*)").Match(url).Success;
+            return new Regex("https?://www.pixiv.net/logout.*").Match(url).Success;
         }
 
         public bool IsParseUrl(string url)
         {
-            return new Regex("http://www.pixiv.net/.+").Match(url).Success;
+            return new Regex("https?://www.pixiv.net/.+").Match(url).Success;
         }
 
         private string GetPixivDisplayMode(UrlContainer.UrlContainer uc)
@@ -241,40 +241,27 @@ namespace PixivParsePlugin
             return "medium";
         }
 
-        private bool IsPixivImageUrl(string url, string mode)
+        private bool IsPixivImageUrl(string url)
         {
-            string pat = "";
-
-            if (mode == "manga")
-                pat = @"http://i[0-9].pixiv.net/c/.+(master)([^/]+)$";
-            else if (mode == "medium")
-                pat = @"http://i[0-9].pixiv.net/img-original/.+$";
-
-            Regex re = new Regex(pat);
-            Match m = re.Match(url);
-
-            if (m.Success)
-                return true;
-
-            return false;
+            return new Regex("https?://i.pximg.net/img-(master|original)/.+$").Match(url).Success;
         }
 
         public List<UrlContainer.UrlContainer> GetImageUrlList(UrlContainer.UrlContainer uc, string[] format)
         {
             var ret = new List<UrlContainer.UrlContainer>();
-            Regex re = new Regex(@"^http://www.pixiv.net/member_illust.php.*?illust_id=(?<Id>[0-9]+)");
+            Regex re = new Regex("https?://www.pixiv.net/member_illust.php.*?illust_id=(?<Id>[0-9]+)");
 
             Match m = re.Match(uc.Url);
             if (m.Success)
             {
                 string mode = GetPixivDisplayMode(uc);
-                uc.Url = String.Format(@"http://www.pixiv.net/member_illust.php?mode={0}&illust_id={1}", mode, m.Groups["Id"].Value);
+                uc.Url = String.Format("http://www.pixiv.net/member_illust.php?mode={0}&illust_id={1}", mode, m.Groups["Id"].Value);
                 var hc = new HtmlContainer.HtmlContainer(uc, _userAccount.Cookies);
                 hc.UpdateAttributeUrlList("img", "src", format);
                 hc.UpdateAttributeUrlList("img", "data-src", format);
                 foreach (var luc in hc.AttributeUrlList)
                 {
-                    if (IsPixivImageUrl(luc.RawUrl, mode) && !ret.Any(x => x.RawUrl == luc.RawUrl))
+                    if (IsPixivImageUrl(luc.RawUrl) && !ret.Any(x => x.RawUrl == luc.RawUrl))
                     {
                         luc.Referer = uc.Url;
                         ret.Add(luc);
