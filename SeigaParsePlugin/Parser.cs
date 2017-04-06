@@ -47,24 +47,15 @@ namespace SeigaParsePlugin
 
         public string Name
         {
-            get
-            {
-                return "SeigaParsePlugin";
-            }
+            get { return "SeigaParsePlugin"; }
         }
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get { return _enabled; }
         }
         public bool IsLoggedIn
         {
-            get
-            {
-                return _userAccount.Enabled;
-            }
+            get { return _userAccount.Enabled; }
         }
 
         public Parser()
@@ -201,28 +192,6 @@ namespace SeigaParsePlugin
             return new Regex("http://seiga.nicovideo.jp/.+").Match(url).Success;
         }
 
-        //public List<UrlContainer> GetSeigaUrl(HashSet<UrlContainer> urlSet)
-        //{
-        //    List<UrlContainer> ret = new List<UrlContainer>();
-        //    Regex re = new Regex("http://seiga.nicovideo.jp/seiga/im(?<Id>[0-9]+)$");
-
-        //    foreach (var uc in urlSet)
-        //    {
-        //        Match m = re.Match(uc.Url);
-        //        if (m.Success)
-        //        {
-        //            uc.Url = "http://seiga.nicovideo.jp/image/source?id=" + m.Groups["Id"].Value;
-        //            string resUrl = uc.GetResponseUrl(Cookies);
-        //            uc.DownloadUrl = resUrl.Replace("/o/", "/priv/");
-        //            if (!String.IsNullOrEmpty(uc.DownloadUrl))
-        //            {
-        //                ret.Add(uc);
-        //            }
-        //        }
-        //    }
-        //    return ret;
-        //}
-
         private string GetSeigaDisplayMode(UrlContainer.UrlContainer uc)
         {
             Regex re = new Regex("http://seiga.nicovideo.jp/(?<Mode>seiga|watch)");
@@ -236,6 +205,7 @@ namespace SeigaParsePlugin
         {
             List<UrlContainer.UrlContainer> ret = new List<UrlContainer.UrlContainer>();
             string mode = GetSeigaDisplayMode(uc);
+
             if (mode == "seiga")
             {
                 Regex re = new Regex("http://seiga.nicovideo.jp/seiga/im(?<Id>[0-9]+)$");

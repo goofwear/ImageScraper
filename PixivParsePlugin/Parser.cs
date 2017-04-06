@@ -55,24 +55,15 @@ namespace PixivParsePlugin
 
         public string Name
         {
-            get
-            {
-                return "PixivParsePlugin";
-            }
+            get { return "PixivParsePlugin"; }
         }
         public bool Enabled
         {
-            get
-            {
-                return _enabled;
-            }
+            get { return _enabled; }
         }
         public bool IsLoggedIn
         {
-            get
-            {
-                return _userAccount.Enabled;
-            }
+            get { return _userAccount.Enabled; }
         }
 
         public Parser()
