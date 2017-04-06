@@ -152,6 +152,7 @@
             this.label11 = new System.Windows.Forms.Label();
             this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
             this.label15 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -770,9 +771,9 @@
             this.label13.AutoSize = true;
             this.label13.Location = new System.Drawing.Point(230, 70);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(37, 14);
+            this.label13.Size = new System.Drawing.Size(41, 14);
             this.label13.TabIndex = 25;
-            this.label13.Text = "pixels";
+            this.label13.Text = "ピクセル";
             // 
             // numericUpDown6
             // 
@@ -947,9 +948,9 @@
             this.label26.AutoSize = true;
             this.label26.Location = new System.Drawing.Point(230, 70);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(23, 14);
+            this.label26.Size = new System.Drawing.Size(41, 14);
             this.label26.TabIndex = 18;
-            this.label26.Text = "pix";
+            this.label26.Text = "ピクセル";
             // 
             // checkBox18
             // 
@@ -1379,6 +1380,7 @@
             // 
             // groupBox10
             // 
+            this.groupBox10.Controls.Add(this.label2);
             this.groupBox10.Controls.Add(this.numericUpDown15);
             this.groupBox10.Controls.Add(this.label10);
             this.groupBox10.Location = new System.Drawing.Point(302, 6);
@@ -1395,7 +1397,7 @@
             0,
             0,
             0});
-            this.numericUpDown15.Location = new System.Drawing.Point(126, 18);
+            this.numericUpDown15.Location = new System.Drawing.Point(88, 18);
             this.numericUpDown15.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -1420,9 +1422,9 @@
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(6, 20);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(114, 14);
+            this.label10.Size = new System.Drawing.Size(76, 14);
             this.label10.TabIndex = 2;
-            this.label10.Text = "リクエスト間隔(msec) :";
+            this.label10.Text = "リクエスト間隔 :";
             // 
             // groupBox5
             // 
@@ -1668,6 +1670,15 @@
             this.label15.TabIndex = 11;
             this.label15.Text = "MBダウンロードする";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(142, 20);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(31, 14);
+            this.label2.TabIndex = 18;
+            this.label2.Text = "ミリ秒";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
@@ -1878,6 +1889,7 @@
         private System.Windows.Forms.CheckBox checkBox21;
         private System.Windows.Forms.CheckBox checkBox23;
         private System.Windows.Forms.CheckBox checkBox24;
+        private System.Windows.Forms.Label label2;
     }
 }
 
