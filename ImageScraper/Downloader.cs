@@ -340,21 +340,21 @@ namespace ImageScraper
                 if (TerminateOrSuspend())
                     return false;
 
-                var hc = GetHtmlContainer(url);
-                if (hc != null)
+                if (!mCachedUrlSet.Contains(url.RawUrl))
                 {
-                    if (hc.AttributeUrlList.Count > 0)
+                    var hc = GetHtmlContainer(url);
+                    if (hc != null && hc.AttributeUrlList.Count > 0)
                     {
                         if (!WaitDownloadResult())
                             return false;
                         mTask = new Task<bool>(() => DownloadWebImages(hc));
                         mTask.Start();
                     }
+
+                    // 順番を保持するのでList
+                    mRootUrlList.Add(url.RawUrl);
                     // 検索かけるのでHashSet
                     mCachedUrlSet.Add(url.RawUrl);
-                    // 順番を保持するのでこっちはList
-                    if (!mRootUrlList.Contains(url.RawUrl))
-                        mRootUrlList.Add(url.RawUrl);
                 }
             }
             return true;
@@ -375,7 +375,6 @@ namespace ImageScraper
                 OnAddRangeLog(hc.AttributeUrlList.Select(x => x.Url).ToList(), 1);
                 // ドメインのフィルタリング
                 var tmpUrlList = mSettings.filterDomain.Filter(hc.AttributeUrlList);
-                tmpUrlList = tmpUrlList.Where(x => !mCachedUrlSet.Contains(x.RawUrl)).ToList();
 
                 if (!SendLink(tmpUrlList))
                     return false;

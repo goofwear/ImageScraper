@@ -227,45 +227,39 @@ namespace ImageScraper
     public class FilterUrlOverlapped
     {
         public bool Enabled { get; set; }
-        Dictionary<string, ImageInfo> _urlCache;
+        HashSet<string> _cachedUrlSet;
+        Dictionary<string, ImageInfo> _cachedUrlTable;
 
-        public Dictionary<string, ImageInfo> UrlDateTable
+        public FilterUrlOverlapped(Dictionary<string, ImageInfo> urlTable)
         {
-            get
-            {
-                return _urlCache;
-            }
-        }
-
-        public FilterUrlOverlapped(Dictionary<string, ImageInfo> urlCache)
-        {
-            this._urlCache = urlCache;
+            this._cachedUrlSet = new HashSet<string>(urlTable.Keys);
+            this._cachedUrlTable = urlTable;
         }
 
         public void Clear()
         {
-            this._urlCache.Clear();
+            this._cachedUrlSet.Clear();
+            this._cachedUrlTable.Clear();
         }
 
         public void Add(string url, ImageInfo info)
         {
-            if (!_urlCache.ContainsKey(url))
-                this._urlCache.Add(url, info);
+            this._cachedUrlSet.Add(url);
+            this._cachedUrlTable[url] = info;
         }
 
         public List<UrlContainer.UrlContainer> Filter(List<UrlContainer.UrlContainer> urlList)
         {
-            if (!this.Enabled)
+            if (this.Enabled)
+                return urlList;
+
+            var ret = new List<UrlContainer.UrlContainer>();
+            foreach (var uc in urlList)
             {
-                var newUrlList = new List<UrlContainer.UrlContainer>();
-                foreach (UrlContainer.UrlContainer uc in urlList)
-                {
-                    if (!_urlCache.ContainsKey(uc.Url))
-                        newUrlList.Add(uc);
-                }
-                return newUrlList;
+                if (!_cachedUrlSet.Contains(uc.Url))
+                    ret.Add(uc);
             }
-            return urlList;
+            return ret;
         }
     }
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace UrlContainer
 {
-    public class UrlContainer
+    public class UrlContainer : IEquatable<UrlContainer>
     {
         public string Url { get; set; }
         public string ResponseUrl { get; set; }
@@ -52,6 +52,18 @@ namespace UrlContainer
             this.DownloadUrl = this.Url;
             this.Referer = referer;
             this.Parse = new UrlParser(this.Url);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.RawUrl.GetHashCode();
+        }
+
+        bool IEquatable<UrlContainer>.Equals(UrlContainer urlContainer)
+        {
+            if (urlContainer == null)
+                return false;
+            return (this.RawUrl == urlContainer.RawUrl);
         }
 
         public bool Cache(CookieContainer cc)

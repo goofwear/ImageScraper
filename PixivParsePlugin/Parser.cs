@@ -259,12 +259,12 @@ namespace PixivParsePlugin
                 var hc = new HtmlContainer.HtmlContainer(uc, _userAccount.Cookies);
                 hc.UpdateAttributeUrlList("img", "src", format);
                 hc.UpdateAttributeUrlList("img", "data-src", format);
-                foreach (var luc in hc.AttributeUrlList)
+                foreach (var cand in hc.AttributeUrlList)
                 {
-                    if (IsPixivImageUrl(luc.RawUrl) && !ret.Any(x => x.RawUrl == luc.RawUrl))
+                    if (IsPixivImageUrl(cand.RawUrl))
                     {
-                        luc.Referer = uc.Url;
-                        ret.Add(luc);
+                        cand.Referer = uc.Url;
+                        ret.Add(cand);
                     }
                 }
             }

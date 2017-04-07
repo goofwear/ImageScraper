@@ -201,6 +201,7 @@ namespace HtmlContainer
                     }
                 }
             }
+            AttributeUrlList = AttributeUrlList.Distinct().ToList();
         }
 
         public string GetAttribute(string tag, string attr, Dictionary<string, string> table)
