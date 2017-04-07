@@ -302,17 +302,17 @@ namespace ImageScraper
 
         HtmlContainer.HtmlContainer GetHtmlContainer(UrlContainer.UrlContainer uc)
         {
-            OnAddLog(uc.Url, 2);
             if (CheckLogout(uc.Url))
                 return null;
 
             // URLに対応するプラグインを検索，見つかればCookie取得
             PluginInterface.PluginInterface plugin = Contains(uc);
             var hc = new HtmlContainer.HtmlContainer(uc, mSettings.cookies);
-            // まず，Htmlを取得しないで済むURLのフィルタリング
+            // Htmlを取得しないで済むURLのフィルタリング
             if (!mSettings.filterUrl.Filter(uc.Url))
             {
-                // 続いて，Htmlを取得する必要があるタイトルのフィルタリング
+                OnAddLog(uc.Url, 2);
+                // Htmlを取得する必要があるタイトルのフィルタリング
                 if (!mSettings.filterTitle.Filter(hc.Title))
                 {
                     if (plugin != null)
