@@ -148,22 +148,10 @@ namespace ImageScraper
         {
             while (true)
             {
-                // 設定値のチェック
-                if (!this.CheckSettings()) break;
                 // 設定値の反映
+                if (!this.CheckSettings())
+                    break;
                 this.InitializeSettings(this.downloadSettings);
-
-                downloader = new Downloader(this.downloadSettings, this);
-                if (mLoggerForm != null)
-                {
-                    downloader.Event_LoggerAdd += new Downloader.Delegate_LoggerAdd(mLoggerForm.Add);
-                    downloader.Event_LoggerAddRange += new Downloader.Delegate_LoggerAddRange(mLoggerForm.AddRange);
-                }
-                downloader.Event_UpdateStatus += new Downloader.Delegate_UpdateStatus(UpdateStatus);
-                downloader.Event_AddProgress += new Downloader.Delegate_AddProgress(AddProgress);
-                downloader.Event_UpdateProgress += new Downloader.Delegate_UpdateProgress(UpdateProgress);
-                downloader.Event_FinalizeProgress += new Downloader.Delegate_FinalizeProgress(FinalizeProgress);
-                downloader.Event_UpdateImageInfo += new Downloader.Delegate_UpdateImageInfo(UpdateImageInfo);
 
                 // 前処理
                 try
@@ -176,6 +164,19 @@ namespace ImageScraper
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
                 }
+
+                downloader = new Downloader(this.downloadSettings, this);
+                if (mLoggerForm != null)
+                {
+                    mLoggerForm.Clear();
+                    downloader.Event_LoggerAdd += new Downloader.Delegate_LoggerAdd(mLoggerForm.Add);
+                    downloader.Event_LoggerAddRange += new Downloader.Delegate_LoggerAddRange(mLoggerForm.AddRange);
+                }
+                downloader.Event_UpdateStatus += new Downloader.Delegate_UpdateStatus(UpdateStatus);
+                downloader.Event_AddProgress += new Downloader.Delegate_AddProgress(AddProgress);
+                downloader.Event_UpdateProgress += new Downloader.Delegate_UpdateProgress(UpdateProgress);
+                downloader.Event_FinalizeProgress += new Downloader.Delegate_FinalizeProgress(FinalizeProgress);
+                downloader.Event_UpdateImageInfo += new Downloader.Delegate_UpdateImageInfo(UpdateImageInfo);
                 InitializeForm();
 
                 try

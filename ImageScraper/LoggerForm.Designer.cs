@@ -47,6 +47,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox1.FormattingEnabled = true;
+            this.listBox1.HorizontalScrollbar = true;
             this.listBox1.ItemHeight = 14;
             this.listBox1.Location = new System.Drawing.Point(0, 0);
             this.listBox1.Margin = new System.Windows.Forms.Padding(0);
@@ -86,11 +87,12 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.listBox2.FormattingEnabled = true;
+            this.listBox2.HorizontalScrollbar = true;
             this.listBox2.ItemHeight = 14;
             this.listBox2.Location = new System.Drawing.Point(0, 0);
             this.listBox2.Margin = new System.Windows.Forms.Padding(0);
             this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(300, 522);
+            this.listBox2.Size = new System.Drawing.Size(299, 522);
             this.listBox2.TabIndex = 2;
             // 
             // splitContainer1
@@ -113,7 +115,7 @@
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 3;
             // 
-            // LogForm
+            // LoggerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -124,7 +126,7 @@
             this.Font = new System.Drawing.Font("Meiryo UI", 8.25F);
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(323, 305);
-            this.Name = "LogForm";
+            this.Name = "LoggerForm";
             this.Text = "ログウィンドウ";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

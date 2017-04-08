@@ -48,8 +48,7 @@ namespace ImageScraper
 
         private void ClearAll_ToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            listBox1.Items.Clear();
-            listBox2.Items.Clear();
+            Clear();
         }
     }
 }
