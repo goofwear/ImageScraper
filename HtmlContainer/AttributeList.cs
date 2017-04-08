@@ -44,7 +44,6 @@ namespace HtmlContainer
             m_list = new ArrayList();
         }
 
-
         /// <summary>
         /// Add the specified attribute to the list of attributes.
         /// </summary>
@@ -54,7 +53,6 @@ namespace HtmlContainer
         {
             m_list.Add(a);
         }
-
 
         /// <summary>
         /// Clear all attributes from this AttributeList and return
@@ -96,12 +94,10 @@ namespace HtmlContainer
             Attribute a = this[name];
 
             if (a == null)
-
             {
                 a = new Attribute(name, value);
                 Add(a);
             }
-
             else
                 a.Value = value;
         }
@@ -111,10 +107,7 @@ namespace HtmlContainer
         /// </summary>
         public int Count
         {
-            get
-            {
-                return m_list.Count;
-            }
+            get { return m_list.Count; }
         }
 
         /// <summary>
@@ -122,10 +115,7 @@ namespace HtmlContainer
         /// </summary>
         public ArrayList List
         {
-            get
-            {
-                return m_list;
-            }
+            get { return m_list; }
         }
 
         public bool Contains(string attr, string value)
@@ -140,7 +130,6 @@ namespace HtmlContainer
             }
 
             return false;
-
         }
 
         /// <summary>
@@ -174,7 +163,6 @@ namespace HtmlContainer
                 }
 
                 return null;
-
             }
         }
     }

@@ -219,11 +219,11 @@ namespace HtmlContainer
                     var attrList = hp.GetTag();
                     if (attrList.Name == tag && attrList[attr] != null)
                     {
+                        bool flag = true;
                         foreach (var pair in table)
-                        {
-                            if (attrList.Contains(pair.Key, pair.Value))
-                                return attrList[attr].Value;
-                        }
+                            flag = flag && attrList.Contains(pair.Key, pair.Value);
+                        if (flag)
+                            return attrList[attr].Value;
                     }
                 }
             }

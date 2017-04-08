@@ -96,7 +96,6 @@
             EatWhiteSpace();
         }
 
-
         /// <summary>
         /// Parse the attribute value
         /// </summary>
@@ -126,7 +125,6 @@
                     while (!Eof() &&
                       !IsWhiteSpace(GetCurrentChar()) &&
                       (GetCurrentChar() != '>'))
-
                     {
                         m_parseValue += GetCurrentChar();
                         m_idx++;
@@ -146,20 +144,14 @@
             Add(a);
         }
 
-
         /// <summary>
         /// Get the current character that is being parsed.
         /// </summary>
         /// <returns></returns>
         public char GetCurrentChar()
-
         {
-
             return GetCurrentChar(0);
-
         }
-
-
 
         /// <summary>
         /// Get a few characters ahead of the current character.
@@ -168,7 +160,6 @@
         /// for.</param>
         /// <returns>The character that was retrieved.</returns>
         public char GetCurrentChar(int peek)
-
         {
             if ((m_idx + peek) < m_source.Length)
                 return m_source[m_idx + peek];
@@ -176,19 +167,14 @@
                 return (char)0;
         }
 
-
-
         /// <summary>
         /// Obtain the next character and advance the index by one.
         /// </summary>
         /// <returns>The next character</returns>
         public char AdvanceCurrentChar()
-
         {
             return m_source[m_idx++];
         }
-
-
 
         /// <summary>
         /// Move the index forward by one.
@@ -198,21 +184,13 @@
             m_idx++;
         }
 
-
         /// <summary>
         /// The last attribute name that was encountered.
         /// <summary>
         public string ParseName
         {
-            get
-            {
-                return m_parseName;
-            }
-
-            set
-            {
-                m_parseName = value;
-            }
+            get { return m_parseName; }
+            set { m_parseName = value; }
         }
 
         /// <summary>
@@ -220,15 +198,8 @@
         /// <summary>
         public string ParseValue
         {
-            get
-            {
-                return m_parseValue;
-            }
-
-            set
-            {
-                m_parseValue = value;
-            }
+            get { return m_parseValue; }
+            set { m_parseValue = value; }
         }
 
         /// <summary>
@@ -236,15 +207,8 @@
         /// <summary>
         public char ParseDelim
         {
-            get
-            {
-                return m_parseDelim;
-            }
-
-            set
-            {
-                m_parseDelim = value;
-            }
+            get { return m_parseDelim; }
+            set { m_parseDelim = value; }
         }
 
         /// <summary>
@@ -252,15 +216,8 @@
         /// <summary>
         public string Source
         {
-            get
-            {
-                return m_source;
-            }
-
-            set
-            {
-                m_source = value;
-            }
+            get { return m_source; }
+            set { m_source = value; }
         }
     }
 }

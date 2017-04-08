@@ -203,7 +203,7 @@ namespace SeigaParsePlugin
 
         public List<UrlContainer.UrlContainer> GetImageUrlList(UrlContainer.UrlContainer uc, string[] format)
         {
-            List<UrlContainer.UrlContainer> ret = new List<UrlContainer.UrlContainer>();
+            var ret = new List<UrlContainer.UrlContainer>();
             string mode = GetSeigaDisplayMode(uc);
 
             if (mode == "seiga")

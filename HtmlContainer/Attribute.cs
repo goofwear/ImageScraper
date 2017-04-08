@@ -42,7 +42,6 @@ namespace HtmlContainer
             m_delim = delim;
         }
 
-
         /// <summary>
         /// The default constructor.  Construct a blank attribute.
         /// </summary>
@@ -55,8 +54,7 @@ namespace HtmlContainer
         /// </summary>
         /// <param name="name">The name of this attribute.</param>
         /// <param name="value">The value of this attribute.</param>
-        public Attribute(String name, String value) : this(name, value,
-                                                       (char)0)
+        public Attribute(String name, String value) : this(name, value, (char)0)
         {
         }
 
@@ -65,15 +63,8 @@ namespace HtmlContainer
         /// </summary>
         public char Delim
         {
-            get
-            {
-                return m_delim;
-            }
-
-            set
-            {
-                m_delim = value;
-            }
+            get { return m_delim; }
+            set { m_delim = value; }
         }
 
         /// <summary>
@@ -81,15 +72,8 @@ namespace HtmlContainer
         /// </summary>
         public string Name
         {
-            get
-            {
-                return m_name;
-            }
-
-            set
-            {
-                m_name = value;
-            }
+            get { return m_name; }
+            set { m_name = value; }
         }
 
         /// <summary>
@@ -97,15 +81,8 @@ namespace HtmlContainer
         /// </summary>
         public string Value
         {
-            get
-            {
-                return m_value;
-            }
-
-            set
-            {
-                m_value = value;
-            }
+            get { return m_value; }
+            set { m_value = value; }
         }
 
         #region ICloneable Members

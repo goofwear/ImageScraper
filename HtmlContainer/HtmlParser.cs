@@ -14,9 +14,7 @@ namespace HtmlContainer
             tag.Name = m_tag;
 
             foreach (Attribute x in List)
-            {
                 tag.Add((Attribute)x.Clone());
-            }
 
             return tag;
         }
@@ -26,8 +24,8 @@ namespace HtmlContainer
             String buffer = "<";
             buffer += m_tag;
             int i = 0;
-            while (this[i] != null)
 
+            while (this[i] != null)
             {// has attributes
                 buffer += " ";
                 if (this[i].Value == null)
@@ -107,7 +105,6 @@ namespace HtmlContainer
                 ParseAttributeName();
 
                 if (GetCurrentChar() == '>')
-
                 {
                     AddAttribute();
                     break;
@@ -119,7 +116,6 @@ namespace HtmlContainer
             }
             Advance();
         }
-
 
         public char Parse()
         {
@@ -133,10 +129,11 @@ namespace HtmlContainer
                     ParseTag();
                     return (char)0;
                 }
-
-                else return (AdvanceCurrentChar());
+                else
+                    return (AdvanceCurrentChar());
             }
-            else return (AdvanceCurrentChar());
+            else
+                return (AdvanceCurrentChar());
         }
     }
 }
