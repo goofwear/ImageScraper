@@ -263,6 +263,10 @@ namespace ImageScraper
             tabPage2.Enabled = !tabPage2.Enabled;
             tabPage3.Enabled = !tabPage3.Enabled;
             tabPage7.Enabled = !tabPage7.Enabled;
+            foreach (ToolStripMenuItem ddi in View_ToolStripMenuItem.DropDownItems)
+                ddi.Enabled = !ddi.Enabled;
+            foreach (ToolStripMenuItem ddi in Plugins_ToolStripMenuItem.DropDownItems)
+                ddi.Enabled = !ddi.Enabled;
         }
 
         private void UpdateStatus(object sender, Status sumStatus)
@@ -355,6 +359,20 @@ namespace ImageScraper
             }
         }
 
+        private void LoadPlugins()
+        {
+            PluginInfo[] pis = PluginInfo.FindPlugins();
+            plugins = new PluginInterface.PluginInterface[pis.Length];
+
+            for (int i = 0; i < plugins.Length; i++)
+            {
+                plugins[i] = pis[i].CreateInstance();
+                ToolStripMenuItem mi = new ToolStripMenuItem(plugins[i].Name);
+                mi.Click += new EventHandler(menuPlugin_Click);
+                Plugins_ToolStripMenuItem.DropDownItems.Add(mi);
+            }
+        }
+
         private void SaveSettings()
         {
             FormSettings settings = new FormSettings();
@@ -394,16 +412,8 @@ namespace ImageScraper
         private void LoadSettings()
         {
             bool compatFlag = false;
-            PluginInfo[] pis = PluginInfo.FindPlugins();
             FormSettings settings = new FormSettings();
             XmlSerializer xs = new XmlSerializer(typeof(FormSettings));
-
-            plugins = new PluginInterface.PluginInterface[pis.Length];
-            for (int i = 0; i < plugins.Length; i++)
-            {
-                plugins[i] = pis[i].CreateInstance();
-                plugins[i].LoadSettings();
-            }
 
             // フォーム設定のデシリアライズ
             if (File.Exists("ImageScraper.xml"))
@@ -459,6 +469,9 @@ namespace ImageScraper
                 comboBox4.Items.AddRange(settings.UrlNCKeywordList.ToArray());
 
             ControlProperty.ControlProperty.Set(this.Controls, settings.Properties);
+
+            foreach (var plugin in plugins)
+                plugin.LoadSettings();
         }
     }
 }

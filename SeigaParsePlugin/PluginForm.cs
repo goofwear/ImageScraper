@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace SeigaParsePlugin
 {
@@ -12,7 +11,7 @@ namespace SeigaParsePlugin
             InitializeComponent();
         }
 
-        public void SetAccount(Account userAccount)
+        internal void SetAccount(Account userAccount)
         {
             if (userAccount != null)
             {
@@ -21,28 +20,28 @@ namespace SeigaParsePlugin
             }
         }
 
-        public void SetEnabled()
+        internal void SetEnabled()
         {
             checkBox1.Checked = Host.Enabled;
         }
 
-        public void SetFormEnabled(bool enabled)
+        internal void SetFormEnabled(bool enabled)
         {
             checkBox1.Enabled = enabled;
             groupBox1.Enabled = enabled;
         }
 
-        public Account GetAccount()
+        internal Account GetAccount()
         {
             return new Account(textBox1.Text, textBox2.Text);
         }
 
-        public bool GetEnabled()
+        internal bool GetEnabled()
         {
             return checkBox1.Checked;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, System.EventArgs e)
         {
             if (Host.Login(textBox1.Text, textBox2.Text))
             {

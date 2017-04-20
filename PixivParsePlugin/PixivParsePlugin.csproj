@@ -36,6 +36,9 @@
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="HtmlContainer">
       <HintPath>..\HtmlContainer\bin\Release\HtmlContainer.dll</HintPath>

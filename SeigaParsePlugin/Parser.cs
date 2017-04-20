@@ -40,7 +40,6 @@ namespace SeigaParsePlugin
     public class Parser : PluginInterface.PluginInterface
     {
         bool _enabled;
-        bool _formEnabled;
         Account _userAccount;
         PluginForm _pluginForm;
         Uri _baseUri = new Uri("http://seiga.nicovideo.jp/");
@@ -61,7 +60,6 @@ namespace SeigaParsePlugin
         public Parser()
         {
             _enabled = false;
-            _formEnabled = true;
             _userAccount = new Account();
         }
 
@@ -111,29 +109,26 @@ namespace SeigaParsePlugin
                 _pluginForm.Host = this;
                 _pluginForm.SetAccount(_userAccount);
                 _pluginForm.SetEnabled();
-                _pluginForm.SetFormEnabled(_formEnabled);
                 _pluginForm.Show();
             }
         }
 
         public void InitializePlugin()
         {
-            _formEnabled = false;
+            // フォームが開かれているとき実行されアカウント情報が反映される
             if (_pluginForm != null && !_pluginForm.IsDisposed)
             {
                 _userAccount = _pluginForm.GetAccount();
                 _enabled = _pluginForm.GetEnabled();
-                _pluginForm.SetFormEnabled(_formEnabled);
+                _pluginForm.SetFormEnabled(false);
             }
+            // 設定を読み込んだあるいはフォームを閉じたときすでにアカウント情報が反映されている
         }
 
         public void FinalizePlugin()
         {
-            _formEnabled = true;
             if (_pluginForm != null && !_pluginForm.IsDisposed)
-            {
-                _pluginForm.SetFormEnabled(_formEnabled);
-            }
+                _pluginForm.SetFormEnabled(true);
         }
 
         internal void SetAccount(string id, string pass)

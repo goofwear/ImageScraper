@@ -56,7 +56,7 @@
             this.Help_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.About_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.表示ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.View_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EnabledLoggerForm_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Plugins_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabPage7 = new System.Windows.Forms.TabPage();
@@ -329,7 +329,7 @@
             this.toolStripSeparator3,
             this.DeleteImage_ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(227, 176);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(227, 154);
             // 
             // OpenUrl_ToolStripMenuItem
             // 
@@ -417,7 +417,7 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.表示ToolStripMenuItem,
+            this.View_ToolStripMenuItem,
             this.Plugins_ToolStripMenuItem,
             this.Help_ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
@@ -427,18 +427,18 @@
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // 表示ToolStripMenuItem
+            // View_ToolStripMenuItem
             // 
-            this.表示ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.View_ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.EnabledLoggerForm_ToolStripMenuItem});
-            this.表示ToolStripMenuItem.Name = "表示ToolStripMenuItem";
-            this.表示ToolStripMenuItem.Size = new System.Drawing.Size(58, 19);
-            this.表示ToolStripMenuItem.Text = "表示(&V)";
+            this.View_ToolStripMenuItem.Name = "View_ToolStripMenuItem";
+            this.View_ToolStripMenuItem.Size = new System.Drawing.Size(58, 19);
+            this.View_ToolStripMenuItem.Text = "表示(&V)";
             // 
             // EnabledLoggerForm_ToolStripMenuItem
             // 
             this.EnabledLoggerForm_ToolStripMenuItem.Name = "EnabledLoggerForm_ToolStripMenuItem";
-            this.EnabledLoggerForm_ToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.EnabledLoggerForm_ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.EnabledLoggerForm_ToolStripMenuItem.Text = "ログウィンドウ";
             this.EnabledLoggerForm_ToolStripMenuItem.Click += new System.EventHandler(this.EnabledLoggerForm_ToolStripMenuItem_Click);
             // 
@@ -1890,7 +1890,7 @@
         private System.Windows.Forms.GroupBox groupBox12;
         private System.Windows.Forms.ToolStripMenuItem Plugins_ToolStripMenuItem;
         private System.Windows.Forms.RadioButton radioButton12;
-        private System.Windows.Forms.ToolStripMenuItem 表示ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem View_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem EnabledLoggerForm_ToolStripMenuItem;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.ComboBox comboBox5;

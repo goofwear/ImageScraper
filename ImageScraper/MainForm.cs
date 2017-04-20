@@ -23,6 +23,7 @@ namespace ImageScraper
         {
             try
             {
+                this.LoadPlugins();
                 this.LoadSettings();
             }
             catch
@@ -35,12 +36,6 @@ namespace ImageScraper
                 groupBox8.Enabled = checkBox12.Checked;
                 groupBox11.Enabled = checkBox11.Checked;
                 this.FormClosing += this.Form1_FormClosing;
-                foreach (PluginInterface.PluginInterface plugin in plugins)
-                {
-                    ToolStripMenuItem mi = new ToolStripMenuItem(plugin.Name);
-                    mi.Click += new EventHandler(menuPlugin_Click);
-                    Plugins_ToolStripMenuItem.DropDownItems.Add(mi);
-                }
             }
         }
 
