@@ -236,6 +236,8 @@ namespace PixivParsePlugin
                 {
                     if (m.Groups["Mode"].Value == "manga")
                         return "manga";
+                    else if (m.Groups["Mode"].Value == "big")
+                        return "big";
                 }
             }
             return "medium";
