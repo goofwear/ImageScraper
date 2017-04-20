@@ -176,8 +176,12 @@ namespace ImageScraper
         {
             if (listViewEx1.SelectedItems.Count > 0)
             {
-                int idx = listViewEx1.SelectedItems[0].Index;
-                int imageCount = ErectFlagsImageInfo(listViewEx1.Items[idx].Tag.ToString());
+                int imageCount = 0;
+                for (int i = 0; i < listViewEx1.SelectedItems.Count; i++)
+                {
+                    int idx = listViewEx1.SelectedItems[i].Index;
+                    imageCount += ErectFlagsImageInfo(listViewEx1.Items[idx].Tag.ToString());
+                }
                 //メッセージボックスを表示する
                 DialogResult res = MessageBox.Show(String.Format("{0}枚の画像を削除します\nよろしいですか？", imageCount), "確認",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
@@ -185,10 +189,14 @@ namespace ImageScraper
                 //何が選択されたか調べる
                 if (res == DialogResult.Yes)
                 {
-                    DeleteSelectedImages(listViewEx1.Items[idx].Tag.ToString());
-                    ProgressBar pb = listViewEx1.GetEmbeddedControl(1, idx) as ProgressBar;
-                    listViewEx1.RemoveEmbeddedControl(pb);
-                    listViewEx1.Items[idx].Remove();
+                    for (int i = listViewEx1.SelectedItems.Count - 1; i >= 0; i--)
+                    {
+                        int idx = listViewEx1.SelectedItems[i].Index;
+                        DeleteSelectedImages(listViewEx1.Items[idx].Tag.ToString());
+                        ProgressBar pb = listViewEx1.GetEmbeddedControl(1, idx) as ProgressBar;
+                        listViewEx1.RemoveEmbeddedControl(pb);
+                        listViewEx1.Items[idx].Remove();
+                    }
                 }
             }
         }
@@ -232,6 +240,15 @@ namespace ImageScraper
         private void checkBox12_CheckedChanged(object sender, EventArgs e)
         {
             groupBox8.Enabled = checkBox12.Checked;
+        }
+
+        private void SelectAll_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            listViewEx1.Focus();
+            listViewEx1.BeginUpdate();
+            for (int i = 0; i < listViewEx1.Items.Count; i++)
+                listViewEx1.Items[i].Selected = true;
+            listViewEx1.EndUpdate();
         }
     }
 }

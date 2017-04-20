@@ -49,6 +49,8 @@
             this.CopyUrl_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CopyTitle_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.SelectAll_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.DeleteImage_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.Help_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -134,6 +136,7 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.numericUpDown15 = new System.Windows.Forms.NumericUpDown();
             this.label10 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -152,7 +155,6 @@
             this.label11 = new System.Windows.Forms.Label();
             this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
             this.label15 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -291,7 +293,6 @@
             this.listViewEx1.FullRowSelect = true;
             this.listViewEx1.GridLines = true;
             this.listViewEx1.Location = new System.Drawing.Point(8, 20);
-            this.listViewEx1.MultiSelect = false;
             this.listViewEx1.Name = "listViewEx1";
             this.listViewEx1.ShowItemToolTips = true;
             this.listViewEx1.Size = new System.Drawing.Size(594, 214);
@@ -324,9 +325,11 @@
             this.CopyUrl_ToolStripMenuItem,
             this.CopyTitle_ToolStripMenuItem,
             this.toolStripSeparator2,
+            this.SelectAll_ToolStripMenuItem,
+            this.toolStripSeparator3,
             this.DeleteImage_ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(227, 126);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(227, 176);
             // 
             // OpenUrl_ToolStripMenuItem
             // 
@@ -365,6 +368,18 @@
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(223, 6);
+            // 
+            // SelectAll_ToolStripMenuItem
+            // 
+            this.SelectAll_ToolStripMenuItem.Name = "SelectAll_ToolStripMenuItem";
+            this.SelectAll_ToolStripMenuItem.Size = new System.Drawing.Size(226, 22);
+            this.SelectAll_ToolStripMenuItem.Text = "すべて選択(&A)";
+            this.SelectAll_ToolStripMenuItem.Click += new System.EventHandler(this.SelectAll_ToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(223, 6);
             // 
             // DeleteImage_ToolStripMenuItem
             // 
@@ -1390,6 +1405,15 @@
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "接続設定";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(142, 20);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(31, 14);
+            this.label2.TabIndex = 18;
+            this.label2.Text = "ミリ秒";
+            // 
             // numericUpDown15
             // 
             this.numericUpDown15.Increment = new decimal(new int[] {
@@ -1670,15 +1694,6 @@
             this.label15.TabIndex = 11;
             this.label15.Text = "MBダウンロードする";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(142, 20);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(31, 14);
-            this.label2.TabIndex = 18;
-            this.label2.Text = "ミリ秒";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
@@ -1890,6 +1905,8 @@
         private System.Windows.Forms.CheckBox checkBox23;
         private System.Windows.Forms.CheckBox checkBox24;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ToolStripMenuItem SelectAll_ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
     }
 }
 
