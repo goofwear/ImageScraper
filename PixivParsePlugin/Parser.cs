@@ -5,6 +5,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
+using Utilities;
 
 namespace PixivParsePlugin
 {
@@ -35,16 +36,20 @@ namespace PixivParsePlugin
         public bool Enabled;
         public string Id;
         public string Pass;
+        public bool IsLoggedIn;
+        public string Cookies;
 
         public Settings()
         {
             Enabled = false;
             Id = "";
             Pass = "";
+            IsLoggedIn = false;
+            Cookies = "";
         }
     }
 
-    public class Parser : PluginInterface.PluginInterface
+    public class Parser : PluginInterface
     {
         bool _enabled;
         Account _userAccount;
@@ -55,13 +60,22 @@ namespace PixivParsePlugin
         {
             get { return "PixivParsePlugin"; }
         }
+
         public bool Enabled
         {
             get { return _enabled; }
         }
+
         public bool IsLoggedIn
         {
-            get { return _userAccount.Enabled; }
+            get
+            {
+                var cookie = GetCookieCollection()["device_token"];
+                if (cookie != null && DateTime.Now > cookie.Expires)
+                    return false;
+                else
+                    return _userAccount.Enabled;
+            }
         }
 
         public Parser()
@@ -78,6 +92,9 @@ namespace PixivParsePlugin
                 settings.Id = _userAccount.Id;
                 settings.Pass = _userAccount.Pass;
                 settings.Enabled = _enabled;
+                settings.IsLoggedIn = _userAccount.Enabled;
+                if (_userAccount.Enabled)
+                    settings.Cookies = Common.CookiesToString(GetCookieCollection());
                 XmlSerializer xs = new XmlSerializer(typeof(Settings));
                 using (StreamWriter sw = new StreamWriter("plugins/" + Name + ".xml", false, new UTF8Encoding(false)))
                     xs.Serialize(sw, settings);
@@ -96,6 +113,12 @@ namespace PixivParsePlugin
                 _enabled = settings.Enabled;
                 _userAccount.Id = settings.Id;
                 _userAccount.Pass = settings.Pass;
+                _userAccount.Enabled = settings.IsLoggedIn;
+                if (settings.IsLoggedIn)
+                {
+                    var ccol = Common.StringToCookies(settings.Cookies);
+                    _userAccount.Cookies.Add(ccol);
+                }
             }
             catch { }
         }
@@ -140,7 +163,8 @@ namespace PixivParsePlugin
 
         internal void SetAccount(string id, string pass)
         {
-            _userAccount = new Account(id, pass);
+            if (id != _userAccount.Id || pass != _userAccount.Pass)
+                _userAccount = new Account(id, pass);
         }
 
         internal void SetEnabled(bool enabled)
@@ -211,7 +235,7 @@ namespace PixivParsePlugin
 
         public bool IsLogoutUrl(string url)
         {
-            return new Regex("https?://www.pixiv.net/logout.*").Match(url).Success;
+            return new Regex("https?://www.pixiv.net/.*?(logout|login).*").Match(url).Success;
         }
 
         public bool IsParseUrl(string url)

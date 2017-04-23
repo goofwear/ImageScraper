@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Collections.Generic;
 
-namespace PluginInterface
+namespace Utilities
 {
     public interface PluginInterface
     {

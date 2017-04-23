@@ -129,10 +129,6 @@
       <HintPath>..\HtmlContainer\bin\Release\HtmlContainer.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="PluginInterface">
-      <HintPath>..\PluginInterface\bin\Release\PluginInterface.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -160,9 +156,11 @@
       <HintPath>..\UrlContainer\bin\Release\UrlContainer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Utilities">
+      <HintPath>..\Utilities\bin\Release\Utilities.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common.cs" />
     <Compile Include="ControlProperty.cs" />
     <Compile Include="Filters.cs" />
     <Compile Include="HistoryEditorForm.cs">

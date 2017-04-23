@@ -44,10 +44,6 @@
       <HintPath>..\HtmlContainer\bin\Release\HtmlContainer.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PluginInterface">
-      <HintPath>..\PluginInterface\bin\Release\PluginInterface.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -62,6 +58,9 @@
     <Reference Include="UrlContainer">
       <HintPath>..\UrlContainer\bin\Release\UrlContainer.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="Utilities">
+      <HintPath>..\Utilities\bin\Release\Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

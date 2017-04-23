@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Utilities;
 
 namespace ImageScraper
 {
@@ -8,7 +9,7 @@ namespace ImageScraper
     {
         const string versionString = "2.5";
         private Downloader downloader;
-        private PluginInterface.PluginInterface[] plugins;
+        private PluginInterface[] plugins;
         private List<ImageInfo> imageInfo = new List<ImageInfo>();
         private DownloadSettings downloadSettings = new DownloadSettings();
         private FormSettings fromSettings = new FormSettings();
@@ -42,7 +43,7 @@ namespace ImageScraper
         private void menuPlugin_Click(object sender, System.EventArgs e)
         {
             ToolStripMenuItem mi = (ToolStripMenuItem)sender;
-            foreach(PluginInterface.PluginInterface plugin in plugins)
+            foreach(PluginInterface plugin in plugins)
             {
                 if (mi.Text == plugin.Name)
                 {

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Utilities;
 
 namespace ImageScraper
 {
@@ -281,7 +282,7 @@ namespace ImageScraper
             return false;
         }
 
-        PluginInterface.PluginInterface Contains(UrlContainer.UrlContainer uc)
+        PluginInterface Contains(UrlContainer.UrlContainer uc)
         {
             for (int i = 0; i < mSettings.plugins.Length; i++)
             {
@@ -306,7 +307,7 @@ namespace ImageScraper
                 return null;
 
             // URLに対応するプラグインを検索，見つかればCookie取得
-            PluginInterface.PluginInterface plugin = Contains(uc);
+            PluginInterface plugin = Contains(uc);
             var hc = new HtmlContainer.HtmlContainer(uc, mSettings.cookies);
             // Htmlを取得しないで済むURLのフィルタリング
             if (!mSettings.filterUrl.Filter(uc.Url))

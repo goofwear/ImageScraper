@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Formatters.Binary;
 
-namespace ImageScraper
+namespace Utilities
 {
     public class Common
     {
@@ -45,6 +47,37 @@ namespace ImageScraper
             return dic;
         }
 
+        public static string CookiesToString(CookieCollection ccol)
+        {
+            using (var stream = new MemoryStream())
+            {
+                try
+                {
+                    new BinaryFormatter().Serialize(stream, ccol);
+                    return Convert.ToBase64String(stream.ToArray());
+                }
+                catch (Exception)
+                {
+                    return string.Empty;
+                }
+            }
+        }
+
+        public static CookieCollection StringToCookies(string cookies)
+        {
+            try
+            {
+                using (var stream = new MemoryStream(Convert.FromBase64String(cookies)))
+                {
+                    return (CookieCollection)new BinaryFormatter().Deserialize(stream);
+                }
+            }
+            catch (Exception)
+            {
+                return new CookieCollection();
+            }
+        }
+
         /// 文字列中の指定した文字を全て"+"に置き換える
         public static string RemoveChars(string s, char[] characters)
         {
@@ -54,22 +87,6 @@ namespace ImageScraper
                 buf.Replace(c.ToString(), "+");
             }
             return buf.ToString();
-        }
-
-        public static void WriteLineList(List<string> list)
-        {
-            foreach(var value in list)
-            {
-                Console.WriteLine(value);
-            }
-        }
-
-        public static void WriteLineUrlContainers(List<UrlContainer.UrlContainer> list)
-        {
-            foreach (var value in list)
-            {
-                Console.WriteLine(value.Url);
-            }
         }
 
         public static string GetImageFormatString(string path)

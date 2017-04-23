@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using Utilities;
 
 namespace ImageScraper
 {
@@ -362,7 +363,7 @@ namespace ImageScraper
         private void LoadPlugins()
         {
             PluginInfo[] pis = PluginInfo.FindPlugins();
-            plugins = new PluginInterface.PluginInterface[pis.Length];
+            plugins = new PluginInterface[pis.Length];
 
             for (int i = 0; i < plugins.Length; i++)
             {

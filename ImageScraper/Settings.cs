@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Collections.Generic;
+using Utilities;
 
 namespace ImageScraper
 {
@@ -55,7 +56,7 @@ namespace ImageScraper
         public FilterDomain filterDomain;
         public FilterKeyword filterTitle;
         public FilterKeyword filterUrl;
-        public PluginInterface.PluginInterface[] plugins;
+        public PluginInterface[] plugins;
         public CookieContainer cookies;
         public string dest;
         public bool destPlusUrl;
