@@ -275,6 +275,8 @@ namespace PixivParsePlugin
             if (m.Success)
             {
                 string mode = GetPixivDisplayMode(uc);
+                // リファラー必須
+                uc.Referer = uc.Url;
                 uc.Url = String.Format("http://www.pixiv.net/member_illust.php?mode={0}&illust_id={1}", mode, m.Groups["Id"].Value);
                 var hc = new HtmlContainer.HtmlContainer(uc, _userAccount.Cookies);
                 hc.UpdateAttributeUrlList("img", "src", format);
