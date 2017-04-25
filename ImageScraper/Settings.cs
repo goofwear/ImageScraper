@@ -25,24 +25,6 @@ namespace ImageScraper
         }
     }
 
-    public class InternalSettings
-    {
-        public List<string> UrlList;
-        public List<string> TitleKeyList;
-        public List<string> UrlKeyList;
-        public ControlProperty.Property[] Properties;
-        public HashSet<string> ImageUrlHistory;
-
-        public InternalSettings()
-        {
-            UrlList = new List<string>();
-            TitleKeyList = new List<string>();
-            UrlKeyList = new List<string>();
-            Properties = new ControlProperty.Property[0];
-            ImageUrlHistory = new HashSet<string>();
-        }
-    }
-
     public class DownloadSettings
     {
         public UrlContainer.UrlContainer urlContainer;

@@ -76,7 +76,6 @@ namespace HtmlContainer
 
             // 次に、HTMLの中でcharset属性を探す
             var ms = new MemoryStream();
-            // byte[] rawHtml = await res.Content.ReadAsByteArrayAsync(); 
             using (Stream sr = res.GetResponseStream())
             {
                 int readSize = 0;

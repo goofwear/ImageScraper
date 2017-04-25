@@ -412,7 +412,6 @@ namespace ImageScraper
 
         private void LoadSettings()
         {
-            bool compatFlag = false;
             FormSettings settings = new FormSettings();
             XmlSerializer xs = new XmlSerializer(typeof(FormSettings));
 
@@ -421,29 +420,11 @@ namespace ImageScraper
             {
                 using (var sr = new StreamReader("ImageScraper.xml", new UTF8Encoding(false)))
                 {
-                    try
-                    {
-                        settings = (FormSettings)xs.Deserialize(sr);
-                    }
-                    catch
-                    {
-                        // 旧バージョンの設定ファイル
-                        compatFlag = true;
-                        sr.BaseStream.Seek(0, SeekOrigin.Begin);
-                        xs = new XmlSerializer(typeof(InternalSettings));
-                        var compatSettings = (InternalSettings)xs.Deserialize(sr);
-
-                        settings.UrlList = compatSettings.UrlList;
-                        settings.TitleCKeywordList = compatSettings.TitleKeyList;
-                        settings.UrlCKeywordList = compatSettings.UrlKeyList;
-                        settings.Properties = compatSettings.Properties;
-                        foreach (var url in compatSettings.ImageUrlHistory)
-                            this.UrlCache.Add(url, new ImageInfo());
-                    }
+                    settings = (FormSettings)xs.Deserialize(sr);
                 }
             }
 
-            if (!compatFlag && File.Exists("UrlCache.xml"))
+            if (File.Exists("UrlCache.xml"))
             {
                 // 履歴のデシリアライズ
                 xs = new XmlSerializer(typeof(List<Common.KeyAndValue<string, ImageInfo>>));
