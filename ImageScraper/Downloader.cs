@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Utilities;
@@ -204,15 +205,19 @@ namespace ImageScraper
                 return false;
 
             // ファイルサイズによるフィルタリング
-            var imageSize = (int)(uc.CachedImageSize / 1000);
+            var imageSize = (int)(uc.CacheSize / 1000);
             if (mSettings.filterImageSize.Filter(imageSize))
                 return false;
-            // 解像度によるフィルタリング
-            else if (mSettings.filterResolution.Filter(uc.CachedImage.Width, uc.CachedImage.Height))
-                return false;
-            // カラーフォーマットによるフィルタリング
-            else if (mSettings.filterColorFormat.Filter(uc.CachedImage))
-                return false;
+
+            using (var cachedImage = new Bitmap(Image.FromStream(uc.CacheStream)))
+            {
+                // 解像度によるフィルタリング
+                if (mSettings.filterResolution.Filter(cachedImage.Width, cachedImage.Height))
+                    return false;
+                // カラーフォーマットによるフィルタリング
+                else if (mSettings.filterColorFormat.Filter(cachedImage))
+                    return false;
+            }
 
             // ダウンロードした画像を保存
             uc.SaveCachedImage(info.ImagePath);
