@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Collections.Generic;
 using Utilities;
 
@@ -61,36 +60,6 @@ namespace ImageScraper
             this.pageCount = page;
             this.imageCount = image;
             this.size = size;
-        }
-    }
-
-    public class ImageInfo : IEquatable<ImageInfo>
-    {
-        public string ImageUrl;
-        public string ParentUrl;
-        public string ParentTitle;
-        public string ImagePath;
-        public DateTime LoadDate;
-
-        public ImageInfo()
-        {
-            ImageUrl = "";
-            ParentUrl = "";
-            ParentTitle = "";
-            ImagePath = "";
-            LoadDate = DateTime.Now;
-        }
-
-        public override int GetHashCode()
-        {
-            return this.ImageUrl.GetHashCode();
-        }
-
-        bool IEquatable<ImageInfo>.Equals(ImageInfo imageInfo)
-        {
-            if (imageInfo == null)
-                return false;
-            return (this.ImageUrl == imageInfo.ImageUrl);
         }
     }
 }

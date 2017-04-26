@@ -24,18 +24,6 @@ namespace ImageScraper
             ReloadHistory();
         }
 
-        private string GetImagePath(int index)
-        {
-            var info = listViewEx1.Items[index].Tag as ImageInfo;
-            return info.ImagePath;
-        }
-
-        private string GetImageUrl(int index)
-        {
-            var info = listViewEx1.Items[index].Tag as ImageInfo;
-            return info.ImageUrl;
-        }
-
         private void ReloadHistory()
         {
             int i = 0;
@@ -97,9 +85,9 @@ namespace ImageScraper
             for (int i = listViewEx1.SelectedItems.Count - 1; i >= 0; i--)
             {
                 // 順番注意
-                var info = listViewEx1.Items[listViewEx1.SelectedIndices[i]].Tag as ImageInfo;
+                var info = listViewEx1.SelectedItems[i].Tag as ImageInfo;
                 _removedUrlSet.Add(info);
-                listViewEx1.Items.RemoveAt(listViewEx1.SelectedIndices[i]);
+                listViewEx1.Items.RemoveAt(listViewEx1.SelectedItems[i].Index);
             }
             listViewEx1.EndUpdate();
         }
@@ -158,27 +146,28 @@ namespace ImageScraper
             try
             {
                 var cookies = new CookieContainer();
-                var urlTable = new Dictionary<string, string>();
+                var urlList = new List<ImageInfo>();
                 foreach (ListViewItem lvi in listViewEx1.SelectedItems)
                 {
-                    string imagePath = GetImagePath(lvi.Index);
-                    if (!File.Exists(imagePath))
+                    var info = lvi.Tag as ImageInfo;
+                    if (!File.Exists(info.ImagePath))
                     {
-                        string imageDir = Path.GetDirectoryName(imagePath);
+                        string imageDir = Path.GetDirectoryName(info.ImagePath);
                         if (!Directory.Exists(imageDir))
-                            Directory.CreateDirectory(Path.GetDirectoryName(imagePath));
-                        urlTable.Add(GetImageUrl(lvi.Index), imagePath);
+                            Directory.CreateDirectory(imageDir);
+                        urlList.Add(info);
                     }
                 }
-                using (var progressForm = GetProgressForm("ダウンロード中", urlTable.Count))
+                using (var progressForm = GetProgressForm("ダウンロード中", urlList.Count))
                 {
                     progressForm.Show();
                     await Task.Run(() =>
                     {
-                        foreach (var pair in urlTable)
+                        foreach (var info in urlList)
                         {
-                            var uc = new UrlContainer.UrlContainer(pair.Key);
-                            uc.Download(pair.Value, cookies);
+                            var uc = new UrlContainer.UrlContainer(info.ImageUrl);
+                            uc.Referer = info.ParentUrl;
+                            uc.Download(info.ImagePath, cookies);
 
                             if (progressForm.isCancelled)
                                 throw new OperationCanceledException();
@@ -223,9 +212,9 @@ namespace ImageScraper
 
         private void listViewEx1_DoubleClick(object sender, EventArgs e)
         {
-            var imagePath = GetImagePath(listViewEx1.SelectedIndices[0]);
-            if (File.Exists(imagePath))
-                Common.OpenFile(imagePath);
+            var info = listViewEx1.SelectedItems[0].Tag as ImageInfo;
+            if (File.Exists(info.ImagePath))
+                Common.OpenFile(info.ImagePath);
         }
     }
 

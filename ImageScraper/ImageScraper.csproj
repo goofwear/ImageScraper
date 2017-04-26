@@ -169,6 +169,7 @@
     <Compile Include="HistoryEditorForm.Designer.cs">
       <DependentUpon>HistoryEditorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ImageInfo.cs" />
     <Compile Include="LoggerForm.cs">
       <SubType>Form</SubType>
     </Compile>
