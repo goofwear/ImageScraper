@@ -12,45 +12,46 @@ namespace ImageScraper
 {
     public partial class HistoryEditorForm : Form
     {
-        HashSet<string> _removedUrlSet;
-        Dictionary<string, ImageInfo> _urlCache;
+        HashSet<ImageInfo> _removedUrlSet;
+        HashSet<ImageInfo> _urlCache;
         ListViewItemComparer listViewItemSorter = new ListViewItemComparer();
 
-        public HistoryEditorForm(Dictionary<string, ImageInfo> urlCache)
+        public HistoryEditorForm(HashSet<ImageInfo> urlCache)
         {
             InitializeComponent();
             this._urlCache = urlCache;
-            this._removedUrlSet = new HashSet<string>();
+            this._removedUrlSet = new HashSet<ImageInfo>();
             ReloadHistory();
         }
 
         private string GetImagePath(int index)
         {
-            var imageUrl = listViewEx1.Items[index].Tag.ToString();
-            return this._urlCache[imageUrl].ImagePath;
+            var info = listViewEx1.Items[index].Tag as ImageInfo;
+            return info.ImagePath;
         }
 
         private string GetImageUrl(int index)
         {
-            return listViewEx1.Items[index].Tag.ToString();
+            var info = listViewEx1.Items[index].Tag as ImageInfo;
+            return info.ImageUrl;
         }
 
         private void ReloadHistory()
         {
             int i = 0;
             var lvItems = new ListViewItem[this._urlCache.Count];
-            foreach (var pair in this._urlCache)
+            foreach (var info in this._urlCache)
             {
                 var lvi = new ListViewItem(
                     new string[] {
-                        Path.GetFileName(pair.Value.ImagePath),
-                        pair.Value.ParentTitle,
-                        pair.Value.LoadDate.ToString("yyyy/MM/dd/ HH:mm:ss")
+                        Path.GetFileName(info.ImagePath),
+                        info.ParentTitle,
+                        info.LoadDate.ToString("yyyy/MM/dd/ HH:mm:ss")
                     }
                 );
-                if (!File.Exists(pair.Value.ImagePath))
+                if (!File.Exists(info.ImagePath))
                     lvi.ForeColor = Color.Red;
-                lvi.Tag = pair.Key;
+                lvi.Tag = info;
                 lvItems[i] = lvi;
                 i++;
             }
@@ -69,7 +70,7 @@ namespace ImageScraper
             bool flag = false;
             foreach (ListViewItem lvi in listViewEx1.Items)
             {
-                string parentUrl = _urlCache[lvi.Tag.ToString()].ParentUrl;
+                string parentUrl = ((ImageInfo)(lvi.Tag)).ParentUrl;
                 if (parentUrl != previousUrl)
                     flag = !flag;
                 if (flag)
@@ -96,7 +97,8 @@ namespace ImageScraper
             for (int i = listViewEx1.SelectedItems.Count - 1; i >= 0; i--)
             {
                 // 順番注意
-                _removedUrlSet.Add(GetImageUrl(listViewEx1.SelectedIndices[i]));
+                var info = listViewEx1.Items[listViewEx1.SelectedIndices[i]].Tag as ImageInfo;
+                _removedUrlSet.Add(info);
                 listViewEx1.Items.RemoveAt(listViewEx1.SelectedIndices[i]);
             }
             listViewEx1.EndUpdate();
@@ -114,8 +116,8 @@ namespace ImageScraper
 
         private void button2_Click(object sender, EventArgs e)
         {
-            foreach (var url in _removedUrlSet)
-                _urlCache.Remove(url);
+            foreach (var info in _removedUrlSet)
+                _urlCache.Remove(info);
             this.Close();
         }
 

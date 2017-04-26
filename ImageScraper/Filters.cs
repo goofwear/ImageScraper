@@ -228,24 +228,20 @@ namespace ImageScraper
     {
         public bool Enabled { get; set; }
         HashSet<string> _cachedUrlSet;
-        Dictionary<string, ImageInfo> _cachedUrlTable;
 
-        public FilterUrlOverlapped(Dictionary<string, ImageInfo> urlTable)
+        public FilterUrlOverlapped(HashSet<ImageInfo> urlTable)
         {
-            this._cachedUrlSet = new HashSet<string>(urlTable.Keys);
-            this._cachedUrlTable = urlTable;
+            this._cachedUrlSet = new HashSet<string>(urlTable.Select(x => x.ImageUrl));
         }
 
         public void Clear()
         {
             this._cachedUrlSet.Clear();
-            this._cachedUrlTable.Clear();
         }
 
-        public void Add(string url, ImageInfo info)
+        public void Add(ImageInfo info)
         {
-            this._cachedUrlSet.Add(url);
-            this._cachedUrlTable[url] = info;
+            this._cachedUrlSet.Add(info.ImageUrl);
         }
 
         public List<UrlContainer.UrlContainer> Filter(List<UrlContainer.UrlContainer> urlList)

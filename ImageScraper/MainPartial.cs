@@ -67,7 +67,7 @@ namespace ImageScraper
             dc.dest = textBox5.Text.TrimEnd('\\') + "\\";
             dc.destPlusUrl = checkBox9.Checked;
             dc.destPlusTitle = checkBox10.Checked;
-            dc.filterUrlOverlapped = new FilterUrlOverlapped(this.UrlCache);
+            dc.filterUrlOverlapped = new FilterUrlOverlapped(urlCache);
             dc.filterUrlOverlapped.Enabled = checkBox13.Checked;
             dc.fileNameGenerator = new FileNameGenerator(
                 radioButton2.Checked,
@@ -127,7 +127,7 @@ namespace ImageScraper
 
         private void InitializeForm()
         {
-            imageInfo.Clear();
+            infoViewItems.Clear();
             listViewEx1.ClearEmbeddedControl();
             listViewEx1.Items.Clear();
             UpdateComboBox(comboBox1);
@@ -319,15 +319,16 @@ namespace ImageScraper
 
         private void UpdateImageInfo(object sender, ImageInfo info)
         {
-            imageInfo.Add(info);
+            urlCache.Add(info);
+            infoViewItems.Add(info);
         }
 
         public ImageInfo GetInitializedImageInfo(string url)
         {
-            for (int i = 0; i < imageInfo.Count; i++)
+            foreach (var info in infoViewItems)
             {
-                if (imageInfo[i].ParentUrl == url)
-                    return imageInfo[i];
+                if (info.ParentUrl == url)
+                    return info;
             }
             return null;
         }
@@ -335,9 +336,9 @@ namespace ImageScraper
         public int ErectFlagsImageInfo(string url)
         {
             int imageCount = 0;
-            for (int i = 0; i < imageInfo.Count; i++)
+            foreach(var info in infoViewItems)
             {
-                if (imageInfo[i].ParentUrl == url)
+                if (info.ParentUrl == url)
                     imageCount++;
             }
             return imageCount;
@@ -345,14 +346,14 @@ namespace ImageScraper
 
         public void DeleteSelectedImages(string url)
         {
-            for (int i = 0; i < imageInfo.Count; i++)
+            foreach(var info in infoViewItems)
             {
-                if (imageInfo[i].ParentUrl == url)
+                if (info.ParentUrl == url)
                 {
-                    string dir = Path.GetDirectoryName(imageInfo[i].ImagePath);
-                    if (File.Exists(imageInfo[i].ImagePath))
+                    string dir = Path.GetDirectoryName(info.ImagePath);
+                    if (File.Exists(info.ImagePath))
                     {
-                        File.Delete(imageInfo[i].ImagePath);
+                        File.Delete(info.ImagePath);
                         if (Common.IsEmptyDirectory(dir))
                             Directory.Delete(dir);
                     }
@@ -380,19 +381,14 @@ namespace ImageScraper
 
             for (int i = comboBox1.Items.Count - 1; i >= 0; i--)
                 settings.UrlList.Insert(0, comboBox1.Items[i].ToString());
-            // タイトル"含む"キーワード
             for (int i = comboBox2.Items.Count - 1; i >= 0; i--)
                 settings.TitleCKeywordList.Insert(0, comboBox2.Items[i].ToString());
-            // タイトル"含まない"キーワード
             for (int i = comboBox5.Items.Count - 1; i >= 0; i--)
                 settings.TitleNCKeywordList.Insert(0, comboBox5.Items[i].ToString());
-            // URL"含む"キーワード
             for (int i = comboBox3.Items.Count - 1; i >= 0; i--)
                 settings.UrlCKeywordList.Insert(0, comboBox3.Items[i].ToString());
-            // URL"含まない"キーワード
             for (int i = comboBox4.Items.Count - 1; i >= 0; i--)
                 settings.UrlNCKeywordList.Insert(0, comboBox4.Items[i].ToString());
-
             settings.Properties = ControlProperty.ControlProperty.Get(this.Controls);
 
             // フォーム設定のシリアライズ
@@ -400,19 +396,19 @@ namespace ImageScraper
             using (var sw = new StreamWriter("ImageScraper.xml", false, new UTF8Encoding(false)))
                 xs.Serialize(sw, settings);
 
-            // 履歴のシリアライズ
-            var obj = Common.ConvertDictionaryToList(this.UrlCache);
-            xs = new XmlSerializer(typeof(List<Common.KeyAndValue<string, ImageInfo>>));
-            using (var sw = new StreamWriter("UrlCache.xml", false, new UTF8Encoding(false)))
-                xs.Serialize(sw, obj);
-
+            // プラグイン設定の保存
             foreach (var plugin in plugins)
                 plugin.SaveSettings();
+
+            // 履歴のシリアライズ
+            xs = new XmlSerializer(typeof(List<ImageInfo>));
+            var urlCacheList = urlCache.ToList();
+            using (var sw = new StreamWriter("UrlCache.xml", false, new UTF8Encoding(false)))
+                xs.Serialize(sw, urlCacheList);
         }
 
         private void LoadSettings()
         {
-            FormSettings settings = new FormSettings();
             XmlSerializer xs = new XmlSerializer(typeof(FormSettings));
 
             // フォーム設定のデシリアライズ
@@ -420,40 +416,60 @@ namespace ImageScraper
             {
                 using (var sr = new StreamReader("ImageScraper.xml", new UTF8Encoding(false)))
                 {
-                    settings = (FormSettings)xs.Deserialize(sr);
+                    var settings = xs.Deserialize(sr) as FormSettings;
+
+                    if (settings.UrlList != null)
+                        comboBox1.Items.AddRange(settings.UrlList.ToArray());
+                    if (settings.TitleCKeywordList != null)
+                        comboBox2.Items.AddRange(settings.TitleCKeywordList.ToArray());
+                    if (settings.TitleNCKeywordList != null)
+                        comboBox5.Items.AddRange(settings.TitleNCKeywordList.ToArray());
+                    if (settings.UrlCKeywordList != null)
+                        comboBox3.Items.AddRange(settings.UrlCKeywordList.ToArray());
+                    if (settings.UrlNCKeywordList != null)
+                        comboBox4.Items.AddRange(settings.UrlNCKeywordList.ToArray());
+                    ControlProperty.ControlProperty.Set(this.Controls, settings.Properties);
                 }
             }
 
-            if (File.Exists("UrlCache.xml"))
-            {
-                // 履歴のデシリアライズ
-                xs = new XmlSerializer(typeof(List<Common.KeyAndValue<string, ImageInfo>>));
-                using (var sr = new StreamReader("UrlCache.xml", new UTF8Encoding(false)))
-                {
-                    var urlCacheList = (List<Common.KeyAndValue<string, ImageInfo>>)xs.Deserialize(sr);
-                    this.UrlCache = Common.ConvertListToDictionary(urlCacheList);
-                }
-            }
-
-            if (settings.UrlList != null)
-                comboBox1.Items.AddRange(settings.UrlList.ToArray());
-            // タイトル"含む"キーワード
-            if (settings.TitleCKeywordList != null)
-                comboBox2.Items.AddRange(settings.TitleCKeywordList.ToArray());
-            // タイトル"含まない"キーワード
-            if (settings.TitleNCKeywordList != null)
-                comboBox5.Items.AddRange(settings.TitleNCKeywordList.ToArray());
-            // URL"含む"キーワード
-            if (settings.UrlCKeywordList != null)
-                comboBox3.Items.AddRange(settings.UrlCKeywordList.ToArray());
-            // URL"含まない"キーワード
-            if (settings.UrlNCKeywordList != null)
-                comboBox4.Items.AddRange(settings.UrlNCKeywordList.ToArray());
-
-            ControlProperty.ControlProperty.Set(this.Controls, settings.Properties);
-
+            // プラグイン設定の読み込み
             foreach (var plugin in plugins)
                 plugin.LoadSettings();
+
+            // 履歴のデシリアライズ
+            if (File.Exists("UrlCache.xml"))
+            {
+                try
+                {
+                    xs = new XmlSerializer(typeof(List<ImageInfo>));
+                    using (var sr = new StreamReader("UrlCache.xml", new UTF8Encoding(false)))
+                    {
+                        var urlCacheList = xs.Deserialize(sr) as List<ImageInfo>;
+                        this.urlCache = new HashSet<ImageInfo>(urlCacheList);
+                    }
+                }
+                catch
+                {
+                    // 旧バージョンの設定ファイル読み込み
+                    xs = new XmlSerializer(typeof(List<Common.KeyAndValue<string, ImageInfo>>));
+                    using (var sr = new StreamReader("UrlCache.xml", new UTF8Encoding(false)))
+                    {
+                        var urlCacheList = (List<Common.KeyAndValue<string, ImageInfo>>)xs.Deserialize(sr);
+                        var urlCacheDict = Common.ConvertListToDictionary(urlCacheList);
+                        urlCache = new HashSet<ImageInfo>();
+                        foreach (var pair in urlCacheDict)
+                        {
+                            var info = new ImageInfo();
+                            info.ImagePath = pair.Value.ImagePath;
+                            info.ImageUrl = pair.Key;
+                            info.LoadDate = pair.Value.LoadDate;
+                            info.ParentTitle = pair.Value.ParentTitle;
+                            info.ParentUrl = pair.Value.ParentUrl;
+                            urlCache.Add(info);
+                        }
+                    }
+                }
+            }
         }
     }
 }

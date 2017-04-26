@@ -10,10 +10,10 @@ namespace ImageScraper
         const string versionString = "2.6";
         private Downloader downloader;
         private PluginInterface[] plugins;
-        private List<ImageInfo> imageInfo = new List<ImageInfo>();
         private DownloadSettings downloadSettings = new DownloadSettings();
         private FormSettings fromSettings = new FormSettings();
-        private Dictionary<string, ImageInfo> UrlCache = new Dictionary<string, ImageInfo>();
+        private HashSet<ImageInfo> urlCache = new HashSet<ImageInfo>();
+        private HashSet<ImageInfo> infoViewItems = new HashSet<ImageInfo>();
 
         public MainForm()
         {
@@ -97,7 +97,7 @@ namespace ImageScraper
 
             //何が選択されたか調べる
             if (res == DialogResult.Yes)
-                this.UrlCache.Clear();
+                this.urlCache.Clear();
         }
 
         private void comboBox1_DragEnter(object sender, DragEventArgs e)
@@ -223,7 +223,7 @@ namespace ImageScraper
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var f = new HistoryEditorForm(this.UrlCache);
+            var f = new HistoryEditorForm(this.urlCache);
             f.ShowDialog(this);
             f.Dispose();
         }

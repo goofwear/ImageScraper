@@ -170,6 +170,7 @@ namespace ImageScraper
         ImageInfo SetImageInfo(HtmlContainer.HtmlContainer hc, UrlContainer.UrlContainer uc, string dir)
         {
             ImageInfo info = new ImageInfo();
+            info.ImageUrl = uc.Url;
             info.ParentUrl = hc.Container.Url;
             info.ParentTitle = hc.Title;
             info.ImagePath = GetImagePath(uc, dir);
@@ -228,7 +229,7 @@ namespace ImageScraper
             mSumStatus.size += imageSize;
             mTempStatus.imageCount++;
             mSumStatus.imageCount++;
-            mSettings.filterUrlOverlapped.Add(uc.Url, info);
+            mSettings.filterUrlOverlapped.Add(info);
             OnUpdateImageInfo(info);
             return true;
         }
