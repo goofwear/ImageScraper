@@ -187,7 +187,7 @@ namespace ImageScraper
                 }
                 catch (ApplicationException ex)
                 {
-                    MessageBox.Show(ex.StackTrace, "エラー",
+                    MessageBox.Show(ex.Message, "エラー",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
