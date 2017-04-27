@@ -15,42 +15,40 @@ namespace ImageScraper
     {
         private List<Log> mLogList;
         private LoggerForm mLoggerForm;
-        private string availableFormats = "jpg|jpeg|png|bmp|gif";
+        private string[] mAvailableFormats = new string[] { "jpg", "jpeg", "png", "bmp", "gif" };
 
         private void InitializeSettings(DownloadSettings dc)
         {
             // ダウンロード設定
-            dc.urlContainer = new UrlContainer.UrlContainer(comboBox1.Text);
-            dc.format = this.SetDownloadImageFormat();
-            dc.enabledHref = checkBox7.Checked;
-            dc.enabledIsrc = checkBox8.Checked;
-            dc.filterDomain = new FilterDomain(dc.urlContainer, checkBox6.Checked);
-            dc.filterColorFormat = new FilterColorFormat(
-                checkBox5.Checked, 
-                checkBox20.Checked);
-            dc.filterImageSize = new FilterValueRange(
+            dc.UrlContainer = new UrlContainer.UrlContainer(comboBox1.Text);
+            dc.Formats = PickImageFormats();
+            dc.ParseHrefAttr = checkBox7.Checked;
+            dc.ParseImgTag = checkBox8.Checked;
+            dc.DomainFilter = new DomainFilter(checkBox6.Checked, dc.UrlContainer);
+            dc.ColorFilter = new ColorFilter(checkBox5.Checked, checkBox20.Checked);
+            dc.ImageSizeFilter = new ValueRangeFilter(
                 checkBox14.Checked, 
                 checkBox17.Checked, 
                 (int)numericUpDown1.Value, 
                 (int)numericUpDown10.Value);
-            dc.filterImageCount = new FilterValueRange(
+            dc.ImagesPerPageFilter = new ValueRangeFilter(
                 checkBox15.Checked, 
                 checkBox18.Checked, 
                 (int)numericUpDown2.Value, 
                 (int)numericUpDown11.Value);
-            dc.filterTitle = new FilterKeyword(
+            dc.TitleFilter = new KeywordFilter(
                 checkBox11.Checked,
                 checkBox21.Checked,
                 checkBox22.Checked,
                 comboBox2.Text, 
                 comboBox5.Text);
-            dc.filterUrl = new FilterKeyword(
+            dc.UrlFilter = new KeywordFilter(
                 checkBox12.Checked,
                 checkBox24.Checked,
                 checkBox23.Checked,
                 comboBox3.Text,
                 comboBox4.Text);
-            dc.filterResolution = new FilterResolution(
+            dc.ResolutionFilter = new ResolutionFilter(
                 checkBox16.Checked, 
                 checkBox19.Checked,
                 (int)numericUpDown5.Value,
@@ -58,28 +56,21 @@ namespace ImageScraper
                 (int)numericUpDown12.Value,
                 (int)numericUpDown13.Value);
 
-            //// アカウント設定
-            dc.plugins = plugins;
-            for (int i = 0; i < dc.plugins.Length; i++)
-                dc.plugins[i].InitializePlugin();
-            dc.cookies = new System.Net.CookieContainer();
-
             // 保存設定
-            dc.dest = textBox5.Text.TrimEnd('\\') + "\\";
-            dc.destPlusUrl = checkBox9.Checked;
-            dc.destPlusTitle = checkBox10.Checked;
-            dc.filterUrlOverlapped = new FilterUrlOverlapped(urlCache);
-            dc.filterUrlOverlapped.Enabled = checkBox13.Checked;
-            dc.fileNameGenerator = new FileNameGenerator(
+            dc.RootDirectory = textBox5.Text.TrimEnd('\\') + "\\";
+            dc.AppendsUrl = checkBox9.Checked;
+            dc.AppendsTitle = checkBox10.Checked;
+            dc.OverlappedUrlFilter = new OverlappedUrlFilter(mUrlCache, checkBox13.Checked);
+            dc.FileNameGenerator = new FileNameGenerator(
                 radioButton2.Checked,
                 new SerialNameGenerator(
                     textBox2.Text, 
                     (int)numericUpDown9.Value, 
-                    this.availableFormats)
+                    mAvailableFormats)
             );
 
             // 終了条件設定
-            dc.checkTerminated = new CheckTerminated(
+            dc.StatusMonitor = new StatusMonitor(
                 new bool[] {
                     radioButton12.Checked,
                     radioButton10.Checked,
@@ -93,7 +84,7 @@ namespace ImageScraper
                     (double)numericUpDown7.Value * 1000
                 ),
                 (int)numericUpDown14.Value,
-                this.GetNumImages(dc.dest)
+                this.CountImages(dc.RootDirectory)
             );
 
             // 接続設定
@@ -128,7 +119,7 @@ namespace ImageScraper
 
         private void InitializeForm()
         {
-            infoViewItems.Clear();
+            mInfoViewItems.Clear();
             listViewEx1.ClearEmbeddedControl();
             listViewEx1.Items.Clear();
             UpdateComboBox(comboBox1);
@@ -136,13 +127,13 @@ namespace ImageScraper
             UpdateComboBox(comboBox3);
             UpdateComboBox(comboBox4);
             UpdateComboBox(comboBox5);
-            this.FlipFormControl();
+            this.ReverseControls();
             toolStripStatusLabel1.Text = "ダウンロード中...";
         }
 
         private void FinalizeForm()
         {
-            this.FlipFormControl();
+            this.ReverseControls();
             toolStripStatusLabel1.Text = "完了";
         }
 
@@ -151,35 +142,29 @@ namespace ImageScraper
             while (true)
             {
                 // 設定値の反映
-                if (!this.CheckSettings())
+                if (!this.IsValidInputs())
                     break;
-                this.InitializeSettings(this.downloadSettings);
+                this.InitializeSettings(mDownloadSettings);
 
-                // 前処理
                 try
                 {
-                    Directory.CreateDirectory(this.downloadSettings.dest);
+                    Directory.CreateDirectory(mDownloadSettings.RootDirectory);
+                    for (int i = 0; i < mPlugins.Length; i++)
+                        mPlugins[i].PreProcess();
+                    mDownloader = new Downloader(mDownloadSettings, mPlugins, this);
+                    InitializeForm();
                 }
-                catch (UnauthorizedAccessException ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, "エラー",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
                 }
 
-                downloader = new Downloader(this.downloadSettings, this);
-                downloader.Event_WriteLog += new Downloader.Delegate_WriteLog(WriteLog);
-                downloader.Event_UpdateStatus += new Downloader.Delegate_UpdateStatus(UpdateStatus);
-                downloader.Event_AddProgress += new Downloader.Delegate_AddProgress(AddProgress);
-                downloader.Event_UpdateProgress += new Downloader.Delegate_UpdateProgress(UpdateProgress);
-                downloader.Event_FinalizeProgress += new Downloader.Delegate_FinalizeProgress(FinalizeProgress);
-                downloader.Event_UpdateImageInfo += new Downloader.Delegate_UpdateImageInfo(UpdateImageInfo);
-                InitializeForm();
-
                 try
                 {
                     // タスクの実行
-                    await downloader.StartTask();
+                    await mDownloader.Start();
                 }
                 catch (ApplicationException ex)
                 {
@@ -191,27 +176,26 @@ namespace ImageScraper
                 FinalizeForm();
                 MessageBox.Show("ダウンロードが完了しました", "通知",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
-                for (int i = 0; i < downloadSettings.plugins.Length; i++)
-                    downloadSettings.plugins[i].FinalizePlugin();
-                downloader = null;
+                for (int i = 0; i < mPlugins.Length; i++)
+                    mPlugins[i].PostProcess();
+                mDownloader = null;
 
                 break;
             }
         }
 
-        private int GetNumImages(string dir)
+        private int CountImages(string dir)
         {
             int num = 0;
             if (Directory.Exists(dir))
             {
-                string[] formatArray = this.availableFormats.Split('|');
-                for (int i = 0; i < formatArray.Length; i++)
-                    num += Directory.GetFiles(dir, "*." + formatArray[i], SearchOption.AllDirectories).Length;
+                for (int i = 0; i < mAvailableFormats.Length; i++)
+                    num += Directory.GetFiles(dir, "*." + mAvailableFormats[i], SearchOption.AllDirectories).Length;
             }
             return num;
         }
 
-        private bool CheckSettings()
+        private bool IsValidInputs()
         {
             string errorMessage = "";
             Regex urlEx = new Regex(@"^(https?|ftp)://[\w/:%#\$&\?\(\)~\.=\+\-]+$", RegexOptions.IgnoreCase);
@@ -236,22 +220,28 @@ namespace ImageScraper
             return true;
         }
 
-        public string[] SetDownloadImageFormat()
+        private string[] PickImageFormats()
         {
             List<string> format = new List<string>();
 
-            if (checkBox1.Checked) format.AddRange(new string[] { "jpg", "jpeg" });
-            if (checkBox2.Checked) format.Add("png");
-            if (checkBox3.Checked) format.Add("bmp");
-            if (checkBox4.Checked) format.Add("gif");
+            if (checkBox1.Checked)
+                format.AddRange(new string[] { "jpg", "jpeg" });
+            if (checkBox2.Checked)
+                format.Add("png");
+            if (checkBox3.Checked)
+                format.Add("bmp");
+            if (checkBox4.Checked)
+                format.Add("gif");
 
             return format.ToArray();
         }
 
-        private void FlipFormControl()
+        private void ReverseControls()
         {
-            if (button1.Text == "この条件でダウンロード開始") button1.Text = "一時停止";
-            else button1.Text = "この条件でダウンロード開始";
+            if (button1.Text == "この条件でダウンロード開始")
+                button1.Text = "一時停止";
+            else
+                button1.Text = "この条件でダウンロード開始";
             comboBox1.Enabled = !comboBox1.Enabled;
             button2.Enabled = !button2.Enabled;
             tabPage1.Enabled = !tabPage1.Enabled;
@@ -264,13 +254,13 @@ namespace ImageScraper
                 ddi.Enabled = !ddi.Enabled;
         }
 
-        private void UpdateStatus(object sender, Status sumStatus)
+        public void UpdateStatus(Status sumStatus)
         {
             toolStripStatusLabel2.Text = String.Format("完了: {0} 階層, {1} ページ, {2} 枚, {3} KB",
-                sumStatus.depthCount, sumStatus.pageCount, sumStatus.imageCount, sumStatus.size);
+                sumStatus.Depth, sumStatus.Pages, sumStatus.Images, sumStatus.Size);
         }
 
-        private void WriteLog(object sender, string module, string desc)
+        public void WriteLog(object sender, string module, string desc)
         {
             var log = new Log(module, desc);
             if (mLogList == null)
@@ -280,7 +270,7 @@ namespace ImageScraper
                 mLoggerForm.Write(log);
         }
 
-        private void AddProgress(object sender, string title, string url, int max)
+        public void InitProgress(string title, string url, int max)
         {
             if (title != null && max > 0)
             {
@@ -306,7 +296,7 @@ namespace ImageScraper
             }
         }
 
-        private void UpdateProgress(object sender, int downloadCount, int imageCount)
+        public void UpdateProgress(int downloadCount, int imageCount)
         {
             int idx = listViewEx1.Items.Count - 1;
             listViewEx1.Items[idx].SubItems[2].Text = downloadCount.ToString();
@@ -314,22 +304,22 @@ namespace ImageScraper
             pb.Value = imageCount;
         }
 
-        private void FinalizeProgress(object sender)
+        public void FinalizeProgress()
         {
             int idx = listViewEx1.Items.Count - 1;
             ProgressBar pb = listViewEx1.GetEmbeddedControl(1, idx) as ProgressBar;
             pb.Value = pb.Maximum;
         }
 
-        private void UpdateImageInfo(object sender, ImageInfo info)
+        public void UpdateImageInfo(ImageInfo info)
         {
-            urlCache.Add(info);
-            infoViewItems.Add(info);
+            mUrlCache.Add(info);
+            mInfoViewItems.Add(info);
         }
 
-        public ImageInfo GetInitializedImageInfo(string url)
+        public ImageInfo FindParentUrl(string url)
         {
-            foreach (var info in infoViewItems)
+            foreach (var info in mInfoViewItems)
             {
                 if (info.ParentUrl == url)
                     return info;
@@ -339,7 +329,7 @@ namespace ImageScraper
 
         public void DeleteSelectedImages(string url)
         {
-            foreach(var info in infoViewItems)
+            foreach(var info in mInfoViewItems)
             {
                 if (info.ParentUrl == url)
                 {
@@ -356,15 +346,15 @@ namespace ImageScraper
         private void LoadPlugins()
         {
             PluginInfo[] pis = PluginInfo.FindPlugins();
-            plugins = new PluginInterface[pis.Length];
+            mPlugins = new PluginInterface[pis.Length];
 
-            for (int i = 0; i < plugins.Length; i++)
+            for (int i = 0; i < mPlugins.Length; i++)
             {
-                plugins[i] = pis[i].CreateInstance();
+                mPlugins[i] = pis[i].CreateInstance();
                 var loggerDelegate = new LoggerDelegate(this);
                 loggerDelegate.Event_WriteLog += new LoggerDelegate.Delegate_WriteLog(WriteLog);
-                plugins[i].SetLoggerDelegate(loggerDelegate);
-                ToolStripMenuItem mi = new ToolStripMenuItem(plugins[i].Name);
+                mPlugins[i].SetLoggerDelegate(loggerDelegate);
+                ToolStripMenuItem mi = new ToolStripMenuItem(mPlugins[i].Name);
                 mi.Click += new EventHandler(menuPlugin_Click);
                 Plugins_ToolStripMenuItem.DropDownItems.Add(mi);
             }
@@ -372,88 +362,127 @@ namespace ImageScraper
 
         private void SaveSettings()
         {
-            FormSettings settings = new FormSettings();
-
-            for (int i = comboBox1.Items.Count - 1; i >= 0; i--)
-                settings.UrlList.Insert(0, comboBox1.Items[i].ToString());
-            for (int i = comboBox2.Items.Count - 1; i >= 0; i--)
-                settings.TitleCKeywordList.Insert(0, comboBox2.Items[i].ToString());
-            for (int i = comboBox5.Items.Count - 1; i >= 0; i--)
-                settings.TitleNCKeywordList.Insert(0, comboBox5.Items[i].ToString());
-            for (int i = comboBox3.Items.Count - 1; i >= 0; i--)
-                settings.UrlCKeywordList.Insert(0, comboBox3.Items[i].ToString());
-            for (int i = comboBox4.Items.Count - 1; i >= 0; i--)
-                settings.UrlNCKeywordList.Insert(0, comboBox4.Items[i].ToString());
-            settings.Properties = ControlProperty.ControlProperty.Get(this.Controls);
-
-            // フォーム設定のシリアライズ
-            var xs = new XmlSerializer(typeof(FormSettings));
-            using (var sw = new StreamWriter("ImageScraper.xml", false, new UTF8Encoding(false)))
-                xs.Serialize(sw, settings);
+            try
+            {
+                FormSettings settings = new FormSettings();
+                settings.Properties = ControlProperty.ControlProperty.Get(this.Controls);
+                for (int i = comboBox1.Items.Count - 1; i >= 0; i--)
+                    settings.UrlList.Insert(0, comboBox1.Items[i].ToString());
+                for (int i = comboBox2.Items.Count - 1; i >= 0; i--)
+                    settings.KeyTitleList.Insert(0, comboBox2.Items[i].ToString());
+                for (int i = comboBox5.Items.Count - 1; i >= 0; i--)
+                    settings.ExKeyTitleList.Insert(0, comboBox5.Items[i].ToString());
+                for (int i = comboBox3.Items.Count - 1; i >= 0; i--)
+                    settings.KeyUrlList.Insert(0, comboBox3.Items[i].ToString());
+                for (int i = comboBox4.Items.Count - 1; i >= 0; i--)
+                    settings.ExKeyUrlList.Insert(0, comboBox4.Items[i].ToString());
+                // フォーム設定のシリアライズ
+                var xs = new XmlSerializer(typeof(FormSettings));
+                using (var sw = new StreamWriter("ImageScraper.xml", false, new UTF8Encoding(false)))
+                    xs.Serialize(sw, settings);
+                WriteLog(this, "MainForm", "フォームの設定を保存しました");
+            }
+            catch
+            {
+                WriteLog(this, "MainForm", "フォームの設定の保存に失敗しました");
+            }
 
             // プラグイン設定の保存
-            foreach (var plugin in plugins)
-                plugin.SaveSettings();
+            foreach (var plugin in mPlugins)
+            {
+                try
+                {
+                    plugin.SaveSettings();
+                    WriteLog(this, plugin.Name, "プラグインの設定を保存しました");
+                }
+                catch
+                {
+                    WriteLog(this, plugin.Name, "プラグインの設定の保存に失敗しました");
+                }
+            }
 
-            // 履歴のシリアライズ
-            xs = new XmlSerializer(typeof(List<ImageInfo>));
-            var urlCacheList = urlCache.ToList();
-            using (var sw = new StreamWriter("UrlCache.xml", false, new UTF8Encoding(false)))
-                xs.Serialize(sw, urlCacheList);
+            try
+            {
+                // 履歴のシリアライズ
+                var xs = new XmlSerializer(typeof(List<ImageInfo>));
+                var urlCache = mUrlCache.ToList();
+                using (var sw = new StreamWriter("UrlCache.xml", false, new UTF8Encoding(false)))
+                    xs.Serialize(sw, urlCache);
+                WriteLog(this, "MainForm", "履歴を保存しました");
+            }
+            catch
+            {
+                WriteLog(this, "MainForm", "履歴の保存に失敗しました");
+            }
         }
 
         private void LoadSettings()
         {
-            XmlSerializer xs = new XmlSerializer(typeof(FormSettings));
-
-            // フォーム設定のデシリアライズ
             if (File.Exists("ImageScraper.xml"))
             {
-                using (var sr = new StreamReader("ImageScraper.xml", new UTF8Encoding(false)))
+                try
                 {
-                    var settings = xs.Deserialize(sr) as FormSettings;
-                    WriteLog(this, "MainForm", "フォームの設定を読み込みました");
-
-                    if (settings.UrlList != null)
-                        comboBox1.Items.AddRange(settings.UrlList.ToArray());
-                    if (settings.TitleCKeywordList != null)
-                        comboBox2.Items.AddRange(settings.TitleCKeywordList.ToArray());
-                    if (settings.TitleNCKeywordList != null)
-                        comboBox5.Items.AddRange(settings.TitleNCKeywordList.ToArray());
-                    if (settings.UrlCKeywordList != null)
-                        comboBox3.Items.AddRange(settings.UrlCKeywordList.ToArray());
-                    if (settings.UrlNCKeywordList != null)
-                        comboBox4.Items.AddRange(settings.UrlNCKeywordList.ToArray());
-                    ControlProperty.ControlProperty.Set(this.Controls, settings.Properties);
+                    using (var sr = new StreamReader("ImageScraper.xml", new UTF8Encoding(false)))
+                    {
+                        // フォーム設定のデシリアライズ
+                        var xs = new XmlSerializer(typeof(FormSettings));
+                        var settings = xs.Deserialize(sr) as FormSettings;
+                        if (settings.UrlList != null)
+                            comboBox1.Items.AddRange(settings.UrlList.ToArray());
+                        if (settings.KeyTitleList != null)
+                            comboBox2.Items.AddRange(settings.KeyTitleList.ToArray());
+                        if (settings.ExKeyTitleList != null)
+                            comboBox5.Items.AddRange(settings.ExKeyTitleList.ToArray());
+                        if (settings.KeyUrlList != null)
+                            comboBox3.Items.AddRange(settings.KeyUrlList.ToArray());
+                        if (settings.ExKeyUrlList != null)
+                            comboBox4.Items.AddRange(settings.ExKeyUrlList.ToArray());
+                        ControlProperty.ControlProperty.Set(this.Controls, settings.Properties);
+                        WriteLog(this, "MainForm", "フォームの設定を読み込みました");
+                    }
+                }
+                catch
+                {
+                    WriteLog(this, "MainForm", "フォームの設定の読み込みに失敗しました");
                 }
             }
 
             // プラグイン設定の読み込み
-            foreach (var plugin in plugins)
-                plugin.LoadSettings();
+            foreach (var plugin in mPlugins)
+            {
+                try
+                {
+                    plugin.LoadSettings();
+                    WriteLog(this, plugin.Name, "プラグインの設定を読み込みました");
+                }
+                catch
+                {
+                    WriteLog(this, plugin.Name, "プラグインの設定の読み込みに失敗しました");
+                }
+            }
 
-            // 履歴のデシリアライズ
             if (File.Exists("UrlCache.xml"))
             {
                 try
                 {
-                    xs = new XmlSerializer(typeof(List<ImageInfo>));
+                    // 履歴のデシリアライズ
+                    var xs = new XmlSerializer(typeof(List<ImageInfo>));
                     using (var sr = new StreamReader("UrlCache.xml", new UTF8Encoding(false)))
                     {
-                        var urlCacheList = xs.Deserialize(sr) as List<ImageInfo>;
-                        this.urlCache = new HashSet<ImageInfo>(urlCacheList);
+                        var urlCache = xs.Deserialize(sr) as List<ImageInfo>;
+                        mUrlCache = new HashSet<ImageInfo>(urlCache);
                     }
                     WriteLog(this, "MainForm", "履歴を読み込みました");
                 }
                 catch
                 {
                     // 旧バージョンの設定ファイル読み込み
-                    xs = new XmlSerializer(typeof(List<Common.KeyAndValue<string, ImageInfo>>));
+                    var xs = new XmlSerializer(typeof(List<Common.KeyAndValue<string, ImageInfo>>));
                     using (var sr = new StreamReader("UrlCache.xml", new UTF8Encoding(false)))
                     {
-                        var urlCacheList = (List<Common.KeyAndValue<string, ImageInfo>>)xs.Deserialize(sr);
-                        var urlCacheDict = Common.ConvertListToDictionary(urlCacheList);
-                        urlCache = new HashSet<ImageInfo>();
+                        var urlCache = (List<Common.KeyAndValue<string, ImageInfo>>)xs.Deserialize(sr);
+                        var urlCacheDict = Common.ConvertListToDictionary(urlCache);
+                        mUrlCache = new HashSet<ImageInfo>();
                         foreach (var pair in urlCacheDict)
                         {
                             var info = new ImageInfo();
@@ -462,7 +491,7 @@ namespace ImageScraper
                             info.LoadDate = pair.Value.LoadDate;
                             info.ParentTitle = pair.Value.ParentTitle;
                             info.ParentUrl = pair.Value.ParentUrl;
-                            urlCache.Add(info);
+                            mUrlCache.Add(info);
                         }
                     }
                     WriteLog(this, "MainForm", "旧バージョンの履歴を読み込みました");

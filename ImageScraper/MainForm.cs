@@ -7,13 +7,13 @@ namespace ImageScraper
 {
     public partial class MainForm : Form
     {
-        const string versionString = "2.6";
-        private Downloader downloader;
-        private PluginInterface[] plugins;
-        private DownloadSettings downloadSettings = new DownloadSettings();
-        private FormSettings fromSettings = new FormSettings();
-        private HashSet<ImageInfo> urlCache = new HashSet<ImageInfo>();
-        private HashSet<ImageInfo> infoViewItems = new HashSet<ImageInfo>();
+        const string mVersionString = "2.6";
+        private Downloader mDownloader;
+        private PluginInterface[] mPlugins;
+        private DownloadSettings mDownloadSettings = new DownloadSettings();
+        private FormSettings mFormSettings = new FormSettings();
+        private HashSet<ImageInfo> mUrlCache = new HashSet<ImageInfo>();
+        private HashSet<ImageInfo> mInfoViewItems = new HashSet<ImageInfo>();
 
         public MainForm()
         {
@@ -22,28 +22,17 @@ namespace ImageScraper
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            try
-            {
-                this.LoadPlugins();
-                this.LoadSettings();
-            }
-            catch
-            {
-                MessageBox.Show("設定ファイルの読み込みに失敗しました", "エラー",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                groupBox8.Enabled = checkBox12.Checked;
-                groupBox11.Enabled = checkBox11.Checked;
-                this.FormClosing += this.Form1_FormClosing;
-            }
+            this.LoadPlugins();
+            this.LoadSettings();
+            groupBox8.Enabled = checkBox12.Checked;
+            groupBox11.Enabled = checkBox11.Checked;
+            this.FormClosing += this.Form1_FormClosing;
         }
 
         private void menuPlugin_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem mi = (ToolStripMenuItem)sender;
-            foreach(PluginInterface plugin in plugins)
+            foreach(PluginInterface plugin in mPlugins)
             {
                 if (mi.Text == plugin.Name)
                 {
@@ -55,24 +44,16 @@ namespace ImageScraper
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            try
-            {
-                this.SaveSettings();
-            }
-            catch
-            {
-                MessageBox.Show("設定ファイルの書き込みに失敗しました", "エラー",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            this.SaveSettings();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (downloader != null)
+            if (mDownloader != null)
             {
-                if (downloader.SuspendTask())
+                if (mDownloader.Suspend())
                     button1.Text = "再開";
-                else if (downloader.ResumeTask())
+                else if (mDownloader.Resume())
                     button1.Text = "一時停止";
             }
             else
@@ -81,11 +62,11 @@ namespace ImageScraper
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (downloader != null)
+            if (mDownloader != null)
             {
-                downloader.ResumeTask();
+                mDownloader.Resume();
                 toolStripStatusLabel1.Text = "最終処理中...";
-                downloader.StopTask();
+                mDownloader.Stop();
             }
         }
 
@@ -97,7 +78,7 @@ namespace ImageScraper
 
             //何が選択されたか調べる
             if (res == DialogResult.Yes)
-                this.urlCache.Clear();
+                mUrlCache.Clear();
         }
 
         private void comboBox1_DragEnter(object sender, DragEventArgs e)
@@ -163,7 +144,7 @@ namespace ImageScraper
             string str = String.Format(
                 "プログラム名:\n    ImageScraper {0}\n" +
                 "ホームページ:\n    http://ux.getuploader.com/csharp_scraping/",
-                versionString);
+                mVersionString);
             MessageBox.Show(str, "ImageScraperについて",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
@@ -176,7 +157,7 @@ namespace ImageScraper
                 for (int i = 0; i < listViewEx1.SelectedItems.Count; i++)
                 {
                     var url = listViewEx1.SelectedItems[i].Tag.ToString();
-                    foreach (var info in infoViewItems)
+                    foreach (var info in mInfoViewItems)
                     {
                         if (info.ParentUrl == url)
                             num++;
@@ -206,7 +187,7 @@ namespace ImageScraper
             if (listViewEx1.SelectedItems.Count > 0)
             {
                 int idx = listViewEx1.SelectedItems[0].Index;
-                ImageInfo imageInfo = GetInitializedImageInfo(listViewEx1.Items[idx].Tag.ToString());
+                ImageInfo imageInfo = FindParentUrl(listViewEx1.Items[idx].Tag.ToString());
                 Common.OpenExplorer(imageInfo.ImagePath);
             }
         }
@@ -227,7 +208,7 @@ namespace ImageScraper
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var f = new HistoryEditorForm(this.urlCache);
+            var f = new HistoryEditorForm(mUrlCache);
             f.ShowDialog(this);
             f.Dispose();
         }

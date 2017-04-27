@@ -9,53 +9,13 @@ using Utilities;
 
 namespace SeigaParsePlugin
 {
-    public class Account
-    {
-        public string Id;
-        public string Pass;
-        public bool Enabled;
-        public CookieContainer Cookies;
-
-        public Account()
-        {
-            Enabled = false;
-            Cookies = new CookieContainer();
-        }
-
-        public Account(string id, string pass)
-        {
-            Id = id;
-            Pass = pass;
-            Enabled = false;
-            Cookies = new CookieContainer();
-        }
-    }
-
-    public class Settings
-    {
-        public bool Enabled;
-        public string Id;
-        public string Pass;
-        public bool IsLoggedIn;
-        public string Cookies;
-
-        public Settings()
-        {
-            Enabled = false;
-            Id = "";
-            Pass = "";
-            IsLoggedIn = false;
-            Cookies = "";
-        }
-    }
-
     public class Parser : PluginInterface
     {
-        bool _enabled;
-        Account _userAccount;
-        PluginForm _pluginForm;
-        LoggerDelegate _loggerDelegate;
-        Uri _baseUri = new Uri("http://seiga.nicovideo.jp/");
+        bool mEnabled;
+        Account mUserAccount;
+        PluginForm mPluginForm;
+        LoggerDelegate mLoggerDelegate;
+        Uri mBaseUri = new Uri("http://seiga.nicovideo.jp/");
 
         public string Name
         {
@@ -64,7 +24,7 @@ namespace SeigaParsePlugin
 
         public bool Enabled
         {
-            get { return _enabled; }
+            get { return mEnabled; }
         }
 
         public bool IsLoggedIn
@@ -75,116 +35,103 @@ namespace SeigaParsePlugin
                 if (cookie != null && DateTime.Now > cookie.Expires)
                     return false;
                 else
-                    return _userAccount.Enabled;
+                    return mUserAccount.Enabled;
             }
         }
 
         public Parser()
         {
-            _enabled = false;
-            _userAccount = new Account();
-            _loggerDelegate = null;
+            mEnabled = false;
+            mUserAccount = new Account();
+            mLoggerDelegate = null;
         }
 
         public void SetLoggerDelegate(LoggerDelegate loggerDelegate)
         {
-            _loggerDelegate = loggerDelegate;
+            mLoggerDelegate = loggerDelegate;
         }
 
         public void SaveSettings()
         {
-            try
-            {
-                Settings settings = new Settings();
-                settings.Id = _userAccount.Id;
-                settings.Pass = _userAccount.Pass;
-                settings.Enabled = _enabled;
-                settings.IsLoggedIn = _userAccount.Enabled;
-                if (_userAccount.Enabled)
-                    settings.Cookies = Common.CookiesToString(GetCookieCollection());
-                XmlSerializer xs = new XmlSerializer(typeof(Settings));
-                using (StreamWriter sw = new StreamWriter("plugins/" + Name + ".xml", false, new UTF8Encoding(false)))
-                    xs.Serialize(sw, settings);
-            }
-            catch { }
+            Settings settings = new Settings();
+            settings.Id = mUserAccount.Id;
+            settings.Pass = mUserAccount.Pass;
+            settings.Enabled = mEnabled;
+            settings.IsLoggedIn = mUserAccount.Enabled;
+            if (mUserAccount.Enabled)
+                settings.Cookies = Common.CookiesToString(GetCookieCollection());
+            XmlSerializer xs = new XmlSerializer(typeof(Settings));
+            using (StreamWriter sw = new StreamWriter("plugins/" + Name + ".xml", false, new UTF8Encoding(false)))
+                xs.Serialize(sw, settings);
         }
 
         public void LoadSettings()
         {
-            try
+            Settings settings = new Settings();
+            XmlSerializer xs = new XmlSerializer(typeof(Settings));
+            using (StreamReader sr = new StreamReader("plugins/" + Name + ".xml", new UTF8Encoding(false)))
+                settings = (Settings)xs.Deserialize(sr);
+            mEnabled = settings.Enabled;
+            mUserAccount.Id = settings.Id;
+            mUserAccount.Pass = settings.Pass;
+            mUserAccount.Enabled = settings.IsLoggedIn;
+            if (settings.IsLoggedIn)
             {
-                Settings settings = new Settings();
-                XmlSerializer xs = new XmlSerializer(typeof(Settings));
-                using (StreamReader sr = new StreamReader("plugins/" + Name + ".xml", new UTF8Encoding(false)))
-                    settings = (Settings)xs.Deserialize(sr);
-                _enabled = settings.Enabled;
-                _userAccount.Id = settings.Id;
-                _userAccount.Pass = settings.Pass;
-                _userAccount.Enabled = settings.IsLoggedIn;
-                _loggerDelegate.Write(Name, "プラグインの設定を読み込みました");
-                if (settings.IsLoggedIn)
-                {
-                    var ccol = Common.StringToCookies(settings.Cookies);
-                    _userAccount.Cookies.Add(ccol);
-                }
-            }
-            catch
-            {
-                _loggerDelegate.Write(Name, "設定の読み込みに失敗しました");
+                var ccol = Common.StringToCookies(settings.Cookies);
+                mUserAccount.Cookies.Add(ccol);
             }
         }
 
         public CookieCollection GetCookieCollection()
         {
-            return _userAccount.Cookies.GetCookies(_baseUri);
+            return mUserAccount.Cookies.GetCookies(mBaseUri);
         }
 
         public void ShowPluginForm()
         {
-            if (_pluginForm == null || _pluginForm.IsDisposed)
+            if (mPluginForm == null || mPluginForm.IsDisposed)
             {
-                _pluginForm = new PluginForm();
-                _pluginForm.Text = Name;
-                _pluginForm.MaximizeBox = false;
-                _pluginForm.MinimizeBox = false;
-                _pluginForm.Host = this;
-                _pluginForm.SetAccount(_userAccount);
-                _pluginForm.SetEnabled();
-                _pluginForm.Show();
+                mPluginForm = new PluginForm(this);
+                mPluginForm.Text = Name;
+                mPluginForm.MaximizeBox = false;
+                mPluginForm.MinimizeBox = false;
+                mPluginForm.SetAccount(mUserAccount);
+                mPluginForm.SetEnabled();
+                mPluginForm.Show();
             }
         }
 
-        public void InitializePlugin()
+        public void PreProcess()
         {
             // フォームが開かれているとき実行されアカウント情報が反映される
-            if (_pluginForm != null && !_pluginForm.IsDisposed)
+            if (mPluginForm != null && !mPluginForm.IsDisposed)
             {
-                _enabled = _pluginForm.GetEnabled();
-                if (_enabled)
+                mEnabled = mPluginForm.GetEnabled();
+                if (mEnabled)
                 {
-                    var userAccount = _pluginForm.GetAccount();
+                    var userAccount = mPluginForm.GetAccount();
                     SetAccount(userAccount.Id, userAccount.Pass);
                 }
-                _pluginForm.SetFormEnabled(false);
+                mPluginForm.SetFormEnabled(false);
             }
             // 設定を読み込んだあるいはフォームを閉じたときすでにアカウント情報が反映されている
         }
 
-        public void FinalizePlugin()
+        public void PostProcess()
         {
-            if (_pluginForm != null && !_pluginForm.IsDisposed)
-                _pluginForm.SetFormEnabled(true);
+            if (mPluginForm != null && !mPluginForm.IsDisposed)
+                mPluginForm.SetFormEnabled(true);
         }
 
         internal void SetAccount(string id, string pass)
         {
-            if (id != _userAccount.Id || pass != _userAccount.Pass)
-                _userAccount = new Account(id, pass);
+            if (id != mUserAccount.Id || pass != mUserAccount.Pass)
+                mUserAccount = new Account(id, pass);
         }
 
         internal void SetEnabled(bool enabled)
         {
-            _enabled = enabled;
+            mEnabled = enabled;
         }
 
         public bool Login(bool force = false)
@@ -194,8 +141,8 @@ namespace SeigaParsePlugin
 
             const string path = "https://secure.nicovideo.jp/secure/login?site=niconico";
             var req = (HttpWebRequest)WebRequest.CreateHttp(new Uri(path));
-            var param = String.Format("next_url={0}&mail={1}&password={2}", "", 
-                Uri.EscapeDataString(_userAccount.Id), Uri.EscapeDataString(_userAccount.Pass));
+            var param = String.Format("nextmUrl={0}&mail={1}&password={2}", "", 
+                Uri.EscapeDataString(mUserAccount.Id), Uri.EscapeDataString(mUserAccount.Pass));
             var buf = Encoding.UTF8.GetBytes(param);
 
             req.Method = "POST";
@@ -208,18 +155,18 @@ namespace SeigaParsePlugin
                 rs.Write(buf, 0, buf.Length);
             }
             var res = req.GetResponse();
-            var ccol = req.CookieContainer.GetCookies(_baseUri);
+            var ccol = req.CookieContainer.GetCookies(mBaseUri);
             req.Abort();
 
             if (ccol["user_session"] != null)
             {
                 ccol.Add(new Cookie("accept_fetish_warning", "1", "/", "seiga.nicovideo.jp"));
-                _userAccount.Enabled = true;
-                _userAccount.Cookies.Add(ccol);
-                _loggerDelegate.Write(Name, "ログインに成功しました");
+                mUserAccount.Enabled = true;
+                mUserAccount.Cookies.Add(ccol);
+                mLoggerDelegate.Write(Name, "ログインに成功しました");
                 return true;
             }
-            _loggerDelegate.Write(Name, "ログインに失敗しました");
+            mLoggerDelegate.Write(Name, "ログインに失敗しました");
             return false;
         }
 
@@ -229,12 +176,12 @@ namespace SeigaParsePlugin
             return Login(true);
         }
 
-        public bool IsLogoutUrl(string url)
+        public bool IsIgnore(string url)
         {
             return new Regex("https?://.+?.nicovideo.jp/.*?(logout|login).*").Match(url).Success;
         }
 
-        public bool IsParseUrl(string url)
+        public bool IsParse(string url)
         {
             return new Regex("https?://seiga.nicovideo.jp/.+").Match(url).Success;
         }
@@ -260,7 +207,7 @@ namespace SeigaParsePlugin
                 if (m.Success)
                 {
                     uc.Url = "http://seiga.nicovideo.jp/image/source?id=" + m.Groups["Id"].Value;
-                    string resUrl = uc.GetResponseUrl(_userAccount.Cookies);
+                    string resUrl = uc.GetResponseUrl(mUserAccount.Cookies);
                     uc.DownloadUrl = resUrl.Replace("/o/", "/priv/");
                     if (!String.IsNullOrEmpty(uc.DownloadUrl))
                         ret.Add(uc);
@@ -268,7 +215,7 @@ namespace SeigaParsePlugin
             }
             else if (mode == "watch")
             {
-                var hc = new HtmlContainer.HtmlContainer(uc, _userAccount.Cookies);
+                var hc = new HtmlContainer.HtmlContainer(uc, mUserAccount.Cookies);
                 hc.UpdateAttributeUrlList("img", "data-original", null);
                 ret = hc.AttributeUrlList;
             }

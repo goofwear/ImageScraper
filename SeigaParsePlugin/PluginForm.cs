@@ -4,11 +4,12 @@ namespace SeigaParsePlugin
 {
     public partial class PluginForm : Form
     {
-        public Parser Host { get; set; }
+        Parser mParent;
 
-        public PluginForm()
+        public PluginForm(Parser parent)
         {
             InitializeComponent();
+            mParent = parent;
         }
 
         internal void SetAccount(Account userAccount)
@@ -22,7 +23,7 @@ namespace SeigaParsePlugin
 
         internal void SetEnabled()
         {
-            checkBox1.Checked = Host.Enabled;
+            checkBox1.Checked = mParent.Enabled;
         }
 
         internal void SetFormEnabled(bool enabled)
@@ -43,7 +44,7 @@ namespace SeigaParsePlugin
 
         private void button1_Click(object sender, System.EventArgs e)
         {
-            if (Host.Login(textBox1.Text, textBox2.Text))
+            if (mParent.Login(textBox1.Text, textBox2.Text))
             {
                 MessageBox.Show("niconicoのログインに成功しました", "通知",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -57,8 +58,8 @@ namespace SeigaParsePlugin
 
         private void PluginForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Host.SetAccount(textBox1.Text, textBox2.Text);
-            Host.SetEnabled(checkBox1.Checked);
+            mParent.SetAccount(textBox1.Text, textBox2.Text);
+            mParent.SetEnabled(checkBox1.Checked);
         }
     }
 }

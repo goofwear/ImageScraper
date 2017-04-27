@@ -8,106 +8,103 @@ using System.Threading.Tasks;
 
 namespace ImageScraper
 {
-    public class FilterResolution
+    public class ResolutionFilter
     {
-        FilterValueRange widthFilter;
-        FilterValueRange heightFilter;
+        ValueRangeFilter mWidthFilter;
+        ValueRangeFilter mHeightFilter;
 
-        public FilterResolution(bool en_min, bool en_max, int w_min, int h_min, int w_max, int h_max)
+        public ResolutionFilter(bool enMin, bool enMax, int wMin, int hMin, int wMax, int hMax)
         {
-            this.widthFilter = new FilterValueRange(en_min, en_max, w_min, w_max);
-            this.heightFilter = new FilterValueRange(en_min, en_max, h_min, h_max);
+            mWidthFilter = new ValueRangeFilter(enMin, enMax, wMin, wMax);
+            mHeightFilter = new ValueRangeFilter(enMin, enMax, hMin, hMax);
         }
 
-        public bool Filter(int w, int h)
+        public bool Filter(Bitmap bitmap)
         {
-            return this.widthFilter.Filter(w) || this.heightFilter.Filter(h);
+            return mWidthFilter.Filter(bitmap.Width) || mHeightFilter.Filter(bitmap.Height);
         }
     }
 
-    public class CheckTerminated
+    public class StatusMonitor
     {
-        bool enabledDepth;
-        bool enabledLinkCount;
-        bool enabledImageCount;
-        bool enabledSize;
-        bool enabledDirImageCount;
-        Status lim;
-        int limDirImageCount;
-        int currentDirImageCount;
+        bool mDepthEnabled;
+        bool mLinksEnabled;
+        bool mImagesEnabled;
+        bool mSizeEnabled;
+        bool mExistImagesEnabled;
+        Status mLimit;
+        int mLimitExistImages;
+        int mExistImages;
 
-        public CheckTerminated(bool[] enabled, Status lim, int lim_dic, int cur_dic)
+        public StatusMonitor(bool[] enabled, Status limit, int limExists, int exists)
         {
-            this.enabledDepth = enabled[0];
-            this.enabledLinkCount = enabled[1];
-            this.enabledImageCount = enabled[2];
-            this.enabledSize = enabled[3];
-            this.enabledDirImageCount = enabled[4];
-            this.lim = lim;
-            this.limDirImageCount = lim_dic;
-            this.currentDirImageCount = cur_dic;
+            mDepthEnabled = enabled[0];
+            mLinksEnabled = enabled[1];
+            mImagesEnabled = enabled[2];
+            mSizeEnabled = enabled[3];
+            mExistImagesEnabled = enabled[4];
+            mLimit = limit;
+            mLimitExistImages = limExists;
+            mExistImages = exists;
         }
 
-        public bool Check(Status cur)
+        public bool HasCompleted(Status currentStatus)
         {
-            if (this.enabledDepth)
+            if (mDepthEnabled)
             {
-                if (cur.depthCount >= this.lim.depthCount)
+                if (currentStatus.Depth >= mLimit.Depth)
                     return true;
             }
-            else if (this.enabledLinkCount)
+            else if (mLinksEnabled)
             {
-                if (cur.pageCount >= this.lim.pageCount)
+                if (currentStatus.Pages >= mLimit.Pages)
                     return true;
             }
-            else if (this.enabledImageCount)
+            else if (mImagesEnabled)
             {
-                if (cur.imageCount >= this.lim.imageCount)
+                if (currentStatus.Images >= mLimit.Images)
                     return true;
             }
-            else if (this.enabledSize)
+            else if (mSizeEnabled)
             {
-                if (cur.size >= this.lim.size)
+                if (currentStatus.Size >= mLimit.Size)
                     return true;
             }
-            else if (this.enabledDirImageCount)
+            else if (mExistImagesEnabled)
             {
-                if (this.currentDirImageCount + cur.imageCount >= this.limDirImageCount)
+                if (mExistImages + currentStatus.Images >= mLimitExistImages)
                     return true;
             }
             return false;
         }
     }
 
-    public class FilterColorFormat
+    public class ColorFilter
     {
-        bool enabledGrey;
-        bool enabledColor;
+        bool mGreyEnabled;
+        bool mColorEnabled;
 
-        public FilterColorFormat(bool en_color, bool en_grey)
+        public ColorFilter(bool enColor, bool enGrey)
         {
-            this.enabledGrey = en_grey;
-            this.enabledColor = en_color;
+            this.mGreyEnabled = enGrey;
+            this.mColorEnabled = enColor;
         }
 
-        private float IsGreyscale(Image img)
+        private static bool IsGreyscale(Image img, float threshold)
         {
             int imgWidth = img.Width;
             int imgHeight = img.Height;
             var subTotals = new float[imgWidth * imgHeight];
             var rect = new Rectangle(0, 0, imgWidth, imgHeight);
 
-            using (Bitmap newBmp = new Bitmap(img))
-            using (Bitmap targetBmp = newBmp.Clone(rect, PixelFormat.Format24bppRgb))
+            using (var targetBmp = new Bitmap(img).Clone(rect, PixelFormat.Format24bppRgb))
             {
                 unsafe
                 {
                     var bitmapData = targetBmp.LockBits(rect, ImageLockMode.ReadWrite, targetBmp.PixelFormat);
-                    int heightInPixels = imgHeight;
-                    int widthInBytes = imgWidth * 3;
                     byte* ptrFirstPixel = (byte*)bitmapData.Scan0;
 
-                    Parallel.For(0, heightInPixels, y =>
+                    Parallel.For(0, imgHeight, y =>
                     {
                         byte* currentLine = ptrFirstPixel + (y * bitmapData.Stride);
                         for (int x = 0; x < imgWidth; x++)
@@ -116,72 +113,67 @@ namespace ImageScraper
                             float b = currentLine[xPor3++];
                             float g = currentLine[xPor3++];
                             float r = currentLine[xPor3];
-
                             subTotals[y * imgWidth + x] = (float)(Math.Pow(r - b, 2) + Math.Pow(r - g, 2));
                         }
                     });
                     targetBmp.UnlockBits(bitmapData);
                 }
-                return subTotals.Sum() / (imgWidth * imgHeight);
+                return subTotals.Sum() / (imgWidth * imgHeight) < threshold;
             }
         }
 
         public bool Filter(Image img)
         {
-            if (!this.enabledGrey)
-                return IsGreyscale(img) < 1;
-            if (!this.enabledColor)
-                return IsGreyscale(img) > 1;
+            if (!this.mGreyEnabled)
+                return IsGreyscale(img, 1.0f);
+            if (!this.mColorEnabled)
+                return !IsGreyscale(img, 1.0f);
             return false;
         }
     }
 
-    public class FilterDomain
+    public class DomainFilter
     {
-        UrlContainer.UrlContainer baseUrl;
-        bool enabledDomain;
-        string authority;
-        string localPath;
+        bool mEnabled;
+        UrlContainer.UrlContainer mBaseUrl;
 
-        public FilterDomain(UrlContainer.UrlContainer uc, bool en_d)
+        public DomainFilter(bool enabled, UrlContainer.UrlContainer uc)
         {
-            this.baseUrl = uc;
-            this.enabledDomain = en_d;
-            this.authority = this.baseUrl.Authority;
-            this.localPath = this.baseUrl.LocalPath;
+            mEnabled = enabled;
+            this.mBaseUrl = uc;
         }
 
         public List<UrlContainer.UrlContainer> Filter(List<UrlContainer.UrlContainer> urlList)
         {
-            var newLinkList = new List<UrlContainer.UrlContainer>();
+            var filteredList = new List<UrlContainer.UrlContainer>();
             foreach (UrlContainer.UrlContainer url in urlList)
             {
-                if (newLinkList.Where(x => x.RawUrl == url.RawUrl).Count() == 0)
+                if (filteredList.Where(x => x.RawUrl == url.RawUrl).Count() == 0)
                 {
                     // ドメインが異なりかつ検索設定が無効なら
-                    if (this.authority == url.Authority || this.enabledDomain)
-                        newLinkList.Add(url);
+                    if (this.mBaseUrl.Authority == url.Authority || this.mEnabled)
+                        filteredList.Add(url);
                 }
             }
-            return newLinkList;
+            return filteredList;
         }
     }
 
-    public class FilterKeyword
+    public class KeywordFilter
     {
         bool mEnabled;
-        bool mContains;
-        bool mNotContains;
+        bool mInEnabled;
+        bool mExEnabled;
         string[] mKeywords;
-        string[] mNGKeywords;
+        string[] mExKeywords;
 
-        public FilterKeyword(bool enabled, bool mContains, bool mNotContains, string keywords, string NGKeywords)
+        public KeywordFilter(bool enabled, bool enIn, bool enEx, string inKeys, string exKeys)
         {
             this.mEnabled = enabled;
-            this.mContains = mContains;
-            this.mNotContains = mNotContains;
-            this.mKeywords = keywords.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            this.mNGKeywords = NGKeywords.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            this.mInEnabled = enIn;
+            this.mExEnabled = enEx;
+            this.mKeywords = inKeys.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            this.mExKeywords = exKeys.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
         }
 
         public bool Filter(string key)
@@ -189,70 +181,71 @@ namespace ImageScraper
             bool flag = false;
             if (this.mEnabled && !String.IsNullOrEmpty(key))
             {
-                if (mContains)
+                if (mInEnabled)
                     flag = (mKeywords.Where(x => key.Contains(x)).Count() == 0);
-                if (mNotContains)
-                    flag = (mNGKeywords.Where(x => key.Contains(x)).Count() > 0);
+                if (mExEnabled)
+                    flag = (mExKeywords.Where(x => key.Contains(x)).Count() > 0);
             }
             
             return flag;
         }
     }
 
-    public class FilterValueRange
+    public class ValueRangeFilter
     {
-        int min;
-        int max;
-        bool enabledMin;
-        bool enabledMax;
+        int mMinimum;
+        int mMaximum;
+        bool mMinimumEnabled;
+        bool mMaximumEnabled;
 
-        public FilterValueRange(bool en_min, bool en_max, int min, int max)
+        public ValueRangeFilter(bool enMin, bool enMax, int min, int max)
         {
-            this.min = min;
-            this.max = max;
-            this.enabledMin = en_min;
-            this.enabledMax = en_max;
+            this.mMinimum = min;
+            this.mMaximum = max;
+            this.mMinimumEnabled = enMin;
+            this.mMaximumEnabled = enMax;
         }
 
         public bool Filter(int val)
         {
-            if (this.enabledMin && val < min)
+            if (this.mMinimumEnabled && val < mMinimum)
                 return true;
-            if (this.enabledMax && val > max)
+            if (this.mMaximumEnabled && val > mMaximum)
                 return true;
             return false;
         }
     }
 
-    public class FilterUrlOverlapped
+    public class OverlappedUrlFilter
     {
-        public bool Enabled { get; set; }
-        HashSet<string> _cachedUrlSet;
+        bool mEnabled { get; set; }
+        HashSet<string> mCachedUrlSet;
 
-        public FilterUrlOverlapped(HashSet<ImageInfo> urlTable)
+        public OverlappedUrlFilter(HashSet<ImageInfo> urlTable, bool enabled)
         {
-            this._cachedUrlSet = new HashSet<string>(urlTable.Select(x => x.ImageUrl));
+            this.mCachedUrlSet = new HashSet<string>(urlTable.Select(x => x.ImageUrl));
+            this.mEnabled = enabled;
         }
 
         public void Clear()
         {
-            this._cachedUrlSet.Clear();
+            this.mCachedUrlSet.Clear();
         }
 
         public void Add(ImageInfo info)
         {
-            this._cachedUrlSet.Add(info.ImageUrl);
+            this.mCachedUrlSet.Add(info.ImageUrl);
         }
 
         public List<UrlContainer.UrlContainer> Filter(List<UrlContainer.UrlContainer> urlList)
         {
-            if (this.Enabled)
+            if (this.mEnabled)
                 return urlList;
 
             var ret = new List<UrlContainer.UrlContainer>();
             foreach (var uc in urlList)
             {
-                if (!_cachedUrlSet.Contains(uc.Url))
+                if (!mCachedUrlSet.Contains(uc.Url))
                     ret.Add(uc);
             }
             return ret;
@@ -261,21 +254,21 @@ namespace ImageScraper
 
     public class FileNameGenerator
     {
-        bool enabledSerial;
-        SerialNameGenerator serialNameGen;
+        bool mEnabled;
+        SerialNameGenerator mSerialNameGen;
 
-        public FileNameGenerator(bool en_sng, SerialNameGenerator sng)
+        public FileNameGenerator(bool enabled, SerialNameGenerator sng)
         {
-            serialNameGen = sng;
-            enabledSerial = en_sng;
+            mEnabled = enabled;
+            mSerialNameGen = sng;
         }
 
         public string Generate(string dir, string oldName)
         {
-            if (enabledSerial)
+            if (mEnabled)
             {
                 string ext = Path.GetExtension(oldName);
-                return serialNameGen.Generate(dir) + ext;
+                return mSerialNameGen.Generate(dir) + ext;
             }
             else
                 return oldName;

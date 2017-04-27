@@ -9,53 +9,13 @@ using Utilities;
 
 namespace PixivParsePlugin
 {
-    public class Account
-    {
-        public string Id;
-        public string Pass;
-        public bool Enabled;
-        public CookieContainer Cookies;
-
-        public Account()
-        {
-            Enabled = false;
-            Cookies = new CookieContainer();
-        }
-
-        public Account(string id, string pass)
-        {
-            Id = id;
-            Pass = pass;
-            Enabled = false;
-            Cookies = new CookieContainer();
-        }
-    }
-
-    public class Settings
-    {
-        public bool Enabled;
-        public string Id;
-        public string Pass;
-        public bool IsLoggedIn;
-        public string Cookies;
-
-        public Settings()
-        {
-            Enabled = false;
-            Id = "";
-            Pass = "";
-            IsLoggedIn = false;
-            Cookies = "";
-        }
-    }
-
     public class Parser : PluginInterface
     {
-        bool _enabled;
-        Account _userAccount;
-        PluginForm _pluginForm;
-        LoggerDelegate _loggerDelegate;
-        Uri _baseUri = new Uri("http://www.pixiv.net/");
+        bool mEnabled;
+        Account mUserAccount;
+        PluginForm mPluginForm;
+        LoggerDelegate mLoggerDelegate;
+        Uri mBaseUri = new Uri("http://www.pixiv.net/");
 
         public string Name
         {
@@ -64,7 +24,7 @@ namespace PixivParsePlugin
 
         public bool Enabled
         {
-            get { return _enabled; }
+            get { return mEnabled; }
         }
 
         public bool IsLoggedIn
@@ -75,116 +35,103 @@ namespace PixivParsePlugin
                 if (cookie != null && DateTime.Now > cookie.Expires)
                     return false;
                 else
-                    return _userAccount.Enabled;
+                    return mUserAccount.Enabled;
             }
         }
 
         public Parser()
         {
-            _enabled = false;
-            _userAccount = new Account();
-            _loggerDelegate = null;
+            mEnabled = false;
+            mUserAccount = new Account();
+            mLoggerDelegate = null;
         }
 
         public void SetLoggerDelegate(LoggerDelegate loggerDelegate)
         {
-            _loggerDelegate = loggerDelegate;
+            mLoggerDelegate = loggerDelegate;
         }
 
         public void SaveSettings()
         {
-            try
-            {
-                Settings settings = new Settings();
-                settings.Id = _userAccount.Id;
-                settings.Pass = _userAccount.Pass;
-                settings.Enabled = _enabled;
-                settings.IsLoggedIn = _userAccount.Enabled;
-                if (_userAccount.Enabled)
-                    settings.Cookies = Common.CookiesToString(GetCookieCollection());
-                XmlSerializer xs = new XmlSerializer(typeof(Settings));
-                using (StreamWriter sw = new StreamWriter("plugins/" + Name + ".xml", false, new UTF8Encoding(false)))
-                    xs.Serialize(sw, settings);
-            }
-            catch { }
+            Settings settings = new Settings();
+            settings.Id = mUserAccount.Id;
+            settings.Pass = mUserAccount.Pass;
+            settings.Enabled = mEnabled;
+            settings.IsLoggedIn = mUserAccount.Enabled;
+            if (mUserAccount.Enabled)
+                settings.Cookies = Common.CookiesToString(GetCookieCollection());
+            XmlSerializer xs = new XmlSerializer(typeof(Settings));
+            using (StreamWriter sw = new StreamWriter("plugins/" + Name + ".xml", false, new UTF8Encoding(false)))
+                xs.Serialize(sw, settings);
         }
 
         public void LoadSettings()
         {
-            try
+            Settings settings = new Settings();
+            XmlSerializer xs = new XmlSerializer(typeof(Settings));
+            using (StreamReader sr = new StreamReader("plugins/" + Name + ".xml", new UTF8Encoding(false)))
+                settings = (Settings)xs.Deserialize(sr);
+            mEnabled = settings.Enabled;
+            mUserAccount.Id = settings.Id;
+            mUserAccount.Pass = settings.Pass;
+            mUserAccount.Enabled = settings.IsLoggedIn;
+            if (settings.IsLoggedIn)
             {
-                Settings settings = new Settings();
-                XmlSerializer xs = new XmlSerializer(typeof(Settings));
-                using (StreamReader sr = new StreamReader("plugins/" + Name + ".xml", new UTF8Encoding(false)))
-                    settings = (Settings)xs.Deserialize(sr);
-                _enabled = settings.Enabled;
-                _userAccount.Id = settings.Id;
-                _userAccount.Pass = settings.Pass;
-                _userAccount.Enabled = settings.IsLoggedIn;
-                _loggerDelegate.Write(Name, "プラグインの設定を読み込みました");
-                if (settings.IsLoggedIn)
-                {
-                    var ccol = Common.StringToCookies(settings.Cookies);
-                    _userAccount.Cookies.Add(ccol);
-                }
-            }
-            catch
-            {
-                _loggerDelegate.Write(Name, "設定の読み込みに失敗しました");
+                var ccol = Common.StringToCookies(settings.Cookies);
+                mUserAccount.Cookies.Add(ccol);
             }
         }
 
         public CookieCollection GetCookieCollection()
         {
-            return _userAccount.Cookies.GetCookies(_baseUri);
+            return mUserAccount.Cookies.GetCookies(mBaseUri);
         }
 
         public void ShowPluginForm()
         {
-            if (_pluginForm == null || _pluginForm.IsDisposed)
+            if (mPluginForm == null || mPluginForm.IsDisposed)
             {
-                _pluginForm = new PluginForm();
-                _pluginForm.Text = Name;
-                _pluginForm.MaximizeBox = false;
-                _pluginForm.MinimizeBox = false;
-                _pluginForm.Host = this;
-                _pluginForm.SetAccount(_userAccount);
-                _pluginForm.SetEnabled();
-                _pluginForm.Show();
+                mPluginForm = new PluginForm(this);
+                mPluginForm.Text = Name;
+                mPluginForm.MaximizeBox = false;
+                mPluginForm.MinimizeBox = false;
+                mPluginForm.SetAccount(mUserAccount);
+                mPluginForm.SetEnabled();
+                mPluginForm.Show();
             }
         }
 
-        public void InitializePlugin()
+        public void PreProcess()
         {
             // フォームが開かれているとき実行されアカウント情報が反映される
-            if (_pluginForm != null && !_pluginForm.IsDisposed)
+            if (mPluginForm != null && !mPluginForm.IsDisposed)
             {
-                _enabled = _pluginForm.GetEnabled();
-                if (_enabled)
+                mEnabled = mPluginForm.GetEnabled();
+                if (mEnabled)
                 {
-                    var userAccount = _pluginForm.GetAccount();
+                    var userAccount = mPluginForm.GetAccount();
                     SetAccount(userAccount.Id, userAccount.Pass);
                 }
-                _pluginForm.SetFormEnabled(false);
+                mPluginForm.SetFormEnabled(false);
             }
             // 設定を読み込んだあるいはフォームを閉じたときすでにアカウント情報が反映されている
         }
 
-        public void FinalizePlugin()
+        public void PostProcess()
         {
-            if (_pluginForm != null && !_pluginForm.IsDisposed)
-                _pluginForm.SetFormEnabled(true);
+            if (mPluginForm != null && !mPluginForm.IsDisposed)
+                mPluginForm.SetFormEnabled(true);
         }
 
         internal void SetAccount(string id, string pass)
         {
-            if (id != _userAccount.Id || pass != _userAccount.Pass)
-                _userAccount = new Account(id, pass);
+            if (id != mUserAccount.Id || pass != mUserAccount.Pass)
+                mUserAccount = new Account(id, pass);
         }
 
         internal void SetEnabled(bool enabled)
         {
-            _enabled = enabled;
+            mEnabled = enabled;
         }
 
         private string GetInitConfig(string key)
@@ -195,7 +142,7 @@ namespace PixivParsePlugin
             Match m = new Regex(pat).Match(jsonString);
             if (m.Success)
             {
-                _userAccount.Cookies.Add(hc.Cookies.GetCookies(_baseUri));
+                mUserAccount.Cookies.Add(hc.Cookies.GetCookies(mBaseUri));
                 return m.Groups["Key"].Value;
             }
             else
@@ -210,10 +157,10 @@ namespace PixivParsePlugin
             var param = "";
             var content = new Dictionary<string, string>()
             {
-                { "pixiv_id", Uri.EscapeDataString(_userAccount.Id) },
-                { "password", Uri.EscapeDataString(_userAccount.Pass) },
+                { "pixiv_id", Uri.EscapeDataString(mUserAccount.Id) },
+                { "password", Uri.EscapeDataString(mUserAccount.Pass) },
                 { "post_key", GetInitConfig("pixivAccount.postKey") },
-                { "return_to", Uri.EscapeDataString(_baseUri.OriginalString) }
+                { "return_to", Uri.EscapeDataString(mBaseUri.OriginalString) }
             };
             foreach (var pair in content)
                 param += String.Format("{0}={1}&", pair.Key, pair.Value);
@@ -225,7 +172,7 @@ namespace PixivParsePlugin
             req.Proxy = null;
             req.ContentType = "application/x-www-form-urlencoded";
             req.ContentLength = buf.Length;
-            req.CookieContainer = _userAccount.Cookies;
+            req.CookieContainer = mUserAccount.Cookies;
             req.UserAgent = "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko";
 
             using (var rs = req.GetRequestStream())
@@ -233,17 +180,17 @@ namespace PixivParsePlugin
                 rs.Write(buf, 0, buf.Length);
             }
             var res = req.GetResponse();
-            var ccol = req.CookieContainer.GetCookies(_baseUri);
+            var ccol = req.CookieContainer.GetCookies(mBaseUri);
             req.Abort();
 
             if (ccol["device_token"] != null)
             {
-                _userAccount.Enabled = true;
-                _userAccount.Cookies.Add(ccol);
-                _loggerDelegate.Write(Name, "ログインに成功しました");
+                mUserAccount.Enabled = true;
+                mUserAccount.Cookies.Add(ccol);
+                mLoggerDelegate.Write(Name, "ログインに成功しました");
                 return true;
             }
-            _loggerDelegate.Write(Name, "ログインに失敗しました");
+            mLoggerDelegate.Write(Name, "ログインに失敗しました");
             return false;
         }
 
@@ -253,19 +200,19 @@ namespace PixivParsePlugin
             return Login(true);
         }
 
-        public bool IsLogoutUrl(string url)
+        public bool IsIgnore(string url)
         {
             return new Regex("https?://www.pixiv.net/.*?(logout|login).*").Match(url).Success;
         }
 
-        public bool IsParseUrl(string url)
+        public bool IsParse(string url)
         {
             return new Regex("https?://www.pixiv.net/.+").Match(url).Success;
         }
 
         private string GetPixivDisplayMode(UrlContainer.UrlContainer uc)
         {
-            var hc = new HtmlContainer.HtmlContainer(uc, _userAccount.Cookies);
+            var hc = new HtmlContainer.HtmlContainer(uc, mUserAccount.Cookies);
             Regex re = new Regex(@"\?mode=(?<Mode>[a-z]+)");
 
             foreach (Match m in re.Matches(hc.Html))
@@ -298,7 +245,7 @@ namespace PixivParsePlugin
                 // リファラー必須
                 uc.Referer = uc.Url;
                 uc.Url = String.Format("http://www.pixiv.net/member_illust.php?mode={0}&illust_id={1}", mode, m.Groups["Id"].Value);
-                var hc = new HtmlContainer.HtmlContainer(uc, _userAccount.Cookies);
+                var hc = new HtmlContainer.HtmlContainer(uc, mUserAccount.Cookies);
                 hc.UpdateAttributeUrlList("img", "src", format);
                 hc.UpdateAttributeUrlList("img", "data-src", format);
                 foreach (var cand in hc.AttributeUrlList)

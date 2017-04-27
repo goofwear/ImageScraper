@@ -1,8 +1,10 @@
-﻿namespace Utilities
+﻿using System.Windows.Forms;
+
+namespace Utilities
 {
     public class LoggerDelegate
     {
-        System.Windows.Forms.Control mFormsControl;
+        Control mParent;
 
         // メソッド用デリゲート
         public delegate void Delegate_WriteLog(object sender, string module, string desc);
@@ -10,15 +12,15 @@
         // イベントの定義
         public event Delegate_WriteLog Event_WriteLog;
 
-        public LoggerDelegate(System.Windows.Forms.Control formsControl)
+        public LoggerDelegate(Control parent)
         {
-            mFormsControl = formsControl;
+            mParent = parent;
         }
 
         public void Write(string module, string desc)
         {
             if (Event_WriteLog != null)
-                mFormsControl.Invoke(Event_WriteLog, this, module, desc);
+                mParent.Invoke(Event_WriteLog, this, module, desc);
         }
     }
 }

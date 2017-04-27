@@ -1,65 +1,61 @@
-﻿using System.Net;
-using System.Collections.Generic;
-using Utilities;
+﻿using System.Collections.Generic;
 
 namespace ImageScraper
 {
     public class FormSettings
     {
         public List<string> UrlList;
-        public List<string> TitleCKeywordList;
-        public List<string> TitleNCKeywordList;
-        public List<string> UrlCKeywordList;
-        public List<string> UrlNCKeywordList;
+        public List<string> KeyTitleList;
+        public List<string> ExKeyTitleList;
+        public List<string> KeyUrlList;
+        public List<string> ExKeyUrlList;
         public ControlProperty.Property[] Properties;
 
         public FormSettings()
         {
             UrlList = new List<string>();
-            TitleCKeywordList = new List<string>();
-            TitleNCKeywordList = new List<string>();
-            UrlCKeywordList = new List<string>();
-            UrlNCKeywordList = new List<string>();
+            KeyTitleList = new List<string>();
+            ExKeyTitleList = new List<string>();
+            KeyUrlList = new List<string>();
+            ExKeyUrlList = new List<string>();
             Properties = new ControlProperty.Property[0];
         }
     }
 
     public class DownloadSettings
     {
-        public UrlContainer.UrlContainer urlContainer;
-        public string[] format;
-        public bool enabledHref;
-        public bool enabledIsrc;
-        public FilterValueRange filterImageSize;
-        public FilterValueRange filterImageCount;
-        public FilterResolution filterResolution;
-        public FilterColorFormat filterColorFormat;
-        public FilterDomain filterDomain;
-        public FilterKeyword filterTitle;
-        public FilterKeyword filterUrl;
-        public PluginInterface[] plugins;
-        public CookieContainer cookies;
-        public string dest;
-        public bool destPlusUrl;
-        public bool destPlusTitle;
-        public FilterUrlOverlapped filterUrlOverlapped;
-        public FileNameGenerator fileNameGenerator;
-        public CheckTerminated checkTerminated;
+        public UrlContainer.UrlContainer UrlContainer;
+        public string[] Formats;
+        public bool ParseHrefAttr;
+        public bool ParseImgTag;
+        public ValueRangeFilter ImageSizeFilter;
+        public ValueRangeFilter ImagesPerPageFilter;
+        public ResolutionFilter ResolutionFilter;
+        public ColorFilter ColorFilter;
+        public DomainFilter DomainFilter;
+        public KeywordFilter TitleFilter;
+        public KeywordFilter UrlFilter;
+        public string RootDirectory;
+        public bool AppendsUrl;
+        public bool AppendsTitle;
+        public OverlappedUrlFilter OverlappedUrlFilter;
+        public FileNameGenerator FileNameGenerator;
+        public StatusMonitor StatusMonitor;
     }
 
     public class Status
     {
-        public int depthCount;
-        public int pageCount;
-        public int imageCount;
-        public double size;
+        public int Depth;
+        public int Pages;
+        public int Images;
+        public double Size;
 
         public Status(int depth, int page, int image, double size)
         {
-            this.depthCount = depth;
-            this.pageCount = page;
-            this.imageCount = image;
-            this.size = size;
+            this.Depth = depth;
+            this.Pages = page;
+            this.Images = image;
+            this.Size = size;
         }
     }
 }

@@ -10,15 +10,15 @@ namespace Utilities
         bool IsLoggedIn { get; }
 
         void SetLoggerDelegate(LoggerDelegate loggerDelegate);
-        void InitializePlugin();
-        void FinalizePlugin();
+        void PreProcess();
+        void PostProcess();
         void LoadSettings();
         void SaveSettings();
         void ShowPluginForm();
         bool Login(bool force = false);
         CookieCollection GetCookieCollection();
-        bool IsLogoutUrl(string url);
-        bool IsParseUrl(string url);
+        bool IsIgnore(string url);
+        bool IsParse(string url);
         List<UrlContainer.UrlContainer> GetImageUrlList(UrlContainer.UrlContainer uc, string[] format);
     }
 }

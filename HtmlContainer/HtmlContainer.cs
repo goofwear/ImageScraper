@@ -13,9 +13,9 @@ namespace HtmlContainer
 {
     public class HtmlContainer
     {
-        public UrlContainer.UrlContainer Container;
-        public CookieContainer Cookies;
+        public UrlContainer.UrlContainer UrlContainer;
         public List<UrlContainer.UrlContainer> AttributeUrlList;
+        public CookieContainer Cookies;
 
         public static int RequestSpan = 500;
 
@@ -47,14 +47,14 @@ namespace HtmlContainer
         public HtmlContainer(string url, CookieContainer cc = null)
         {
             this.Cookies = cc;
-            this.Container = new UrlContainer.UrlContainer(url);
+            this.UrlContainer = new UrlContainer.UrlContainer(url);
             this.AttributeUrlList = new List<UrlContainer.UrlContainer>();
         }
 
         public HtmlContainer(UrlContainer.UrlContainer uc, CookieContainer cc = null)
         {
             this.Cookies = cc;
-            this.Container = uc;
+            this.UrlContainer = uc;
             this.AttributeUrlList = new List<UrlContainer.UrlContainer>();
         }
 
@@ -121,14 +121,14 @@ namespace HtmlContainer
 
             string html = null;
             // HttpWebRequestを作成
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(this.Container.Url);
-            req.Referer = this.Container.Referer;
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(UrlContainer.Url);
+            req.Referer = UrlContainer.Referer;
             req.UserAgent = "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko";
             req.Timeout = 10 * 1000; // 10 sec timeout
             req.CookieContainer = new CookieContainer();
 
             if (Cookies != null)
-                req.CookieContainer.Add(Cookies.GetCookies(new Uri(this.Container.Url)));
+                req.CookieContainer.Add(Cookies.GetCookies(new Uri(UrlContainer.Url)));
             else
                 Cookies = new CookieContainer();
 
@@ -138,7 +138,7 @@ namespace HtmlContainer
                 // サーバーからの応答を受信するためのHttpWebResponseを取得
                 HttpWebResponse res = (HttpWebResponse)req.GetResponse();
                 html = HtmlDecode(res);
-                Cookies.Add(req.CookieContainer.GetCookies(new Uri(this.Container.Url)));
+                Cookies.Add(req.CookieContainer.GetCookies(new Uri(UrlContainer.Url)));
                 task.Wait();
             }
             catch
@@ -186,13 +186,13 @@ namespace HtmlContainer
                         string attrValue = attrList[attr].Value;
                         if (!re.Match(attrValue).Success)
                         {
-                            Uri baseUrl = new Uri(this.Container.Url);
+                            Uri baseUrl = new Uri(UrlContainer.Url);
                             Uri abs = new Uri(baseUrl, attrValue);
                             attrValue = abs.AbsoluteUri;
                         }
                         if (re.Match(attrValue).Success)
                         {
-                            var uc = new UrlContainer.UrlContainer(attrValue, this.Container.RawUrl);
+                            var uc = new UrlContainer.UrlContainer(attrValue, UrlContainer.RawUrl);
                             uc.AttributeName = attr;
                             if (format == null || format.Contains(uc.Extension))
                                 AttributeUrlList.Add(uc);
