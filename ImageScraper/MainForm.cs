@@ -40,7 +40,7 @@ namespace ImageScraper
             }
         }
 
-        private void menuPlugin_Click(object sender, System.EventArgs e)
+        private void menuPlugin_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem mi = (ToolStripMenuItem)sender;
             foreach(PluginInterface plugin in plugins)
@@ -92,7 +92,7 @@ namespace ImageScraper
         private void button5_Click(object sender, EventArgs e)
         {
             //メッセージボックスを表示する
-            DialogResult res = MessageBox.Show( "ダウンロード履歴を削除します\nよろしいですか？", "確認", 
+            var res = MessageBox.Show( "ダウンロード履歴を削除します\nよろしいですか？", "確認", 
                 MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
 
             //何が選択されたか調べる
@@ -119,8 +119,8 @@ namespace ImageScraper
 
         private void button3_Click(object sender, EventArgs e)
         {
-            DialogResult dr = folderBrowserDialog1.ShowDialog();
-            if (dr == System.Windows.Forms.DialogResult.OK)
+            var dr = folderBrowserDialog1.ShowDialog();
+            if (dr == DialogResult.OK)
                 textBox5.Text = folderBrowserDialog1.SelectedPath;
         }
 
@@ -172,14 +172,18 @@ namespace ImageScraper
         {
             if (listViewEx1.SelectedItems.Count > 0)
             {
-                int imageCount = 0;
+                int num = 0;
                 for (int i = 0; i < listViewEx1.SelectedItems.Count; i++)
                 {
-                    int idx = listViewEx1.SelectedItems[i].Index;
-                    imageCount += ErectFlagsImageInfo(listViewEx1.Items[idx].Tag.ToString());
+                    var url = listViewEx1.SelectedItems[i].Tag.ToString();
+                    foreach (var info in infoViewItems)
+                    {
+                        if (info.ParentUrl == url)
+                            num++;
+                    }
                 }
                 //メッセージボックスを表示する
-                DialogResult res = MessageBox.Show(String.Format("{0}枚の画像を削除します\nよろしいですか？", imageCount), "確認",
+                DialogResult res = MessageBox.Show(String.Format("{0}枚の画像を削除します\nよろしいですか？", num), "確認",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2);
 
                 //何が選択されたか調べる

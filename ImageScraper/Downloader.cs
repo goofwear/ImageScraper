@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -23,8 +22,7 @@ namespace ImageScraper
         char[] mInvalidCharsF = Path.GetInvalidFileNameChars();
 
         // メソッド用デリゲート
-        public delegate void Delegate_LoggerAdd(object sender, string log, int formIndex);
-        public delegate void Delegate_LoggerAddRange(object sender, List<string> log, int formIndex);
+        public delegate void Delegate_WriteLog(object sender, string module, string desc);
         public delegate void Delegate_UpdateStatus(object sender, Status sumStatus);
         public delegate void Delegate_AddProgress(object sender, string title, string url, int max);
         public delegate void Delegate_UpdateProgress(object sender, int downloadCount, int imageCount);
@@ -32,8 +30,7 @@ namespace ImageScraper
         public delegate void Delegate_UpdateImageInfo(object sender, ImageInfo info);
 
         // イベントの定義
-        public event Delegate_LoggerAdd Event_LoggerAdd;
-        public event Delegate_LoggerAddRange Event_LoggerAddRange;
+        public event Delegate_WriteLog Event_WriteLog;
         public event Delegate_UpdateStatus Event_UpdateStatus;
         public event Delegate_AddProgress Event_AddProgress;
         public event Delegate_UpdateProgress Event_UpdateProgress;
@@ -62,16 +59,10 @@ namespace ImageScraper
             mFormsControl = sender;
 		}
 
-        void OnAddLog(string log, int formIndex)
+        void OnWriteLog(string module, string desc)
         {
-            if (Event_LoggerAdd != null)
-                mFormsControl.Invoke(Event_LoggerAdd, this, log, formIndex);
-        }
-
-        void OnAddRangeLog(List<string> log, int formIndex)
-        {
-            if (Event_LoggerAddRange != null)
-                mFormsControl.Invoke(Event_LoggerAddRange, this, log, formIndex);
+            if (Event_WriteLog != null)
+                mFormsControl.Invoke(Event_WriteLog, this, module, desc);
         }
 
         void OnUpdateStatus()
@@ -146,8 +137,8 @@ namespace ImageScraper
 
         string GetDestination(HtmlContainer.HtmlContainer hc)
         {
-            string safeTitle = Common.RemoveChars(hc.Title, mInvalidCharsF);
-            string safeLocalPath = Common.RemoveChars(hc.Container.LocalPath, mInvalidCharsP);
+            string safeTitle = Common.RemoveChars(hc.Title, mInvalidCharsF, "_");
+            string safeLocalPath = Common.RemoveChars(hc.Container.LocalPath, mInvalidCharsP, "_");
             string dir = mSettings.dest;
 
             if (mSettings.destPlusUrl)
@@ -162,7 +153,7 @@ namespace ImageScraper
 
         string GetImagePath(UrlContainer.UrlContainer uc, string dir)
         {
-            string tempName = Common.RemoveChars(uc.FileName, mInvalidCharsF);
+            string tempName = Common.RemoveChars(uc.FileName, mInvalidCharsF, "_");
             string newName = mSettings.fileNameGenerator.Generate(dir, tempName);
             return dir + newName;
         }
@@ -208,23 +199,32 @@ namespace ImageScraper
             // ファイルサイズによるフィルタリング
             var imageSize = (int)(uc.CacheSize / 1000);
             if (mSettings.filterImageSize.Filter(imageSize))
+            {
+                OnWriteLog("Downloader", "ファイルサイズフィルタが適用されました");
                 return false;
+            }
 
             using (var cachedImage = new Bitmap(Image.FromStream(uc.CacheStream)))
             {
                 // 解像度によるフィルタリング
                 if (mSettings.filterResolution.Filter(cachedImage.Width, cachedImage.Height))
+                {
+                    OnWriteLog("Downloader", "解像度フィルタが適用されました");
                     return false;
+                }
                 // カラーフォーマットによるフィルタリング
-                else if (mSettings.filterColorFormat.Filter(cachedImage))
+                if (mSettings.filterColorFormat.Filter(cachedImage))
+                {
+                    OnWriteLog("Downloader", "カラーフィルタが適用されました");
                     return false;
+                }
             }
 
             // ダウンロードした画像を保存
-            uc.SaveCachedImage(info.ImagePath);
+            uc.SaveCache(info.ImagePath);
 
             // ダウンロード状況更新
-            OnAddLog(uc.Url, 2);
+            OnWriteLog("Downloader", uc.Url + " を取得しました");
             mTempStatus.size += imageSize;
             mSumStatus.size += imageSize;
             mTempStatus.imageCount++;
@@ -268,12 +268,7 @@ namespace ImageScraper
                     mSumStatus.pageCount++;
                     OnFinalizeProgress();
                 }
-                try
-                {
-                    if (Common.IsEmptyDirectory(dest))
-                        Directory.Delete(dest);
-                }
-                catch { }
+                Common.DeleteEmptyDirectory(dest);
             }
             return true;
         }
@@ -288,20 +283,17 @@ namespace ImageScraper
             return false;
         }
 
-        PluginInterface Contains(UrlContainer.UrlContainer uc)
+        PluginInterface GetRelatedPlugin(UrlContainer.UrlContainer uc)
         {
-            for (int i = 0; i < mSettings.plugins.Length; i++)
+            foreach (var plugin in mSettings.plugins)
             {
-                if (mSettings.plugins[i].Enabled && mSettings.plugins[i].IsParseUrl(uc.Url))
+                if (plugin.Enabled && plugin.IsParseUrl(uc.Url))
                 {
-                    if (!mSettings.plugins[i].IsLoggedIn)
-                    {
-                        if (mSettings.plugins[i].Login())
-                            mSettings.cookies.Add(mSettings.plugins[i].GetCookieCollection());
-                        else
-                            throw new ApplicationException(mSettings.plugins[i].Name + "\nログインに失敗しました");
-                    }
-                    return mSettings.plugins[i];
+                    if (plugin.Login())
+                        mSettings.cookies.Add(plugin.GetCookieCollection());
+                    else
+                        throw new ApplicationException(plugin.Name + "\nログインに失敗しました");
+                    return plugin;
                 }
             }
             return null;
@@ -313,27 +305,33 @@ namespace ImageScraper
                 return null;
 
             // URLに対応するプラグインを検索，見つかればCookie取得
-            PluginInterface plugin = Contains(uc);
+            PluginInterface plugin = GetRelatedPlugin(uc);
             var hc = new HtmlContainer.HtmlContainer(uc, mSettings.cookies);
+
             // Htmlを取得しないで済むURLのフィルタリング
-            if (!mSettings.filterUrl.Filter(uc.Url))
+            if (mSettings.filterUrl.Filter(uc.Url))
             {
-                OnAddLog(uc.Url, 2);
-                // Htmlを取得する必要があるタイトルのフィルタリング
-                if (!mSettings.filterTitle.Filter(hc.Title))
+                OnWriteLog("Downloader", "URLフィルタが適用されました > " + uc.Url);
+                return hc;
+            }
+            // Htmlを取得する必要があるタイトルのフィルタリング
+            if (mSettings.filterTitle.Filter(hc.Title))
+            {
+                OnWriteLog("Downloader", "タイトルフィルタが適用されました > " + hc.Title);
+                return hc;
+            }
+
+            OnWriteLog("Downloader", uc.Url + " を取得しました");   
+            if (plugin != null)
+                hc.AttributeUrlList = plugin.GetImageUrlList(uc, mSettings.format);
+            else
+            {
+                if (mSettings.enabledHref)
+                    hc.UpdateAttributeUrlList("a", "href", mSettings.format);
+                if (mSettings.enabledIsrc)
                 {
-                    if (plugin != null)
-                        hc.AttributeUrlList = plugin.GetImageUrlList(uc, mSettings.format);
-                    else
-                    {
-                        if (mSettings.enabledHref)
-                            hc.UpdateAttributeUrlList("a", "href", mSettings.format);
-                        if (mSettings.enabledIsrc)
-                        {
-                            hc.UpdateAttributeUrlList("img", "src", mSettings.format);
-                            hc.UpdateAttributeUrlList("img", "data-src", mSettings.format);
-                        }
-                    }
+                    hc.UpdateAttributeUrlList("img", "src", mSettings.format);
+                    hc.UpdateAttributeUrlList("img", "data-src", mSettings.format);
                 }
             }
             return hc;
@@ -357,7 +355,6 @@ namespace ImageScraper
                         mTask = new Task<bool>(() => DownloadWebImages(hc));
                         mTask.Start();
                     }
-
                     // 順番を保持するのでList
                     mRootUrlList.Add(url.RawUrl);
                     // 検索かけるのでHashSet
@@ -379,7 +376,6 @@ namespace ImageScraper
 			{
                 var hc = new HtmlContainer.HtmlContainer(rootUrl, mSettings.cookies);
                 hc.UpdateAttributeUrlList("a", "href", new string[] { "php", "html", "htm", "" });
-                OnAddRangeLog(hc.AttributeUrlList.Select(x => x.Url).ToList(), 1);
                 // ドメインのフィルタリング
                 var tmpUrlList = mSettings.filterDomain.Filter(hc.AttributeUrlList);
 

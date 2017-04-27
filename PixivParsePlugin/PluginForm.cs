@@ -45,12 +45,12 @@ namespace PixivParsePlugin
         {
             if (Host.Login(textBox1.Text, textBox2.Text))
             {
-                MessageBox.Show("pixivへのログインに成功しました", "通知",
+                MessageBox.Show("pixivのログインに成功しました", "通知",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show("pixivへのログインに失敗しました", "エラー",
+                MessageBox.Show("pixivのログインに失敗しました", "エラー",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

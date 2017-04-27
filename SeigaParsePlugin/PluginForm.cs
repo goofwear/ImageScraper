@@ -45,12 +45,12 @@ namespace SeigaParsePlugin
         {
             if (Host.Login(textBox1.Text, textBox2.Text))
             {
-                MessageBox.Show("niconicoへのログインに成功しました", "通知",
+                MessageBox.Show("niconicoのログインに成功しました", "通知",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                MessageBox.Show("niconicoへのログインに失敗しました", "エラー",
+                MessageBox.Show("niconicoのログインに失敗しました", "エラー",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

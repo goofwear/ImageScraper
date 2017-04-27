@@ -13,6 +13,7 @@ namespace ImageScraper
 {
     partial class MainForm
     {
+        private List<Log> mLogList;
         private LoggerForm mLoggerForm;
         private string availableFormats = "jpg|jpeg|png|bmp|gif";
 
@@ -86,13 +87,13 @@ namespace ImageScraper
                     radioButton6.Checked,
                     radioButton7.Checked
                 },
-                new Status((int)numericUpDown3.Value, 
-                    (int)numericUpDown8.Value, 
-                    (int)numericUpDown4.Value, 
+                new Status((int)numericUpDown3.Value,
+                    (int)numericUpDown8.Value,
+                    (int)numericUpDown4.Value,
                     (double)numericUpDown7.Value * 1000
                 ),
-                (int)numericUpDown14.Value, 
-                this.GetDestImageCount()
+                (int)numericUpDown14.Value,
+                this.GetNumImages(dc.dest)
             );
 
             // 接続設定
@@ -104,7 +105,7 @@ namespace ImageScraper
         {
             if (EnabledLoggerForm_ToolStripMenuItem.Checked)
             {
-                mLoggerForm = new LoggerForm();
+                mLoggerForm = new LoggerForm(mLogList);
                 mLoggerForm.FormClosed += new FormClosedEventHandler(LoggerForm_FormClosed);
                 mLoggerForm.Show();
                 mLoggerForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
@@ -167,12 +168,7 @@ namespace ImageScraper
                 }
 
                 downloader = new Downloader(this.downloadSettings, this);
-                if (mLoggerForm != null)
-                {
-                    mLoggerForm.Clear();
-                    downloader.Event_LoggerAdd += new Downloader.Delegate_LoggerAdd(mLoggerForm.Add);
-                    downloader.Event_LoggerAddRange += new Downloader.Delegate_LoggerAddRange(mLoggerForm.AddRange);
-                }
+                downloader.Event_WriteLog += new Downloader.Delegate_WriteLog(WriteLog);
                 downloader.Event_UpdateStatus += new Downloader.Delegate_UpdateStatus(UpdateStatus);
                 downloader.Event_AddProgress += new Downloader.Delegate_AddProgress(AddProgress);
                 downloader.Event_UpdateProgress += new Downloader.Delegate_UpdateProgress(UpdateProgress);
@@ -203,18 +199,16 @@ namespace ImageScraper
             }
         }
 
-        private int GetDestImageCount()
+        private int GetNumImages(string dir)
         {
-            int imageCount = 0;
-            if (Directory.Exists(this.downloadSettings.dest))
+            int num = 0;
+            if (Directory.Exists(dir))
             {
                 string[] formatArray = this.availableFormats.Split('|');
                 for (int i = 0; i < formatArray.Length; i++)
-                {
-                    imageCount += Directory.GetFiles(this.downloadSettings.dest, "*." + formatArray[i], SearchOption.AllDirectories).Length;
-                }
+                    num += Directory.GetFiles(dir, "*." + formatArray[i], SearchOption.AllDirectories).Length;
             }
-            return imageCount;
+            return num;
         }
 
         private bool CheckSettings()
@@ -276,6 +270,16 @@ namespace ImageScraper
                 sumStatus.depthCount, sumStatus.pageCount, sumStatus.imageCount, sumStatus.size);
         }
 
+        private void WriteLog(object sender, string module, string desc)
+        {
+            var log = new Log(module, desc);
+            if (mLogList == null)
+                mLogList = new List<Log>();
+            mLogList.Add(log);
+            if (mLoggerForm != null)
+                mLoggerForm.Write(log);
+        }
+
         private void AddProgress(object sender, string title, string url, int max)
         {
             if (title != null && max > 0)
@@ -333,17 +337,6 @@ namespace ImageScraper
             return null;
         }
 
-        public int ErectFlagsImageInfo(string url)
-        {
-            int imageCount = 0;
-            foreach(var info in infoViewItems)
-            {
-                if (info.ParentUrl == url)
-                    imageCount++;
-            }
-            return imageCount;
-        }
-
         public void DeleteSelectedImages(string url)
         {
             foreach(var info in infoViewItems)
@@ -354,8 +347,7 @@ namespace ImageScraper
                     if (File.Exists(info.ImagePath))
                     {
                         File.Delete(info.ImagePath);
-                        if (Common.IsEmptyDirectory(dir))
-                            Directory.Delete(dir);
+                        Common.DeleteEmptyDirectory(dir);
                     }
                 }
             }
@@ -369,6 +361,9 @@ namespace ImageScraper
             for (int i = 0; i < plugins.Length; i++)
             {
                 plugins[i] = pis[i].CreateInstance();
+                var loggerDelegate = new LoggerDelegate(this);
+                loggerDelegate.Event_WriteLog += new LoggerDelegate.Delegate_WriteLog(WriteLog);
+                plugins[i].SetLoggerDelegate(loggerDelegate);
                 ToolStripMenuItem mi = new ToolStripMenuItem(plugins[i].Name);
                 mi.Click += new EventHandler(menuPlugin_Click);
                 Plugins_ToolStripMenuItem.DropDownItems.Add(mi);
@@ -417,6 +412,7 @@ namespace ImageScraper
                 using (var sr = new StreamReader("ImageScraper.xml", new UTF8Encoding(false)))
                 {
                     var settings = xs.Deserialize(sr) as FormSettings;
+                    WriteLog(this, "MainForm", "フォームの設定を読み込みました");
 
                     if (settings.UrlList != null)
                         comboBox1.Items.AddRange(settings.UrlList.ToArray());
@@ -447,6 +443,7 @@ namespace ImageScraper
                         var urlCacheList = xs.Deserialize(sr) as List<ImageInfo>;
                         this.urlCache = new HashSet<ImageInfo>(urlCacheList);
                     }
+                    WriteLog(this, "MainForm", "履歴を読み込みました");
                 }
                 catch
                 {
@@ -468,6 +465,7 @@ namespace ImageScraper
                             urlCache.Add(info);
                         }
                     }
+                    WriteLog(this, "MainForm", "旧バージョンの履歴を読み込みました");
                 }
             }
         }

@@ -170,12 +170,6 @@
       <DependentUpon>HistoryEditorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ImageInfo.cs" />
-    <Compile Include="LoggerForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="LoggerForm.Designer.cs">
-      <DependentUpon>LoggerForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="MainPartial.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -202,9 +196,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="HistoryEditorForm.resx">
       <DependentUpon>HistoryEditorForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="LoggerForm.resx">
-      <DependentUpon>LoggerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

@@ -54,6 +54,7 @@ namespace PixivParsePlugin
         bool _enabled;
         Account _userAccount;
         PluginForm _pluginForm;
+        LoggerDelegate _loggerDelegate;
         Uri _baseUri = new Uri("http://www.pixiv.net/");
 
         public string Name
@@ -82,6 +83,12 @@ namespace PixivParsePlugin
         {
             _enabled = false;
             _userAccount = new Account();
+            _loggerDelegate = null;
+        }
+
+        public void SetLoggerDelegate(LoggerDelegate loggerDelegate)
+        {
+            _loggerDelegate = loggerDelegate;
         }
 
         public void SaveSettings()
@@ -114,13 +121,17 @@ namespace PixivParsePlugin
                 _userAccount.Id = settings.Id;
                 _userAccount.Pass = settings.Pass;
                 _userAccount.Enabled = settings.IsLoggedIn;
+                _loggerDelegate.Write(Name, "プラグインの設定を読み込みました");
                 if (settings.IsLoggedIn)
                 {
                     var ccol = Common.StringToCookies(settings.Cookies);
                     _userAccount.Cookies.Add(ccol);
                 }
             }
-            catch { }
+            catch
+            {
+                _loggerDelegate.Write(Name, "設定の読み込みに失敗しました");
+            }
         }
 
         public CookieCollection GetCookieCollection()
@@ -148,8 +159,12 @@ namespace PixivParsePlugin
             // フォームが開かれているとき実行されアカウント情報が反映される
             if (_pluginForm != null && !_pluginForm.IsDisposed)
             {
-                _userAccount = _pluginForm.GetAccount();
                 _enabled = _pluginForm.GetEnabled();
+                if (_enabled)
+                {
+                    var userAccount = _pluginForm.GetAccount();
+                    SetAccount(userAccount.Id, userAccount.Pass);
+                }
                 _pluginForm.SetFormEnabled(false);
             }
             // 設定を読み込んだあるいはフォームを閉じたときすでにアカウント情報が反映されている
@@ -187,8 +202,11 @@ namespace PixivParsePlugin
                 return null;
         }
 
-        public bool Login()
+        public bool Login(bool force = false)
         {
+            if (IsLoggedIn && !force)
+                return true;
+
             var param = "";
             var content = new Dictionary<string, string>()
             {
@@ -222,15 +240,17 @@ namespace PixivParsePlugin
             {
                 _userAccount.Enabled = true;
                 _userAccount.Cookies.Add(ccol);
+                _loggerDelegate.Write(Name, "ログインに成功しました");
                 return true;
             }
+            _loggerDelegate.Write(Name, "ログインに失敗しました");
             return false;
         }
 
         internal bool Login(string id, string pass)
         {
             SetAccount(id, pass);
-            return Login();
+            return Login(true);
         }
 
         public bool IsLogoutUrl(string url)

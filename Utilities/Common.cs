@@ -79,12 +79,12 @@ namespace Utilities
         }
 
         /// 文字列中の指定した文字を全て"+"に置き換える
-        public static string RemoveChars(string s, char[] characters)
+        public static string RemoveChars(string s, char[] characters, string newValue)
         {
             StringBuilder buf = new StringBuilder(s);
             foreach (char c in characters)
             {
-                buf.Replace(c.ToString(), "+");
+                buf.Replace(c.ToString(), newValue);
             }
             return buf.ToString();
         }
@@ -119,22 +119,23 @@ namespace Utilities
             return "";
         }
 
-        public static bool IsEmptyDirectory(string dir)
+        public static void DeleteEmptyDirectory(string dir)
         {
             if (!Directory.Exists(dir))
             {
                 // ディレクトリが存在しなければ空でないとする
-                return false;
+                return;
             }
             try
             {
                 string[] entries = Directory.GetFileSystemEntries(dir);
-                return entries.Length == 0;
+                if (entries.Length == 0)
+                    Directory.Delete(dir);
             }
             catch
             {
                 // アクセス権がないなどの場合は空でないとする
-                return false;
+                return;
             }
         }
 

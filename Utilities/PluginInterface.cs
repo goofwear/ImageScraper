@@ -9,12 +9,13 @@ namespace Utilities
         bool Enabled { get; }
         bool IsLoggedIn { get; }
 
+        void SetLoggerDelegate(LoggerDelegate loggerDelegate);
         void InitializePlugin();
         void FinalizePlugin();
         void LoadSettings();
         void SaveSettings();
         void ShowPluginForm();
-        bool Login();
+        bool Login(bool force = false);
         CookieCollection GetCookieCollection();
         bool IsLogoutUrl(string url);
         bool IsParseUrl(string url);

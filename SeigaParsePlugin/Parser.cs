@@ -54,6 +54,7 @@ namespace SeigaParsePlugin
         bool _enabled;
         Account _userAccount;
         PluginForm _pluginForm;
+        LoggerDelegate _loggerDelegate;
         Uri _baseUri = new Uri("http://seiga.nicovideo.jp/");
 
         public string Name
@@ -82,6 +83,12 @@ namespace SeigaParsePlugin
         {
             _enabled = false;
             _userAccount = new Account();
+            _loggerDelegate = null;
+        }
+
+        public void SetLoggerDelegate(LoggerDelegate loggerDelegate)
+        {
+            _loggerDelegate = loggerDelegate;
         }
 
         public void SaveSettings()
@@ -114,13 +121,17 @@ namespace SeigaParsePlugin
                 _userAccount.Id = settings.Id;
                 _userAccount.Pass = settings.Pass;
                 _userAccount.Enabled = settings.IsLoggedIn;
+                _loggerDelegate.Write(Name, "プラグインの設定を読み込みました");
                 if (settings.IsLoggedIn)
                 {
                     var ccol = Common.StringToCookies(settings.Cookies);
                     _userAccount.Cookies.Add(ccol);
                 }
             }
-            catch { }
+            catch
+            {
+                _loggerDelegate.Write(Name, "設定の読み込みに失敗しました");
+            }
         }
 
         public CookieCollection GetCookieCollection()
@@ -148,8 +159,12 @@ namespace SeigaParsePlugin
             // フォームが開かれているとき実行されアカウント情報が反映される
             if (_pluginForm != null && !_pluginForm.IsDisposed)
             {
-                _userAccount = _pluginForm.GetAccount();
                 _enabled = _pluginForm.GetEnabled();
+                if (_enabled)
+                {
+                    var userAccount = _pluginForm.GetAccount();
+                    SetAccount(userAccount.Id, userAccount.Pass);
+                }
                 _pluginForm.SetFormEnabled(false);
             }
             // 設定を読み込んだあるいはフォームを閉じたときすでにアカウント情報が反映されている
@@ -172,8 +187,11 @@ namespace SeigaParsePlugin
             _enabled = enabled;
         }
 
-        public bool Login()
+        public bool Login(bool force = false)
         {
+            if (IsLoggedIn && !force)
+                return true;
+
             const string path = "https://secure.nicovideo.jp/secure/login?site=niconico";
             var req = (HttpWebRequest)WebRequest.CreateHttp(new Uri(path));
             var param = String.Format("next_url={0}&mail={1}&password={2}", "", 
@@ -192,20 +210,23 @@ namespace SeigaParsePlugin
             var res = req.GetResponse();
             var ccol = req.CookieContainer.GetCookies(_baseUri);
             req.Abort();
+
             if (ccol["user_session"] != null)
             {
                 ccol.Add(new Cookie("accept_fetish_warning", "1", "/", "seiga.nicovideo.jp"));
                 _userAccount.Enabled = true;
                 _userAccount.Cookies.Add(ccol);
+                _loggerDelegate.Write(Name, "ログインに成功しました");
                 return true;
             }
+            _loggerDelegate.Write(Name, "ログインに失敗しました");
             return false;
         }
 
         internal bool Login(string id, string pass)
         {
             SetAccount(id, pass);
-            return Login();
+            return Login(true);
         }
 
         public bool IsLogoutUrl(string url)
