@@ -9,7 +9,7 @@ namespace ImageScraper
         public List<string> ExKeyTitleList;
         public List<string> KeyUrlList;
         public List<string> ExKeyUrlList;
-        public ControlProperty.Property[] Properties;
+        public Utilities.Property[] Properties;
 
         public FormSettings()
         {
@@ -18,7 +18,7 @@ namespace ImageScraper
             ExKeyTitleList = new List<string>();
             KeyUrlList = new List<string>();
             ExKeyUrlList = new List<string>();
-            Properties = new ControlProperty.Property[0];
+            Properties = new Utilities.Property[0];
         }
     }
 
@@ -41,6 +41,7 @@ namespace ImageScraper
         public OverlappedUrlFilter OverlappedUrlFilter;
         public FileNameGenerator FileNameGenerator;
         public StatusMonitor StatusMonitor;
+        public Utilities.Logger Logger;
     }
 
     public class Status

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Collections;
 using System.Windows.Forms;
-using Utilities;
 
 namespace ImageScraper
 {
@@ -51,10 +50,10 @@ namespace ImageScraper
         {
             ArrayList plugins = new ArrayList();
             List<string> failedPlugins = new List<string>();
-            //IPlugin型の名前
-            string ipluginName = typeof(PluginInterface).FullName;
+            // IPlugin型の名前
+            string ipluginName = typeof(Plugins.PluginInterface).FullName;
 
-            //プラグインフォルダ
+            // プラグインフォルダ
             string folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             folder = Path.Combine(folder, "plugins");
             if (!Directory.Exists(folder))
@@ -65,28 +64,27 @@ namespace ImageScraper
             }
             else
             {
-                //.dllファイルを探す
+                // .dllファイルを探す
                 string[] dlls = Directory.GetFiles(folder, "*.dll");
 
                 foreach (string dll in dlls)
                 {
                     try
                     {
-                        //アセンブリとして読み込む
+                        // アセンブリとして読み込む
                         Assembly asm = Assembly.LoadFrom(dll);
                         foreach (Type t in asm.GetTypes())
                         {
-                            //アセンブリ内のすべての型について、
-                            //プラグインとして有効か調べる
+                            // アセンブリ内のすべての型について，プラグインとして有効か調べる
                             if (t.IsClass && t.IsPublic && !t.IsAbstract &&
                                 t.GetInterface(ipluginName) != null)
                             {
-                                //PluginInfoをコレクションに追加する
+                                // PluginInfoをコレクションに追加する
                                 plugins.Add(new PluginInfo(dll, t.FullName));
                             }
                         }
                     }
-                    catch
+                    catch (FileLoadException)
                     {
                         failedPlugins.Add(Path.GetFileName(dll));
                     }
@@ -97,9 +95,7 @@ namespace ImageScraper
                     string msg = "以下のプラグインの読み込みに失敗しました\n";
                     msg += ("-------------------------------------------------------\n");
                     foreach (string fp in failedPlugins)
-                    {
                         msg += ("\"" + fp + "\"\n");
-                    }
                     msg += ("-------------------------------------------------------\n");
                     msg += ("該当dllのプロパティから\"ブロックの解除\"を適用してください\n");
                     MessageBox.Show(msg, "エラー",
@@ -107,7 +103,7 @@ namespace ImageScraper
                 }
             }
 
-            //コレクションを配列にして返す
+            // コレクションを配列にして返す
             return (PluginInfo[])plugins.ToArray(typeof(PluginInfo));
         }
 
@@ -115,14 +111,14 @@ namespace ImageScraper
         /// プラグインクラスのインスタンスを作成する
         /// </summary>
         /// <returns>プラグインクラスのインスタンス</returns>
-        public PluginInterface CreateInstance()
+        public Plugins.PluginInterface CreateInstance()
         {
             try
             {
-                //アセンブリを読み込む
+                // アセンブリを読み込む
                 Assembly asm = Assembly.LoadFrom(this.Location);
-                //クラス名からインスタンスを作成する
-                PluginInterface plugin = (PluginInterface)asm.CreateInstance(this.ClassName);
+                // クラス名からインスタンスを作成する
+                Plugins.PluginInterface plugin = (Plugins.PluginInterface)asm.CreateInstance(this.ClassName);
                 return plugin;
             }
             catch

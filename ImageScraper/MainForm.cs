@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Utilities;
 
 namespace ImageScraper
 {
@@ -9,7 +9,8 @@ namespace ImageScraper
     {
         const string mVersionString = "2.6";
         private Downloader mDownloader;
-        private PluginInterface[] mPlugins;
+        private Utilities.Logger mLogger;
+        private Plugins.PluginInterface[] mPlugins;
         private DownloadSettings mDownloadSettings = new DownloadSettings();
         private FormSettings mFormSettings = new FormSettings();
         private HashSet<ImageInfo> mUrlCache = new HashSet<ImageInfo>();
@@ -22,6 +23,7 @@ namespace ImageScraper
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            mLogger = new Utilities.Logger();
             this.LoadPlugins();
             this.LoadSettings();
             groupBox8.Enabled = checkBox12.Checked;
@@ -32,7 +34,7 @@ namespace ImageScraper
         private void menuPlugin_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem mi = (ToolStripMenuItem)sender;
-            foreach(PluginInterface plugin in mPlugins)
+            foreach (Plugins.PluginInterface plugin in mPlugins)
             {
                 if (mi.Text == plugin.Name)
                 {
@@ -188,22 +190,22 @@ namespace ImageScraper
             {
                 int idx = listViewEx1.SelectedItems[0].Index;
                 ImageInfo imageInfo = FindParentUrl(listViewEx1.Items[idx].Tag.ToString());
-                Common.OpenExplorer(imageInfo.ImagePath);
+                Utilities.Common.OpenExplorer(imageInfo.ImagePath);
             }
         }
 
-        private void EnabledLoggerForm_ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void LoggerFormEnabled_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            EnabledLoggerForm_ToolStripMenuItem.Checked = !EnabledLoggerForm_ToolStripMenuItem.Checked;
-            if (EnabledLoggerForm_ToolStripMenuItem.Checked)
-                ShowLoggerForm();
-            else if (mLoggerForm != null && !mLoggerForm.IsDisposed)
-                mLoggerForm.Dispose();
+            LoggerFormEnabled_ToolStripMenuItem.Checked = !LoggerFormEnabled_ToolStripMenuItem.Checked;
+            if (LoggerFormEnabled_ToolStripMenuItem.Checked)
+                mLogger.ShowForm(LoggerFormClosingEventHandler, new Point(this.Location.X + this.Width, this.Location.Y));
+            else
+                mLogger.HideForm();
         }
 
-        private void LoggerForm_FormClosed(object sender, FormClosedEventArgs e)
+        private void LoggerFormClosingEventHandler(object sender, FormClosingEventArgs e)
         {
-            EnabledLoggerForm_ToolStripMenuItem.Checked = false;
+            LoggerFormEnabled_ToolStripMenuItem.Checked = false;
         }
 
         private void button4_Click(object sender, EventArgs e)

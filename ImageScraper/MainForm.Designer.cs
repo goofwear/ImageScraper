@@ -57,7 +57,7 @@
             this.About_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.View_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.EnabledLoggerForm_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.LoggerFormEnabled_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Plugins_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabPage7 = new System.Windows.Forms.TabPage();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
@@ -430,17 +430,17 @@
             // View_ToolStripMenuItem
             // 
             this.View_ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.EnabledLoggerForm_ToolStripMenuItem});
+            this.LoggerFormEnabled_ToolStripMenuItem});
             this.View_ToolStripMenuItem.Name = "View_ToolStripMenuItem";
             this.View_ToolStripMenuItem.Size = new System.Drawing.Size(58, 19);
             this.View_ToolStripMenuItem.Text = "表示(&V)";
             // 
-            // EnabledLoggerForm_ToolStripMenuItem
+            // LoggerFormEnabled_ToolStripMenuItem
             // 
-            this.EnabledLoggerForm_ToolStripMenuItem.Name = "EnabledLoggerForm_ToolStripMenuItem";
-            this.EnabledLoggerForm_ToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
-            this.EnabledLoggerForm_ToolStripMenuItem.Text = "ログウィンドウ";
-            this.EnabledLoggerForm_ToolStripMenuItem.Click += new System.EventHandler(this.EnabledLoggerForm_ToolStripMenuItem_Click);
+            this.LoggerFormEnabled_ToolStripMenuItem.Name = "LoggerFormEnabled_ToolStripMenuItem";
+            this.LoggerFormEnabled_ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.LoggerFormEnabled_ToolStripMenuItem.Text = "ログウィンドウ";
+            this.LoggerFormEnabled_ToolStripMenuItem.Click += new System.EventHandler(this.LoggerFormEnabled_ToolStripMenuItem_Click);
             // 
             // Plugins_ToolStripMenuItem
             // 
@@ -1891,7 +1891,7 @@
         private System.Windows.Forms.ToolStripMenuItem Plugins_ToolStripMenuItem;
         private System.Windows.Forms.RadioButton radioButton12;
         private System.Windows.Forms.ToolStripMenuItem View_ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem EnabledLoggerForm_ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem LoggerFormEnabled_ToolStripMenuItem;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.ComboBox comboBox5;
         private System.Windows.Forms.ComboBox comboBox4;

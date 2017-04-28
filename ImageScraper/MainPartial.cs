@@ -2,19 +2,15 @@
 using System.IO;
 using System.Text;
 using System.Linq;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
-using Utilities;
 
 namespace ImageScraper
 {
     partial class MainForm
     {
-        private List<Log> mLogList;
-        private LoggerForm mLoggerForm;
         private string[] mAvailableFormats = new string[] { "jpg", "jpeg", "png", "bmp", "gif" };
 
         private void InitializeSettings(DownloadSettings dc)
@@ -63,7 +59,7 @@ namespace ImageScraper
             dc.OverlappedUrlFilter = new OverlappedUrlFilter(mUrlCache, checkBox13.Checked);
             dc.FileNameGenerator = new FileNameGenerator(
                 radioButton2.Checked,
-                new SerialNameGenerator(
+                new Utilities.SerialNameGenerator(
                     textBox2.Text, 
                     (int)numericUpDown9.Value, 
                     mAvailableFormats)
@@ -90,17 +86,9 @@ namespace ImageScraper
             // 接続設定
             UrlContainer.UrlContainer.RequestSpan = (int)numericUpDown15.Value;
             HtmlContainer.HtmlContainer.RequestSpan = (int)numericUpDown15.Value;
-        }
 
-        void ShowLoggerForm()
-        {
-            if (EnabledLoggerForm_ToolStripMenuItem.Checked)
-            {
-                mLoggerForm = new LoggerForm(mLogList);
-                mLoggerForm.FormClosed += new FormClosedEventHandler(LoggerForm_FormClosed);
-                mLoggerForm.Show();
-                mLoggerForm.Location = new Point(this.Location.X + this.Width, this.Location.Y);
-            }
+            // ロガー
+            dc.Logger = mLogger;
         }
 
         private void UpdateComboBox(ComboBox cb)
@@ -260,16 +248,6 @@ namespace ImageScraper
                 sumStatus.Depth, sumStatus.Pages, sumStatus.Images, sumStatus.Size);
         }
 
-        public void WriteLog(object sender, string module, string desc)
-        {
-            var log = new Log(module, desc);
-            if (mLogList == null)
-                mLogList = new List<Log>();
-            mLogList.Add(log);
-            if (mLoggerForm != null)
-                mLoggerForm.Write(log);
-        }
-
         public void InitProgress(string title, string url, int max)
         {
             if (title != null && max > 0)
@@ -291,9 +269,7 @@ namespace ImageScraper
                 }
             }
             else
-            {
                 listViewEx1.Items.Clear();
-            }
         }
 
         public void UpdateProgress(int downloadCount, int imageCount)
@@ -337,7 +313,7 @@ namespace ImageScraper
                     if (File.Exists(info.ImagePath))
                     {
                         File.Delete(info.ImagePath);
-                        Common.DeleteEmptyDirectory(dir);
+                        Utilities.Common.DeleteEmptyDirectory(dir);
                     }
                 }
             }
@@ -346,14 +322,12 @@ namespace ImageScraper
         private void LoadPlugins()
         {
             PluginInfo[] pis = PluginInfo.FindPlugins();
-            mPlugins = new PluginInterface[pis.Length];
+            mPlugins = new Plugins.PluginInterface[pis.Length];
 
             for (int i = 0; i < mPlugins.Length; i++)
             {
                 mPlugins[i] = pis[i].CreateInstance();
-                var loggerDelegate = new LoggerDelegate(this);
-                loggerDelegate.Event_WriteLog += new LoggerDelegate.Delegate_WriteLog(WriteLog);
-                mPlugins[i].SetLoggerDelegate(loggerDelegate);
+                mPlugins[i].Logger = mLogger;
                 ToolStripMenuItem mi = new ToolStripMenuItem(mPlugins[i].Name);
                 mi.Click += new EventHandler(menuPlugin_Click);
                 Plugins_ToolStripMenuItem.DropDownItems.Add(mi);
@@ -365,7 +339,7 @@ namespace ImageScraper
             try
             {
                 FormSettings settings = new FormSettings();
-                settings.Properties = ControlProperty.ControlProperty.Get(this.Controls);
+                settings.Properties = Utilities.ControlProperty.Get(this.Controls);
                 for (int i = comboBox1.Items.Count - 1; i >= 0; i--)
                     settings.UrlList.Insert(0, comboBox1.Items[i].ToString());
                 for (int i = comboBox2.Items.Count - 1; i >= 0; i--)
@@ -380,11 +354,11 @@ namespace ImageScraper
                 var xs = new XmlSerializer(typeof(FormSettings));
                 using (var sw = new StreamWriter("ImageScraper.xml", false, new UTF8Encoding(false)))
                     xs.Serialize(sw, settings);
-                WriteLog(this, "MainForm", "フォームの設定を保存しました");
+                mLogger.Write("MainForm", "フォームの設定を保存しました");
             }
             catch
             {
-                WriteLog(this, "MainForm", "フォームの設定の保存に失敗しました");
+                mLogger.Write("MainForm", "フォームの設定の保存に失敗しました");
             }
 
             // プラグイン設定の保存
@@ -393,11 +367,11 @@ namespace ImageScraper
                 try
                 {
                     plugin.SaveSettings();
-                    WriteLog(this, plugin.Name, "プラグインの設定を保存しました");
+                    mLogger.Write(plugin.Name, "プラグインの設定を保存しました");
                 }
                 catch
                 {
-                    WriteLog(this, plugin.Name, "プラグインの設定の保存に失敗しました");
+                    mLogger.Write(plugin.Name, "プラグインの設定の保存に失敗しました");
                 }
             }
 
@@ -408,11 +382,11 @@ namespace ImageScraper
                 var urlCache = mUrlCache.ToList();
                 using (var sw = new StreamWriter("UrlCache.xml", false, new UTF8Encoding(false)))
                     xs.Serialize(sw, urlCache);
-                WriteLog(this, "MainForm", "履歴を保存しました");
+                mLogger.Write("MainForm", "履歴を保存しました");
             }
             catch
             {
-                WriteLog(this, "MainForm", "履歴の保存に失敗しました");
+                mLogger.Write("MainForm", "履歴の保存に失敗しました");
             }
         }
 
@@ -437,13 +411,13 @@ namespace ImageScraper
                             comboBox3.Items.AddRange(settings.KeyUrlList.ToArray());
                         if (settings.ExKeyUrlList != null)
                             comboBox4.Items.AddRange(settings.ExKeyUrlList.ToArray());
-                        ControlProperty.ControlProperty.Set(this.Controls, settings.Properties);
-                        WriteLog(this, "MainForm", "フォームの設定を読み込みました");
+                        Utilities.ControlProperty.Set(this.Controls, settings.Properties);
+                        mLogger.Write("MainForm", "フォームの設定を読み込みました");
                     }
                 }
                 catch
                 {
-                    WriteLog(this, "MainForm", "フォームの設定の読み込みに失敗しました");
+                    mLogger.Write("MainForm", "フォームの設定の読み込みに失敗しました");
                 }
             }
 
@@ -453,11 +427,11 @@ namespace ImageScraper
                 try
                 {
                     plugin.LoadSettings();
-                    WriteLog(this, plugin.Name, "プラグインの設定を読み込みました");
+                    mLogger.Write(plugin.Name, "プラグインの設定を読み込みました");
                 }
                 catch
                 {
-                    WriteLog(this, plugin.Name, "プラグインの設定の読み込みに失敗しました");
+                    mLogger.Write(plugin.Name, "プラグインの設定の読み込みに失敗しました");
                 }
             }
 
@@ -472,29 +446,29 @@ namespace ImageScraper
                         var urlCache = xs.Deserialize(sr) as List<ImageInfo>;
                         mUrlCache = new HashSet<ImageInfo>(urlCache);
                     }
-                    WriteLog(this, "MainForm", "履歴を読み込みました");
+                    mLogger.Write("MainForm", "履歴を読み込みました");
                 }
                 catch
                 {
                     // 旧バージョンの設定ファイル読み込み
-                    var xs = new XmlSerializer(typeof(List<Common.KeyAndValue<string, ImageInfo>>));
+                    var xs = new XmlSerializer(typeof(List<Utilities.Common.KeyAndValue<string, ImageInfo>>));
                     using (var sr = new StreamReader("UrlCache.xml", new UTF8Encoding(false)))
                     {
-                        var urlCache = (List<Common.KeyAndValue<string, ImageInfo>>)xs.Deserialize(sr);
-                        var urlCacheDict = Common.ConvertListToDictionary(urlCache);
+                        var urlCache = (List<Utilities.Common.KeyAndValue<string, ImageInfo>>)xs.Deserialize(sr);
+                        var urlCacheDict = Utilities.Common.ConvertListToDictionary(urlCache);
                         mUrlCache = new HashSet<ImageInfo>();
                         foreach (var pair in urlCacheDict)
                         {
                             var info = new ImageInfo();
                             info.ImagePath = pair.Value.ImagePath;
                             info.ImageUrl = pair.Key;
-                            info.LoadDate = pair.Value.LoadDate;
+                            info.TimeStamp = pair.Value.TimeStamp;
                             info.ParentTitle = pair.Value.ParentTitle;
                             info.ParentUrl = pair.Value.ParentUrl;
                             mUrlCache.Add(info);
                         }
                     }
-                    WriteLog(this, "MainForm", "旧バージョンの履歴を読み込みました");
+                    mLogger.Write("MainForm", "旧バージョンの履歴を読み込みました");
                 }
             }
         }

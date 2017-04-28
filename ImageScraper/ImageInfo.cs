@@ -8,7 +8,7 @@ namespace ImageScraper
         public string ParentUrl;
         public string ParentTitle;
         public string ImagePath;
-        public DateTime LoadDate;
+        public DateTime TimeStamp;
 
         public ImageInfo()
         {
@@ -16,7 +16,7 @@ namespace ImageScraper
             ParentUrl = "";
             ParentTitle = "";
             ImagePath = "";
-            LoadDate = DateTime.Now;
+            TimeStamp = DateTime.Now;
         }
 
         public override int GetHashCode()

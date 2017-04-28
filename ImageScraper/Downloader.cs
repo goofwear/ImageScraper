@@ -4,7 +4,6 @@ using System.Net;
 using System.Drawing;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Utilities;
 
 namespace ImageScraper
 {
@@ -20,9 +19,11 @@ namespace ImageScraper
         Status mSumStatus;
         CookieContainer mCookies;
         MainForm mParentForm;
-        PluginInterface[] mPlugins;
+        Plugins.PluginInterface[] mPlugins;
         char[] mInvalidCharsP = Path.GetInvalidPathChars();
         char[] mInvalidCharsF = Path.GetInvalidFileNameChars();
+
+        delegate void WriteLogDelegate(string modele, string desc);
 
         public bool IsRunning
         {
@@ -34,7 +35,7 @@ namespace ImageScraper
             get { return _isSuspend; }
         }
 
-        public Downloader(DownloadSettings settings, PluginInterface[] plugins, MainForm parentForm)
+        public Downloader(DownloadSettings settings, Plugins.PluginInterface[] plugins, MainForm parentForm)
 		{
 			mSettings = settings;
             mPlugins = plugins;
@@ -47,11 +48,6 @@ namespace ImageScraper
             mCachedUrlSet = new HashSet<string>();
             mParentForm = parentForm;
 		}
-
-        void OnWriteLog(string module, string desc)
-        {
-            mParentForm.Invoke(new Action(() => mParentForm.WriteLog(this, module, desc)));
-        }
 
         void OnUpdateStatus()
         {
@@ -78,7 +74,7 @@ namespace ImageScraper
             if (String.IsNullOrEmpty(Path.GetExtension(info.ImagePath)))
             {
                 string oldName = info.ImagePath;
-                info.ImagePath += Common.GetImageFormatString(info.ImagePath);
+                info.ImagePath += Utilities.Common.GetImageFormatString(info.ImagePath);
                 File.Move(oldName, info.ImagePath);
             }
             mParentForm.Invoke(new Action(() => mParentForm.UpdateImageInfo(info)));
@@ -116,10 +112,10 @@ namespace ImageScraper
             return false;
         }
 
-        string InitSaveDirectory(HtmlContainer.HtmlContainer hc)
+        string InitDirectoryName(HtmlContainer.HtmlContainer hc)
         {
-            string safeTitle = Common.RemoveChars(hc.Title, mInvalidCharsF, "_");
-            string safeLocalPath = Common.RemoveChars(hc.UrlContainer.LocalPath, mInvalidCharsP, "_");
+            string safeTitle = Utilities.Common.RemoveChars(hc.Title, mInvalidCharsF, "_");
+            string safeLocalPath = Utilities.Common.RemoveChars(hc.UrlContainer.LocalPath, mInvalidCharsP, "_");
             string dir = mSettings.RootDirectory;
 
             if (mSettings.AppendsUrl)
@@ -134,7 +130,7 @@ namespace ImageScraper
 
         ImageInfo InitImageInfo(HtmlContainer.HtmlContainer hc, UrlContainer.UrlContainer uc, string dir)
         {
-            string tmpName = Common.RemoveChars(uc.FileName, mInvalidCharsF, "_");
+            string tmpName = Utilities.Common.RemoveChars(uc.FileName, mInvalidCharsF, "_");
             string fileName = mSettings.FileNameGenerator.Generate(dir, tmpName);
 
             ImageInfo info = new ImageInfo();
@@ -178,7 +174,7 @@ namespace ImageScraper
             var imageSize = (int)(uc.CacheSize / 1000);
             if (mSettings.ImageSizeFilter.Filter(imageSize))
             {
-                OnWriteLog("Downloader", "ファイルサイズフィルタが適用されました > " + uc.Url);
+                mSettings.Logger.WriteInvoke("Downloader", "ファイルサイズフィルタが適用されました > " + uc.Url);
                 return false;
             }
 
@@ -187,13 +183,13 @@ namespace ImageScraper
                 // 解像度によるフィルタリング
                 if (mSettings.ResolutionFilter.Filter(cachedImage))
                 {
-                    OnWriteLog("Downloader", "解像度フィルタが適用されました > " + uc.Url);
+                    mSettings.Logger.WriteInvoke("Downloader", "解像度フィルタが適用されました > " + uc.Url);
                     return false;
                 }
                 // カラーフォーマットによるフィルタリング
                 if (mSettings.ColorFilter.Filter(cachedImage))
                 {
-                    OnWriteLog("Downloader", "カラーフィルタが適用されました > " + uc.Url);
+                    mSettings.Logger.WriteInvoke("Downloader", "カラーフィルタが適用されました > " + uc.Url);
                     return false;
                 }
             }
@@ -202,7 +198,7 @@ namespace ImageScraper
             uc.SaveCache(info.ImagePath);
 
             // ダウンロード状況更新
-            OnWriteLog("Downloader", uc.Url + " を取得しました");
+            mSettings.Logger.WriteInvoke("Downloader", uc.Url + " を取得しました");
             mTempStatus.Size += imageSize;
             mSumStatus.Size += imageSize;
             mTempStatus.Images++;
@@ -221,7 +217,7 @@ namespace ImageScraper
             if (mSettings.ImagesPerPageFilter.Filter(images))
             {
                 string mes = String.Format("{0} 枚 ({1})", images, hc.UrlContainer.Url);
-                OnWriteLog("Downloader", "画像枚数フィルタが適用されました > " + mes);
+                mSettings.Logger.WriteInvoke("Downloader", "画像枚数フィルタが適用されました > " + mes);
             }
             else
             {
@@ -229,7 +225,7 @@ namespace ImageScraper
                 hc.AttributeUrlList = mSettings.OverlappedUrlFilter.Filter(hc.AttributeUrlList);
                 // 画像枚数更新
                 images = hc.AttributeUrlList.Count;
-                string dir = InitSaveDirectory(hc);
+                string dir = InitDirectoryName(hc);
                 for (int i = 0; i < images; i++)
                 {
                     // 終了条件を満たす
@@ -253,7 +249,7 @@ namespace ImageScraper
                     mSumStatus.Pages++;
                     OnFinalizeProgress();
                 }
-                Common.DeleteEmptyDirectory(dir);
+                Utilities.Common.DeleteEmptyDirectory(dir);
             }
             return true;
         }
@@ -268,7 +264,7 @@ namespace ImageScraper
             return false;
         }
 
-        PluginInterface FindPlugin(UrlContainer.UrlContainer uc)
+        Plugins.PluginInterface FindPlugin(UrlContainer.UrlContainer uc)
         {
             foreach (var plugin in mPlugins)
             {
@@ -290,23 +286,23 @@ namespace ImageScraper
                 return null;
 
             // URLに対応するプラグインを検索，見つかればCookie取得
-            PluginInterface plugin = FindPlugin(uc);
+            Plugins.PluginInterface plugin = FindPlugin(uc);
             var hc = new HtmlContainer.HtmlContainer(uc, mCookies);
 
             // Htmlを取得しないで済むURLのフィルタリング
             if (mSettings.UrlFilter.Filter(uc.Url))
             {
-                OnWriteLog("Downloader", "URLフィルタが適用されました > " + uc.Url);
+                mSettings.Logger.WriteInvoke("Downloader", "URLフィルタが適用されました > " + uc.Url);
                 return hc;
             }
             // Htmlを取得する必要があるタイトルのフィルタリング
             if (mSettings.TitleFilter.Filter(hc.Title))
             {
-                OnWriteLog("Downloader", "タイトルフィルタが適用されました > " + hc.Title);
+                mSettings.Logger.WriteInvoke("Downloader", "タイトルフィルタが適用されました > " + hc.Title);
                 return hc;
             }
 
-            OnWriteLog("Downloader", uc.Url + " を取得しました");   
+            mSettings.Logger.WriteInvoke("Downloader", uc.Url + " を取得しました");   
             if (plugin != null)
                 hc.AttributeUrlList = plugin.GetImageUrlList(uc, mSettings.Formats);
             else

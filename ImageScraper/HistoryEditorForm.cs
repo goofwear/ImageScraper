@@ -6,7 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Utilities;
 
 namespace ImageScraper
 {
@@ -34,7 +33,7 @@ namespace ImageScraper
                     new string[] {
                         Path.GetFileName(info.ImagePath),
                         info.ParentTitle,
-                        info.LoadDate.ToString("yyyy/MM/dd/ HH:mm:ss")
+                        info.TimeStamp.ToString("yyyy/MM/dd/ HH:mm:ss")
                     }
                 );
                 if (!File.Exists(info.ImagePath))
@@ -128,9 +127,9 @@ namespace ImageScraper
             UpdateRowColor();
         }
 
-        ProgressForm GetProgressForm(string titleText, int max)
+        Utilities.ProgressForm GetProgressForm(string titleText, int max)
         {
-            ProgressForm progressForm = new ProgressForm(titleText, max);
+            var progressForm = new Utilities.ProgressForm(titleText, max);
             progressForm.Owner = this;
             progressForm.Left = this.Left + (this.Width - progressForm.Width) / 2;
             progressForm.Top = this.Top + (this.Height - progressForm.Height) / 2;
@@ -214,7 +213,7 @@ namespace ImageScraper
         {
             var info = listViewEx1.SelectedItems[0].Tag as ImageInfo;
             if (File.Exists(info.ImagePath))
-                Common.OpenFile(info.ImagePath);
+                Utilities.Common.OpenFile(info.ImagePath);
         }
     }
 

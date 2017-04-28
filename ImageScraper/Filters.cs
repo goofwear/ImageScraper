@@ -219,22 +219,22 @@ namespace ImageScraper
     public class OverlappedUrlFilter
     {
         bool mEnabled { get; set; }
-        HashSet<string> mCachedUrlSet;
+        HashSet<string> mUrlCache;
 
         public OverlappedUrlFilter(HashSet<ImageInfo> urlTable, bool enabled)
         {
-            this.mCachedUrlSet = new HashSet<string>(urlTable.Select(x => x.ImageUrl));
+            this.mUrlCache = new HashSet<string>(urlTable.Select(x => x.ImageUrl));
             this.mEnabled = enabled;
         }
 
         public void Clear()
         {
-            this.mCachedUrlSet.Clear();
+            this.mUrlCache.Clear();
         }
 
         public void Add(ImageInfo info)
         {
-            this.mCachedUrlSet.Add(info.ImageUrl);
+            this.mUrlCache.Add(info.ImageUrl);
         }
 
         public List<UrlContainer.UrlContainer> Filter(List<UrlContainer.UrlContainer> urlList)
@@ -245,7 +245,7 @@ namespace ImageScraper
             var ret = new List<UrlContainer.UrlContainer>();
             foreach (var uc in urlList)
             {
-                if (!mCachedUrlSet.Contains(uc.Url))
+                if (!mUrlCache.Contains(uc.Url))
                     ret.Add(uc);
             }
             return ret;
@@ -255,9 +255,9 @@ namespace ImageScraper
     public class FileNameGenerator
     {
         bool mEnabled;
-        SerialNameGenerator mSerialNameGen;
+        Utilities.SerialNameGenerator mSerialNameGen;
 
-        public FileNameGenerator(bool enabled, SerialNameGenerator sng)
+        public FileNameGenerator(bool enabled, Utilities.SerialNameGenerator sng)
         {
             mEnabled = enabled;
             mSerialNameGen = sng;
