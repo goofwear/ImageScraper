@@ -178,7 +178,7 @@ namespace ImageScraper
             var imageSize = (int)(uc.CacheSize / 1000);
             if (mSettings.ImageSizeFilter.Filter(imageSize))
             {
-                OnWriteLog("Downloader", "ファイルサイズフィルタが適用されました");
+                OnWriteLog("Downloader", "ファイルサイズフィルタが適用されました > " + uc.Url);
                 return false;
             }
 
@@ -187,13 +187,13 @@ namespace ImageScraper
                 // 解像度によるフィルタリング
                 if (mSettings.ResolutionFilter.Filter(cachedImage))
                 {
-                    OnWriteLog("Downloader", "解像度フィルタが適用されました");
+                    OnWriteLog("Downloader", "解像度フィルタが適用されました > " + uc.Url);
                     return false;
                 }
                 // カラーフォーマットによるフィルタリング
                 if (mSettings.ColorFilter.Filter(cachedImage))
                 {
-                    OnWriteLog("Downloader", "カラーフィルタが適用されました");
+                    OnWriteLog("Downloader", "カラーフィルタが適用されました > " + uc.Url);
                     return false;
                 }
             }
@@ -216,12 +216,19 @@ namespace ImageScraper
 		{
             mTempStatus.Size = 0;
             mTempStatus.Images = 0;
-            // ダウンロード履歴のフィルタリング
-            hc.AttributeUrlList = mSettings.OverlappedUrlFilter.Filter(hc.AttributeUrlList);
             int images = hc.AttributeUrlList.Count;
             // ページあたりの画像枚数のフィルタリング
-            if (!mSettings.ImagesPerPageFilter.Filter(images))
+            if (mSettings.ImagesPerPageFilter.Filter(images))
             {
+                string mes = String.Format("{0} 枚 ({1})", images, hc.UrlContainer.Url);
+                OnWriteLog("Downloader", "画像枚数フィルタが適用されました > " + mes);
+            }
+            else
+            {
+                // ダウンロード履歴のフィルタリング
+                hc.AttributeUrlList = mSettings.OverlappedUrlFilter.Filter(hc.AttributeUrlList);
+                // 画像枚数更新
+                images = hc.AttributeUrlList.Count;
                 string dir = InitSaveDirectory(hc);
                 for (int i = 0; i < images; i++)
                 {
