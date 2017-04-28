@@ -1423,12 +1423,12 @@
             0});
             this.numericUpDown15.Location = new System.Drawing.Point(88, 18);
             this.numericUpDown15.Maximum = new decimal(new int[] {
-            1000,
+            65536,
             0,
             0,
             0});
             this.numericUpDown15.Minimum = new decimal(new int[] {
-            250,
+            500,
             0,
             0,
             0});
@@ -1436,7 +1436,7 @@
             this.numericUpDown15.Size = new System.Drawing.Size(48, 21);
             this.numericUpDown15.TabIndex = 3;
             this.numericUpDown15.Value = new decimal(new int[] {
-            250,
+            500,
             0,
             0,
             0});
