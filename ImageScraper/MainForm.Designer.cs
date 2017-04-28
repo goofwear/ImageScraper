@@ -38,7 +38,7 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.listViewEx1 = new ImageScraper.ListViewEx();
+            this.listViewEx1 = new Utilities.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -438,14 +438,14 @@
             // EnabledLoggerForm_ToolStripMenuItem
             // 
             this.EnabledLoggerForm_ToolStripMenuItem.Name = "EnabledLoggerForm_ToolStripMenuItem";
-            this.EnabledLoggerForm_ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.EnabledLoggerForm_ToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.EnabledLoggerForm_ToolStripMenuItem.Text = "ログウィンドウ";
             this.EnabledLoggerForm_ToolStripMenuItem.Click += new System.EventHandler(this.EnabledLoggerForm_ToolStripMenuItem_Click);
             // 
             // Plugins_ToolStripMenuItem
             // 
             this.Plugins_ToolStripMenuItem.Name = "Plugins_ToolStripMenuItem";
-            this.Plugins_ToolStripMenuItem.Size = new System.Drawing.Size(77, 19);
+            this.Plugins_ToolStripMenuItem.Size = new System.Drawing.Size(78, 19);
             this.Plugins_ToolStripMenuItem.Text = "プラグイン(&P)";
             // 
             // tabPage7
@@ -1791,7 +1791,7 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.ToolStripMenuItem Help_ToolStripMenuItem;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private ListViewEx listViewEx1;
+        private Utilities.ListViewEx listViewEx1;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.GroupBox groupBox1;

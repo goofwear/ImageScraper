@@ -188,9 +188,6 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Downloader.cs" />
-    <Compile Include="ListViewEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="PluginLoader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
