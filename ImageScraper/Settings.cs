@@ -9,6 +9,7 @@ namespace ImageScraper
         public List<string> ExKeyTitleList;
         public List<string> KeyUrlList;
         public List<string> ExKeyUrlList;
+        public bool LoggerFormEnabled;
         public Utilities.Property[] Properties;
 
         public FormSettings()
@@ -18,6 +19,7 @@ namespace ImageScraper
             ExKeyTitleList = new List<string>();
             KeyUrlList = new List<string>();
             ExKeyUrlList = new List<string>();
+            LoggerFormEnabled = false;
             Properties = new Utilities.Property[0];
         }
     }

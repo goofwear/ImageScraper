@@ -339,6 +339,7 @@ namespace ImageScraper
             try
             {
                 FormSettings settings = new FormSettings();
+                settings.LoggerFormEnabled = LoggerFormEnabled_ToolStripMenuItem.Checked;
                 settings.Properties = Utilities.ControlProperty.Get(this.Controls);
                 for (int i = comboBox1.Items.Count - 1; i >= 0; i--)
                     settings.UrlList.Insert(0, comboBox1.Items[i].ToString());
@@ -412,6 +413,7 @@ namespace ImageScraper
                         if (settings.ExKeyUrlList != null)
                             comboBox4.Items.AddRange(settings.ExKeyUrlList.ToArray());
                         Utilities.ControlProperty.Set(this.Controls, settings.Properties);
+                        LoggerFormEnabled_ToolStripMenuItem.Checked = settings.LoggerFormEnabled;
                         mLogger.Write("MainForm", "フォームの設定を読み込みました");
                     }
                 }

@@ -26,6 +26,8 @@ namespace ImageScraper
             mLogger = new Utilities.Logger();
             this.LoadPlugins();
             this.LoadSettings();
+            if (LoggerFormEnabled_ToolStripMenuItem.Checked)
+                mLogger.ShowForm(LoggerFormClosingEventHandler, new Point(this.Location.X + this.Width, this.Location.Y));
             groupBox8.Enabled = checkBox12.Checked;
             groupBox11.Enabled = checkBox11.Checked;
             this.FormClosing += this.Form1_FormClosing;
