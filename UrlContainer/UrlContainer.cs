@@ -18,6 +18,7 @@ namespace UrlContainer
         UrlParser Parse;
 
         public static int RequestSpan = 500;
+        public static WebProxy Proxy = null;
 
         public string RawUrl
         {
@@ -82,6 +83,8 @@ namespace UrlContainer
                 req.Timeout = 10 * 1000; // 10 sec timeout
                 req.CookieContainer = new CookieContainer();
                 req.CookieContainer.Add(cc.GetCookies(new Uri(this.DownloadUrl)));
+                if (Proxy != null)
+                    req.Proxy = Proxy;
 
                 try
                 {
@@ -146,6 +149,8 @@ namespace UrlContainer
                 req.Timeout = 10 * 1000; // 10 sec timeout
                 req.CookieContainer = new CookieContainer();
                 req.CookieContainer.Add(cc.GetCookies(new Uri(this.DownloadUrl)));
+                if (Proxy != null)
+                    req.Proxy = Proxy;
 
                 try
                 {
@@ -186,6 +191,8 @@ namespace UrlContainer
             req.Timeout = 10 * 1000; // 10 sec timeout
             req.CookieContainer = new CookieContainer();
             req.CookieContainer.Add(cc.GetCookies(new Uri(this.Url)));
+            if (Proxy != null)
+                req.Proxy = Proxy;
 
             try
             {

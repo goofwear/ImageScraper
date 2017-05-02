@@ -127,7 +127,7 @@ namespace ImageScraper.Plugins.SeigaParser
         private void OnWriteLog(string module, string desc)
         {
             if (mLogger != null)
-                mLogger.WriteInvoke(module, desc);
+                mLogger.Write(module, desc);
         }
 
         internal void SetAccount(string id, string pass)

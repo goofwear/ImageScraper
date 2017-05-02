@@ -39,14 +39,6 @@ namespace ImageScraper.Utilities
             var log = new Log(module, desc);
             mLogList.Add(log);
             if (mLoggerForm != null && !mLoggerForm.IsDisposed)
-                mLoggerForm.Write(log);
-        }
-
-        public void WriteInvoke(string module, string desc)
-        {
-            var log = new Log(module, desc);
-            mLogList.Add(log);
-            if (mLoggerForm != null && !mLoggerForm.IsDisposed)
                 mLoggerForm.Invoke(new Action(() => mLoggerForm.Write(log)));
         }
     }

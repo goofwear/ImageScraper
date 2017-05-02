@@ -2,10 +2,13 @@
 using System.IO;
 using System.Text;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
+using System.Net;
+using System.Net.Http;
 
 namespace ImageScraper
 {
@@ -86,6 +89,17 @@ namespace ImageScraper
             // 接続設定
             UrlContainer.UrlContainer.RequestSpan = (int)numericUpDown15.Value;
             HtmlContainer.HtmlContainer.RequestSpan = (int)numericUpDown15.Value;
+            if (checkBox25.Checked)
+            {
+                var proxy = new WebProxy(textBox1.Text, int.Parse(textBox3.Text));
+                UrlContainer.UrlContainer.Proxy = proxy;
+                HtmlContainer.HtmlContainer.Proxy = proxy;
+            }
+            else
+            {
+                UrlContainer.UrlContainer.Proxy = null;
+                HtmlContainer.HtmlContainer.Proxy = null;
+            }
 
             // ロガー
             dc.Logger = mLogger;
@@ -115,50 +129,37 @@ namespace ImageScraper
             UpdateComboBox(comboBox3);
             UpdateComboBox(comboBox4);
             UpdateComboBox(comboBox5);
-            this.ReverseControls();
+            ReverseControls();
             toolStripStatusLabel1.Text = "ダウンロード中...";
         }
 
         private void FinalizeForm()
         {
-            this.ReverseControls();
+            ReverseControls();
             toolStripStatusLabel1.Text = "完了";
         }
 
         async void RunDownloader()
         {
-            while (true)
+            // 入力値のチェック
+            SwitchControls(false);
+            bool result = await this.IsValidInputs();
+            SwitchControls(true);
+            if (!result)
+                return;
+
+            try
             {
                 // 設定値の反映
-                if (!this.IsValidInputs())
-                    break;
                 this.InitializeSettings(mDownloadSettings);
+                Directory.CreateDirectory(mDownloadSettings.RootDirectory);
+                for (int i = 0; i < mPlugins.Length; i++)
+                    mPlugins[i].PreProcess();
+                mDownloader = new Downloader(mDownloadSettings, mPlugins, this);
+                InitializeForm();
 
-                try
-                {
-                    Directory.CreateDirectory(mDownloadSettings.RootDirectory);
-                    for (int i = 0; i < mPlugins.Length; i++)
-                        mPlugins[i].PreProcess();
-                    mDownloader = new Downloader(mDownloadSettings, mPlugins, this);
-                    InitializeForm();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "エラー",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
-                }
-
-                try
-                {
-                    // タスクの実行
-                    await mDownloader.Start();
-                }
-                catch (ApplicationException ex)
-                {
-                    MessageBox.Show(ex.Message, "エラー",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                // タスクの実行
+                await mDownloader.Start();
 
                 // 後処理
                 FinalizeForm();
@@ -166,9 +167,15 @@ namespace ImageScraper
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 for (int i = 0; i < mPlugins.Length; i++)
                     mPlugins[i].PostProcess();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "エラー",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
                 mDownloader = null;
-
-                break;
             }
         }
 
@@ -183,20 +190,71 @@ namespace ImageScraper
             return num;
         }
 
-        private bool IsValidInputs()
+        private async Task<bool> IsValidProxy(string host, int port)
+        {
+            try
+            {
+                var sw = new System.Diagnostics.Stopwatch();
+                var ch = new HttpClientHandler();
+                ch.Proxy = new WebProxy(host, port);
+                ch.UseProxy = true;
+                var client = new HttpClient(ch);
+                client.Timeout = TimeSpan.FromSeconds(20.0);
+                sw.Start();
+                var responseString = await client.GetStringAsync(new Uri("http://google.com/"));
+                sw.Stop();
+                if (!string.IsNullOrEmpty(responseString))
+                {
+                    string mes = String.Format("有効なプロキシサーバーです > http://google.com/ {0} s", sw.Elapsed.TotalSeconds);
+                    mLogger.Write("MainForm", mes);
+                    return true;
+                }
+                else
+                {
+                    mLogger.Write("MainForm", "無効なプロキシサーバーです");
+                    return false;
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                mLogger.Write("MainForm", "プロキシサーバーを用いた接続がタイムアウトしました");
+                return false;
+            }
+            catch
+            {
+                mLogger.Write("MainForm", "無効なプロキシサーバーです");
+                return false;
+            }
+        }
+
+        private async Task<bool> IsValidInputs()
         {
             string errorMessage = "";
             Regex urlEx = new Regex(@"^(https?|ftp)://[\w/:%#\$&\?\(\)~\.=\+\-]+$", RegexOptions.IgnoreCase);
             if (!urlEx.Match(comboBox1.Text).Success)
-                errorMessage += "URLを入力してください\n";
+                errorMessage += "URL を正しく入力してください\n";
 
             Regex dirEx = new Regex(@"[a-zA-Z]:\\.*");
             if (!dirEx.Match(textBox5.Text).Success)
-                errorMessage += "保存先を入力してください\n";
+                errorMessage += "保存先を正しく入力してください\n";
 
-            if ((checkBox21.Checked && comboBox2.Text.Length == 0) || (checkBox22.Checked && comboBox5.Text.Length == 0) ||
-                (checkBox23.Checked && comboBox4.Text.Length == 0) || (checkBox24.Checked && comboBox3.Text.Length == 0))
+            if ((checkBox21.Checked && comboBox2.Text.Length == 0) || 
+                (checkBox22.Checked && comboBox5.Text.Length == 0) ||
+                (checkBox23.Checked && comboBox4.Text.Length == 0) ||
+                (checkBox24.Checked && comboBox3.Text.Length == 0))
                 errorMessage += "キーワードを入力してください\n";
+
+            if (checkBox25.Checked)
+            {
+                int port = 0;
+                if (!int.TryParse(textBox3.Text, out port))
+                {
+                    mLogger.Write("MainForm", "ポートを正しく入力してください");
+                    errorMessage += "プロキシサーバーを正しく入力してください\n";
+                }
+                else if (!await IsValidProxy(textBox1.Text, port))
+                    errorMessage += "プロキシサーバーを正しく入力してください\n";
+            }
 
             if (errorMessage.Length != 0)
             {
@@ -222,6 +280,20 @@ namespace ImageScraper
                 format.Add("gif");
 
             return format.ToArray();
+        }
+
+        private void SwitchControls(bool enabled)
+        {
+            button1.Enabled = enabled;
+            comboBox1.Enabled = enabled;
+            tabPage1.Enabled = enabled;
+            tabPage2.Enabled = enabled;
+            tabPage3.Enabled = enabled;
+            tabPage7.Enabled = enabled;
+            foreach (ToolStripMenuItem ddi in View_ToolStripMenuItem.DropDownItems)
+                ddi.Enabled = enabled;
+            foreach (ToolStripMenuItem ddi in Plugins_ToolStripMenuItem.DropDownItems)
+                ddi.Enabled = enabled;
         }
 
         private void ReverseControls()

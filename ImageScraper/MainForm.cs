@@ -30,6 +30,7 @@ namespace ImageScraper
                 mLogger.ShowForm(LoggerFormClosingEventHandler, new Point(this.Location.X + this.Width, this.Location.Y));
             groupBox8.Enabled = checkBox12.Checked;
             groupBox11.Enabled = checkBox11.Checked;
+            groupBox13.Enabled = checkBox25.Checked;
             this.FormClosing += this.Form1_FormClosing;
         }
 
@@ -234,6 +235,11 @@ namespace ImageScraper
             for (int i = 0; i < listViewEx1.Items.Count; i++)
                 listViewEx1.Items[i].Selected = true;
             listViewEx1.EndUpdate();
+        }
+
+        private void checkBox25_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBox13.Enabled = checkBox25.Checked;
         }
     }
 }

@@ -174,7 +174,7 @@ namespace ImageScraper
             var imageSize = (int)(uc.CacheSize / 1000);
             if (mSettings.ImageSizeFilter.Filter(imageSize))
             {
-                mSettings.Logger.WriteInvoke("Downloader", "ファイルサイズフィルタが適用されました > " + uc.Url);
+                mSettings.Logger.Write("Downloader", "ファイルサイズフィルタが適用されました > " + uc.Url);
                 return false;
             }
 
@@ -183,13 +183,13 @@ namespace ImageScraper
                 // 解像度によるフィルタリング
                 if (mSettings.ResolutionFilter.Filter(cachedImage))
                 {
-                    mSettings.Logger.WriteInvoke("Downloader", "解像度フィルタが適用されました > " + uc.Url);
+                    mSettings.Logger.Write("Downloader", "解像度フィルタが適用されました > " + uc.Url);
                     return false;
                 }
                 // カラーフォーマットによるフィルタリング
                 if (mSettings.ColorFilter.Filter(cachedImage))
                 {
-                    mSettings.Logger.WriteInvoke("Downloader", "カラーフィルタが適用されました > " + uc.Url);
+                    mSettings.Logger.Write("Downloader", "カラーフィルタが適用されました > " + uc.Url);
                     return false;
                 }
             }
@@ -198,7 +198,7 @@ namespace ImageScraper
             uc.SaveCache(info.ImagePath);
 
             // ダウンロード状況更新
-            mSettings.Logger.WriteInvoke("Downloader", uc.Url + " を取得しました");
+            mSettings.Logger.Write("Downloader", uc.Url + " を取得しました");
             mTempStatus.Size += imageSize;
             mSumStatus.Size += imageSize;
             mTempStatus.Images++;
@@ -217,7 +217,7 @@ namespace ImageScraper
             if (mSettings.ImagesPerPageFilter.Filter(images))
             {
                 string mes = String.Format("{0} 枚 ({1})", images, hc.UrlContainer.Url);
-                mSettings.Logger.WriteInvoke("Downloader", "画像枚数フィルタが適用されました > " + mes);
+                mSettings.Logger.Write("Downloader", "画像枚数フィルタが適用されました > " + mes);
             }
             else
             {
@@ -292,17 +292,17 @@ namespace ImageScraper
             // Htmlを取得しないで済むURLのフィルタリング
             if (mSettings.UrlFilter.Filter(uc.Url))
             {
-                mSettings.Logger.WriteInvoke("Downloader", "URLフィルタが適用されました > " + uc.Url);
+                mSettings.Logger.Write("Downloader", "URLフィルタが適用されました > " + uc.Url);
                 return hc;
             }
             // Htmlを取得する必要があるタイトルのフィルタリング
             if (mSettings.TitleFilter.Filter(hc.Title))
             {
-                mSettings.Logger.WriteInvoke("Downloader", "タイトルフィルタが適用されました > " + hc.Title);
+                mSettings.Logger.Write("Downloader", "タイトルフィルタが適用されました > " + hc.Title);
                 return hc;
             }
 
-            mSettings.Logger.WriteInvoke("Downloader", uc.Url + " を取得しました");   
+            mSettings.Logger.Write("Downloader", uc.Url + " を取得しました");   
             if (plugin != null)
                 hc.AttributeUrlList = plugin.GetImageUrlList(uc, mSettings.Formats);
             else

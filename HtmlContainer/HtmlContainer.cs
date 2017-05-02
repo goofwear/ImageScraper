@@ -18,6 +18,7 @@ namespace HtmlContainer
         public CookieContainer Cookies;
 
         public static int RequestSpan = 500;
+        public static WebProxy Proxy = null;
 
         string _html = null;
         string _title = null;
@@ -126,6 +127,8 @@ namespace HtmlContainer
             req.UserAgent = "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko";
             req.Timeout = 10 * 1000; // 10 sec timeout
             req.CookieContainer = new CookieContainer();
+            if (Proxy != null)
+                req.Proxy = Proxy;
 
             if (Cookies != null)
                 req.CookieContainer.Add(Cookies.GetCookies(new Uri(UrlContainer.Url)));

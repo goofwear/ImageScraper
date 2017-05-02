@@ -38,7 +38,8 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.listViewEx1 = new Utilities.ListViewEx();
+            this.groupBox13 = new System.Windows.Forms.GroupBox();
+            this.listViewEx1 = new ImageScraper.Utilities.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -124,7 +125,6 @@
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.numericUpDown9 = new System.Windows.Forms.NumericUpDown();
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
@@ -136,8 +136,13 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.checkBox25 = new System.Windows.Forms.CheckBox();
+            this.label18 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textBox3 = new System.Windows.Forms.TextBox();
             this.numericUpDown15 = new System.Windows.Forms.NumericUpDown();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.numericUpDown14 = new System.Windows.Forms.NumericUpDown();
@@ -157,6 +162,7 @@
             this.label15 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            this.groupBox13.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tabPage7.SuspendLayout();
@@ -279,6 +285,18 @@
             this.groupBox4.TabIndex = 5;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "情報ウィンドウ";
+            // 
+            // groupBox13
+            // 
+            this.groupBox13.Controls.Add(this.label3);
+            this.groupBox13.Controls.Add(this.textBox1);
+            this.groupBox13.Controls.Add(this.label18);
+            this.groupBox13.Controls.Add(this.textBox3);
+            this.groupBox13.Location = new System.Drawing.Point(6, 71);
+            this.groupBox13.Name = "groupBox13";
+            this.groupBox13.Size = new System.Drawing.Size(278, 90);
+            this.groupBox13.TabIndex = 19;
+            this.groupBox13.TabStop = false;
             // 
             // listViewEx1
             // 
@@ -438,7 +456,7 @@
             // LoggerFormEnabled_ToolStripMenuItem
             // 
             this.LoggerFormEnabled_ToolStripMenuItem.Name = "LoggerFormEnabled_ToolStripMenuItem";
-            this.LoggerFormEnabled_ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.LoggerFormEnabled_ToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.LoggerFormEnabled_ToolStripMenuItem.Text = "ログウィンドウ";
             this.LoggerFormEnabled_ToolStripMenuItem.Click += new System.EventHandler(this.LoggerFormEnabled_ToolStripMenuItem_Click);
             // 
@@ -1226,7 +1244,6 @@
             this.groupBox6.Controls.Add(this.radioButton2);
             this.groupBox6.Controls.Add(this.radioButton1);
             this.groupBox6.Controls.Add(this.textBox2);
-            this.groupBox6.Controls.Add(this.label8);
             this.groupBox6.Controls.Add(this.numericUpDown9);
             this.groupBox6.Controls.Add(this.label17);
             this.groupBox6.Controls.Add(this.label16);
@@ -1268,18 +1285,9 @@
             this.textBox2.TabIndex = 2;
             this.textBox2.Text = "Image";
             // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(23, 73);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(16, 14);
-            this.label8.TabIndex = 3;
-            this.label8.Text = "+";
-            // 
             // numericUpDown9
             // 
-            this.numericUpDown9.Location = new System.Drawing.Point(102, 71);
+            this.numericUpDown9.Location = new System.Drawing.Point(93, 71);
             this.numericUpDown9.Maximum = new decimal(new int[] {
             10,
             0,
@@ -1302,7 +1310,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(156, 73);
+            this.label17.Location = new System.Drawing.Point(147, 73);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(18, 14);
             this.label17.TabIndex = 6;
@@ -1311,11 +1319,11 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(45, 73);
+            this.label16.Location = new System.Drawing.Point(23, 73);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(51, 14);
+            this.label16.Size = new System.Drawing.Size(64, 14);
             this.label16.TabIndex = 4;
-            this.label16.Text = "自動連番";
+            this.label16.Text = "+ 自動連番";
             // 
             // button3
             // 
@@ -1395,6 +1403,8 @@
             // 
             // groupBox10
             // 
+            this.groupBox10.Controls.Add(this.groupBox13);
+            this.groupBox10.Controls.Add(this.checkBox25);
             this.groupBox10.Controls.Add(this.label2);
             this.groupBox10.Controls.Add(this.numericUpDown15);
             this.groupBox10.Controls.Add(this.label10);
@@ -1405,14 +1415,50 @@
             this.groupBox10.TabStop = false;
             this.groupBox10.Text = "接続設定";
             // 
+            // checkBox25
+            // 
+            this.checkBox25.AutoSize = true;
+            this.checkBox25.Location = new System.Drawing.Point(6, 47);
+            this.checkBox25.Name = "checkBox25";
+            this.checkBox25.Size = new System.Drawing.Size(107, 18);
+            this.checkBox25.TabIndex = 19;
+            this.checkBox25.Text = "プロキシを使用する";
+            this.checkBox25.UseVisualStyleBackColor = true;
+            this.checkBox25.CheckedChanged += new System.EventHandler(this.checkBox25_CheckedChanged);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(173, 23);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(42, 14);
+            this.label18.TabIndex = 3;
+            this.label18.Text = "ポート :";
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(142, 20);
+            this.label2.Location = new System.Drawing.Point(142, 22);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(31, 14);
             this.label2.TabIndex = 18;
             this.label2.Text = "ミリ秒";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 23);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(48, 14);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "アドレス :";
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(221, 20);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(51, 21);
+            this.textBox3.TabIndex = 1;
             // 
             // numericUpDown15
             // 
@@ -1421,7 +1467,7 @@
             0,
             0,
             0});
-            this.numericUpDown15.Location = new System.Drawing.Point(88, 18);
+            this.numericUpDown15.Location = new System.Drawing.Point(88, 20);
             this.numericUpDown15.Maximum = new decimal(new int[] {
             65536,
             0,
@@ -1441,10 +1487,17 @@
             0,
             0});
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(60, 20);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(107, 21);
+            this.textBox1.TabIndex = 0;
+            // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 20);
+            this.label10.Location = new System.Drawing.Point(6, 22);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(76, 14);
             this.label10.TabIndex = 2;
@@ -1719,6 +1772,8 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.groupBox4.ResumeLayout(false);
+            this.groupBox13.ResumeLayout(false);
+            this.groupBox13.PerformLayout();
             this.contextMenuStrip1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -1849,7 +1904,6 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.NumericUpDown numericUpDown9;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.GroupBox groupBox3;
@@ -1907,6 +1961,12 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStripMenuItem SelectAll_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.GroupBox groupBox13;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.CheckBox checkBox25;
     }
 }
 
