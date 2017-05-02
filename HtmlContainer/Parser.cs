@@ -9,12 +9,12 @@
     ///
     /// Written by Jeff Heaton (http://www.jeffheaton.com)
     /// </summary>
-    public class Parse : AttributeList
+    public class Parser : AttributeList
     {
         /// <summary>
         /// The source text that is being parsed.
         /// </summary>
-        private string m_source;
+        public string Source { get; set; }
 
         /// <summary>
         /// The current position inside of the text that
@@ -25,17 +25,17 @@
         /// <summary>
         /// The most recently parsed attribute delimiter.
         /// </summary>
-        private char m_parseDelim;
+        public char ParseDelim { get; set; }
 
         /// <summary>
         /// This most recently parsed attribute name.
         /// </summary>
-        private string m_parseName;
+        public string ParseName { get; set; }
 
         /// <summary>
         /// The most recently parsed attribute value.
         /// </summary>
-        private string m_parseValue;
+        public string ParseValue { get; set; }
 
         /// <summary>
         /// The most recently parsed tag.
@@ -73,7 +73,7 @@
         /// reached.</returns>
         public bool Eof()
         {
-            return (m_idx >= m_source.Length);
+            return (m_idx >= Source.Length);
         }
 
         /// <summary>
@@ -85,11 +85,9 @@
             // get attribute name
             while (!Eof())
             {
-                if (IsWhiteSpace(GetCurrentChar()) ||
-                  (GetCurrentChar() == '=') ||
-                  (GetCurrentChar() == '>'))
+                if (IsWhiteSpace(GetCurrentChar()) || (GetCurrentChar() == '=') || (GetCurrentChar() == '>'))
                     break;
-                m_parseName += GetCurrentChar();
+                ParseName += GetCurrentChar();
                 m_idx++;
             }
 
@@ -101,32 +99,29 @@
         /// </summary>
         public void ParseAttributeValue()
         {
-            if (m_parseDelim != 0)
+            if (ParseDelim != 0)
                 return;
 
             if (GetCurrentChar() == '=')
             {
                 m_idx++;
                 EatWhiteSpace();
-                if ((GetCurrentChar() == '\'') ||
-                  (GetCurrentChar() == '\"'))
+                if ((GetCurrentChar() == '\'') || (GetCurrentChar() == '\"'))
                 {
-                    m_parseDelim = GetCurrentChar();
+                    ParseDelim = GetCurrentChar();
                     m_idx++;
-                    while (GetCurrentChar() != m_parseDelim)
+                    while (GetCurrentChar() != ParseDelim)
                     {
-                        m_parseValue += GetCurrentChar();
+                        ParseValue += GetCurrentChar();
                         m_idx++;
                     }
                     m_idx++;
                 }
                 else
                 {
-                    while (!Eof() &&
-                      !IsWhiteSpace(GetCurrentChar()) &&
-                      (GetCurrentChar() != '>'))
+                    while (!Eof() && !IsWhiteSpace(GetCurrentChar()) && (GetCurrentChar() != '>'))
                     {
-                        m_parseValue += GetCurrentChar();
+                        ParseValue += GetCurrentChar();
                         m_idx++;
                     }
                 }
@@ -139,9 +134,7 @@
         /// </summary>
         public void AddAttribute()
         {
-            Attribute a = new Attribute(m_parseName,
-              m_parseValue, m_parseDelim);
-            Add(a);
+            Add(new Attribute(ParseName, ParseValue, ParseDelim));
         }
 
         /// <summary>
@@ -161,8 +154,8 @@
         /// <returns>The character that was retrieved.</returns>
         public char GetCurrentChar(int peek)
         {
-            if ((m_idx + peek) < m_source.Length)
-                return m_source[m_idx + peek];
+            if ((m_idx + peek) < Source.Length)
+                return Source[m_idx + peek];
             else
                 return (char)0;
         }
@@ -173,7 +166,7 @@
         /// <returns>The next character</returns>
         public char AdvanceCurrentChar()
         {
-            return m_source[m_idx++];
+            return Source[m_idx++];
         }
 
         /// <summary>
@@ -182,42 +175,6 @@
         public void Advance()
         {
             m_idx++;
-        }
-
-        /// <summary>
-        /// The last attribute name that was encountered.
-        /// <summary>
-        public string ParseName
-        {
-            get { return m_parseName; }
-            set { m_parseName = value; }
-        }
-
-        /// <summary>
-        /// The last attribute value that was encountered.
-        /// <summary>
-        public string ParseValue
-        {
-            get { return m_parseValue; }
-            set { m_parseValue = value; }
-        }
-
-        /// <summary>
-        /// The last attribute delimeter that was encountered.
-        /// <summary>
-        public char ParseDelim
-        {
-            get { return m_parseDelim; }
-            set { m_parseDelim = value; }
-        }
-
-        /// <summary>
-        /// The text that is to be parsed.
-        /// <summary>
-        public string Source
-        {
-            get { return m_source; }
-            set { m_source = value; }
         }
     }
 }

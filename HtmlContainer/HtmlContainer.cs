@@ -27,7 +27,7 @@ namespace HtmlContainer
             get
             {
                 if (_html == null)
-                    _html = GetWebPage();
+                    _html = Download();
 
                 return _html;
             }
@@ -58,7 +58,7 @@ namespace HtmlContainer
             this.AttributeUrlList = new List<UrlContainer.UrlContainer>();
         }
 
-        private string HtmlDecode(HttpWebResponse res)
+        private string Decode(HttpWebResponse res)
         {
             Encoding enc = Encoding.UTF8;
 
@@ -111,7 +111,7 @@ namespace HtmlContainer
             return enc.GetString(rawHtml);
         }
 
-        public string GetWebPage()
+        private string Download()
         {
             Task task = new Task<bool>(() =>
             {
@@ -137,7 +137,7 @@ namespace HtmlContainer
                 task.Start();
                 // サーバーからの応答を受信するためのHttpWebResponseを取得
                 HttpWebResponse res = (HttpWebResponse)req.GetResponse();
-                html = HtmlDecode(res);
+                html = Decode(res);
                 Cookies.Add(req.CookieContainer.GetCookies(new Uri(UrlContainer.Url)));
                 task.Wait();
             }

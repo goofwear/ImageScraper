@@ -6,7 +6,7 @@ namespace HtmlContainer
     /// Summary description for ParseHTML.
     /// </summary>
 
-    public class HtmlParser : Parse
+    public class HtmlParser : Parser
     {
         public AttributeList GetTag()
         {
@@ -60,16 +60,11 @@ namespace HtmlContainer
             m_tag = "";
             Clear();
 
-            // Is it a comment?
-            if ((GetCurrentChar() == '!') &&
-              (GetCurrentChar(1) == '-') &&
-              (GetCurrentChar(2) == '-'))
+            if ((GetCurrentChar() == '!') && (GetCurrentChar(1) == '-') && (GetCurrentChar(2) == '-'))
             {
                 while (!Eof())
                 {
-                    if ((GetCurrentChar() == '-') &&
-                      (GetCurrentChar(1) == '-') &&
-                      (GetCurrentChar(2) == '>'))
+                    if ((GetCurrentChar() == '-') && (GetCurrentChar(1) == '-') && (GetCurrentChar(2) == '>'))
                         break;
                     if (GetCurrentChar() != '\r')
                         m_tag += GetCurrentChar();
@@ -86,8 +81,7 @@ namespace HtmlContainer
             // Find the tag name
             while (!Eof())
             {
-                if (IsWhiteSpace(GetCurrentChar()) ||
-                                 (GetCurrentChar() == '>'))
+                if (IsWhiteSpace(GetCurrentChar()) || (GetCurrentChar() == '>'))
                     break;
                 m_tag += GetCurrentChar();
                 Advance();

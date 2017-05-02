@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Collections;
+﻿using System.Collections.Generic;
 
 namespace HtmlContainer
 {
@@ -19,14 +17,15 @@ namespace HtmlContainer
         /// An internally used Vector.  This vector contains
         /// the entire list of attributes.
         /// </summary>
-        protected ArrayList m_list;
+        protected List<Attribute> m_list;
+
         /// <summary>
         /// Make an exact copy of this object using the cloneable
         /// interface.
         /// </summary>
         /// <returns>A new object that is a clone of the specified
         /// object.</returns>
-        public override Object Clone()
+        public override object Clone()
         {
             AttributeList rtn = new AttributeList();
 
@@ -41,7 +40,7 @@ namespace HtmlContainer
         /// </summary>
         public AttributeList() : base("", "")
         {
-            m_list = new ArrayList();
+            m_list = new List<Attribute>();
         }
 
         /// <summary>
@@ -94,10 +93,7 @@ namespace HtmlContainer
             Attribute a = this[name];
 
             if (a == null)
-            {
-                a = new Attribute(name, value);
-                Add(a);
-            }
+                Add(new Attribute(name, value));
             else
                 a.Value = value;
         }
@@ -113,20 +109,17 @@ namespace HtmlContainer
         /// <summary>
         /// A list of the attributes in this AttributeList
         /// </summary>
-        public ArrayList List
+        public List<Attribute> List
         {
             get { return m_list; }
         }
 
         public bool Contains(string attr, string value)
         {
-            int i = 0;
-
-            while (this[i] != null)
+            foreach (var elem in m_list)
             {
-                if (this[i].Name == attr && this[i].Value == value)
+                if (elem.Name == attr && elem.Value == value)
                     return true;
-                i++;
             }
 
             return false;
@@ -140,7 +133,7 @@ namespace HtmlContainer
             get
             {
                 if (index < m_list.Count)
-                    return (Attribute)m_list[index];
+                    return m_list[index];
                 else
                     return null;
             }
@@ -153,13 +146,10 @@ namespace HtmlContainer
         {
             get
             {
-                int i = 0;
-
-                while (this[i] != null)
+                foreach (var attr in m_list)
                 {
-                    if (this[i].Name.ToLower().Equals((index.ToLower())))
-                        return this[i];
-                    i++;
+                    if (attr.Name.ToLower().Equals((index.ToLower())))
+                        return attr;
                 }
 
                 return null;
