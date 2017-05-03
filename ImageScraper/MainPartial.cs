@@ -248,10 +248,7 @@ namespace ImageScraper
             {
                 int port = 0;
                 if (!int.TryParse(textBox3.Text, out port))
-                {
-                    mLogger.Write("MainForm", "ポートを正しく入力してください");
                     errorMessage += "プロキシサーバーを正しく入力してください\n";
-                }
                 else if (!await IsValidProxy(textBox1.Text, port))
                     errorMessage += "プロキシサーバーを正しく入力してください\n";
             }
@@ -431,7 +428,7 @@ namespace ImageScraper
             }
             catch
             {
-                mLogger.Write("MainForm", "フォームの設定の保存に失敗しました");
+                mLogger.Write("MainForm", "フォームの設定を正常に保存できませんでした");
             }
 
             // プラグイン設定の保存
@@ -444,7 +441,7 @@ namespace ImageScraper
                 }
                 catch
                 {
-                    mLogger.Write(plugin.Name, "プラグインの設定の保存に失敗しました");
+                    mLogger.Write(plugin.Name, "プラグインの設定を正常に保存できませんでした");
                 }
             }
 
@@ -459,7 +456,7 @@ namespace ImageScraper
             }
             catch
             {
-                mLogger.Write("MainForm", "履歴の保存に失敗しました");
+                mLogger.Write("MainForm", "履歴を正常に保存できませんでした");
             }
         }
 
@@ -491,7 +488,7 @@ namespace ImageScraper
                 }
                 catch
                 {
-                    mLogger.Write("MainForm", "フォームの設定の読み込みに失敗しました");
+                    mLogger.Write("MainForm", "フォームの設定を正常に読み込めませんでした");
                 }
             }
 
@@ -505,7 +502,7 @@ namespace ImageScraper
                 }
                 catch
                 {
-                    mLogger.Write(plugin.Name, "プラグインの設定の読み込みに失敗しました");
+                    mLogger.Write(plugin.Name, "プラグインの設定を正常に読み込めませんでした");
                 }
             }
 
