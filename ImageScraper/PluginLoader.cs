@@ -88,6 +88,7 @@ namespace ImageScraper
                     {
                         failedPlugins.Add(Path.GetFileName(dll));
                     }
+                    catch (ReflectionTypeLoadException) { }
                 }
 
                 if (failedPlugins.Count > 0)

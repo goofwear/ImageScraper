@@ -40,7 +40,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="UrlContainer">
-      <HintPath>..\UrlContainer\bin\Release\UrlContainer.dll</HintPath>
+      <HintPath>..\..\UrlContainer\bin\Release\UrlContainer.dll</HintPath>
     </Reference>
     <Reference Include="Utilities">
       <HintPath>..\..\ImageScraper.Utilities\bin\Release\Utilities.dll</HintPath>
