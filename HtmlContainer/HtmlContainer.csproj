@@ -51,7 +51,6 @@
     <Reference Include="System.Xml" />
     <Reference Include="UrlContainer">
       <HintPath>..\UrlContainer\bin\Release\UrlContainer.dll</HintPath>
-      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

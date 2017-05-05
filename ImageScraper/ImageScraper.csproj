@@ -126,9 +126,9 @@
     </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="HtmlContainer">
+    <Reference Include="HtmlContainer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\HtmlContainer\bin\Release\HtmlContainer.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="PluginInterface, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -149,11 +149,12 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="UrlContainer">
+    <Reference Include="UrlContainer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\UrlContainer\bin\Release\UrlContainer.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Utilities">
+    <Reference Include="Utilities, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ImageScraper.Utilities\bin\Release\Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
