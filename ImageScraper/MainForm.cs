@@ -7,7 +7,7 @@ namespace ImageScraper
 {
     public partial class MainForm : Form
     {
-        const string mVersionString = "2.6";
+        const string mVersionString = "2.7";
         private Downloader mDownloader;
         private Utilities.Logger mLogger;
         private Plugins.PluginInterface[] mPlugins;
