@@ -5,10 +5,13 @@ namespace ImageScraper.Utilities
 { 
     public partial class LoggerForm : Form
     {
-        public LoggerForm(List<Log> logList = null)
+        Logger mParent;
+
+        public LoggerForm(Logger parent, List<Log> logList = null)
         {
             InitializeComponent();
 
+            mParent = parent;
             if (logList != null)
             {
                 listView1.BeginUpdate();
@@ -24,6 +27,12 @@ namespace ImageScraper.Utilities
             listView1.Items.Add(new ListViewItem(log.ToArray()));
             listView1.Items[listView1.Items.Count - 1].EnsureVisible();
             listView1.EndUpdate();
+        }
+
+        private void Clear_ToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            mParent.Clear();
+            listView1.Items.Clear();
         }
     }
 }

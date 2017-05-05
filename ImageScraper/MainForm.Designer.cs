@@ -38,11 +38,6 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.groupBox13 = new System.Windows.Forms.GroupBox();
-            this.listViewEx1 = new ImageScraper.Utilities.ListViewEx();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.OpenUrl_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenDirectory_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,6 +49,11 @@
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.DeleteImage_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox13 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.textBox3 = new System.Windows.Forms.TextBox();
             this.Help_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.About_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -137,12 +137,8 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.checkBox25 = new System.Windows.Forms.CheckBox();
-            this.label18 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
             this.numericUpDown15 = new System.Windows.Forms.NumericUpDown();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.numericUpDown14 = new System.Windows.Forms.NumericUpDown();
@@ -160,10 +156,14 @@
             this.label11 = new System.Windows.Forms.Label();
             this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
             this.label15 = new System.Windows.Forms.Label();
+            this.listViewEx1 = new ImageScraper.Utilities.ListViewEx();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
-            this.groupBox13.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
+            this.groupBox13.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.tabPage7.SuspendLayout();
             this.groupBox7.SuspendLayout();
@@ -286,54 +286,6 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "情報ウィンドウ";
             // 
-            // groupBox13
-            // 
-            this.groupBox13.Controls.Add(this.label3);
-            this.groupBox13.Controls.Add(this.textBox1);
-            this.groupBox13.Controls.Add(this.label18);
-            this.groupBox13.Controls.Add(this.textBox3);
-            this.groupBox13.Location = new System.Drawing.Point(6, 71);
-            this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(278, 90);
-            this.groupBox13.TabIndex = 19;
-            this.groupBox13.TabStop = false;
-            // 
-            // listViewEx1
-            // 
-            this.listViewEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listViewEx1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3});
-            this.listViewEx1.ContextMenuStrip = this.contextMenuStrip1;
-            this.listViewEx1.FullRowSelect = true;
-            this.listViewEx1.GridLines = true;
-            this.listViewEx1.Location = new System.Drawing.Point(8, 20);
-            this.listViewEx1.Name = "listViewEx1";
-            this.listViewEx1.ShowItemToolTips = true;
-            this.listViewEx1.Size = new System.Drawing.Size(594, 214);
-            this.listViewEx1.TabIndex = 0;
-            this.listViewEx1.UseCompatibleStateImageBehavior = false;
-            this.listViewEx1.View = System.Windows.Forms.View.Details;
-            this.listViewEx1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewEx1_MouseDoubleClick);
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "タイトル";
-            this.columnHeader1.Width = 390;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "進捗";
-            this.columnHeader2.Width = 120;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "枚数";
-            this.columnHeader3.Width = 50;
-            // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -416,6 +368,50 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "画像フィルタ";
+            // 
+            // groupBox13
+            // 
+            this.groupBox13.Controls.Add(this.label3);
+            this.groupBox13.Controls.Add(this.textBox1);
+            this.groupBox13.Controls.Add(this.label18);
+            this.groupBox13.Controls.Add(this.textBox3);
+            this.groupBox13.Location = new System.Drawing.Point(6, 71);
+            this.groupBox13.Name = "groupBox13";
+            this.groupBox13.Size = new System.Drawing.Size(278, 90);
+            this.groupBox13.TabIndex = 19;
+            this.groupBox13.TabStop = false;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 23);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(48, 14);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "アドレス :";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(60, 20);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(107, 21);
+            this.textBox1.TabIndex = 0;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(173, 23);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(42, 14);
+            this.label18.TabIndex = 3;
+            this.label18.Text = "ポート :";
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(221, 20);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(51, 21);
+            this.textBox3.TabIndex = 1;
             // 
             // Help_ToolStripMenuItem
             // 
@@ -607,7 +603,7 @@
             this.tabPage9.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage9.Size = new System.Drawing.Size(282, 140);
             this.tabPage9.TabIndex = 1;
-            this.tabPage9.Text = "URLフィルタ";
+            this.tabPage9.Text = "URL フィルタ";
             this.tabPage9.UseVisualStyleBackColor = true;
             // 
             // groupBox8
@@ -667,9 +663,9 @@
             this.checkBox12.AutoSize = true;
             this.checkBox12.Location = new System.Drawing.Point(6, 6);
             this.checkBox12.Name = "checkBox12";
-            this.checkBox12.Size = new System.Drawing.Size(220, 18);
+            this.checkBox12.Size = new System.Drawing.Size(224, 18);
             this.checkBox12.TabIndex = 6;
-            this.checkBox12.Text = "URLに以下のキーワード (スペース区切り) を";
+            this.checkBox12.Text = "URL に以下のキーワード (スペース区切り) を";
             this.checkBox12.UseVisualStyleBackColor = true;
             this.checkBox12.CheckedChanged += new System.EventHandler(this.checkBox12_CheckedChanged);
             // 
@@ -732,16 +728,16 @@
             this.groupBox2.Size = new System.Drawing.Size(290, 80);
             this.groupBox2.TabIndex = 24;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "画像検索範囲";
+            this.groupBox2.Text = "画像検索対象";
             // 
             // checkBox8
             // 
             this.checkBox8.AutoSize = true;
             this.checkBox8.Location = new System.Drawing.Point(6, 44);
             this.checkBox8.Name = "checkBox8";
-            this.checkBox8.Size = new System.Drawing.Size(110, 18);
+            this.checkBox8.Size = new System.Drawing.Size(114, 18);
             this.checkBox8.TabIndex = 1;
-            this.checkBox8.Text = "imgタグを検索する";
+            this.checkBox8.Text = "img タグを検索する";
             this.checkBox8.UseVisualStyleBackColor = true;
             // 
             // checkBox7
@@ -751,9 +747,9 @@
             this.checkBox7.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox7.Location = new System.Drawing.Point(6, 20);
             this.checkBox7.Name = "checkBox7";
-            this.checkBox7.Size = new System.Drawing.Size(117, 18);
+            this.checkBox7.Size = new System.Drawing.Size(121, 18);
             this.checkBox7.TabIndex = 0;
-            this.checkBox7.Text = "href属性を検索する";
+            this.checkBox7.Text = "href 属性を検索する";
             this.checkBox7.UseVisualStyleBackColor = true;
             // 
             // tabControl2
@@ -1247,9 +1243,9 @@
             this.groupBox6.Controls.Add(this.numericUpDown9);
             this.groupBox6.Controls.Add(this.label17);
             this.groupBox6.Controls.Add(this.label16);
-            this.groupBox6.Location = new System.Drawing.Point(192, 37);
+            this.groupBox6.Location = new System.Drawing.Point(212, 37);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(220, 136);
+            this.groupBox6.Size = new System.Drawing.Size(200, 136);
             this.groupBox6.TabIndex = 4;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "ファイル名生成規則";
@@ -1281,7 +1277,7 @@
             this.textBox2.Location = new System.Drawing.Point(70, 44);
             this.textBox2.MaxLength = 16;
             this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(144, 21);
+            this.textBox2.Size = new System.Drawing.Size(124, 21);
             this.textBox2.TabIndex = 2;
             this.textBox2.Text = "Image";
             // 
@@ -1344,7 +1340,7 @@
             this.groupBox3.Controls.Add(this.checkBox9);
             this.groupBox3.Location = new System.Drawing.Point(6, 37);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(180, 136);
+            this.groupBox3.Size = new System.Drawing.Size(200, 136);
             this.groupBox3.TabIndex = 3;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "フォルダ分類";
@@ -1366,9 +1362,9 @@
             this.checkBox9.AutoSize = true;
             this.checkBox9.Location = new System.Drawing.Point(6, 20);
             this.checkBox9.Name = "checkBox9";
-            this.checkBox9.Size = new System.Drawing.Size(165, 18);
+            this.checkBox9.Size = new System.Drawing.Size(169, 18);
             this.checkBox9.TabIndex = 0;
-            this.checkBox9.Text = "URLの階層を維持して保存する";
+            this.checkBox9.Text = "URL の階層を維持して保存する";
             this.checkBox9.UseVisualStyleBackColor = true;
             // 
             // label9
@@ -1383,7 +1379,6 @@
             // textBox5
             // 
             this.textBox5.Location = new System.Drawing.Point(61, 9);
-            this.textBox5.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.textBox5.MaxLength = 256;
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(493, 21);
@@ -1426,15 +1421,6 @@
             this.checkBox25.UseVisualStyleBackColor = true;
             this.checkBox25.CheckedChanged += new System.EventHandler(this.checkBox25_CheckedChanged);
             // 
-            // label18
-            // 
-            this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(173, 23);
-            this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(42, 14);
-            this.label18.TabIndex = 3;
-            this.label18.Text = "ポート :";
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -1443,22 +1429,6 @@
             this.label2.Size = new System.Drawing.Size(31, 14);
             this.label2.TabIndex = 18;
             this.label2.Text = "ミリ秒";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 23);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(48, 14);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "アドレス :";
-            // 
-            // textBox3
-            // 
-            this.textBox3.Location = new System.Drawing.Point(221, 20);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(51, 21);
-            this.textBox3.TabIndex = 1;
             // 
             // numericUpDown15
             // 
@@ -1486,13 +1456,6 @@
             0,
             0,
             0});
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(60, 20);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(107, 21);
-            this.textBox1.TabIndex = 0;
             // 
             // label10
             // 
@@ -1743,9 +1706,45 @@
             this.label15.AutoSize = true;
             this.label15.Location = new System.Drawing.Point(92, 103);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(89, 14);
+            this.label15.Size = new System.Drawing.Size(93, 14);
             this.label15.TabIndex = 11;
-            this.label15.Text = "MBダウンロードする";
+            this.label15.Text = "MB ダウンロードする";
+            // 
+            // listViewEx1
+            // 
+            this.listViewEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewEx1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3});
+            this.listViewEx1.ContextMenuStrip = this.contextMenuStrip1;
+            this.listViewEx1.FullRowSelect = true;
+            this.listViewEx1.GridLines = true;
+            this.listViewEx1.Location = new System.Drawing.Point(8, 20);
+            this.listViewEx1.Name = "listViewEx1";
+            this.listViewEx1.ShowItemToolTips = true;
+            this.listViewEx1.Size = new System.Drawing.Size(594, 214);
+            this.listViewEx1.TabIndex = 0;
+            this.listViewEx1.UseCompatibleStateImageBehavior = false;
+            this.listViewEx1.View = System.Windows.Forms.View.Details;
+            this.listViewEx1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewEx1_MouseDoubleClick);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "タイトル";
+            this.columnHeader1.Width = 390;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "進捗";
+            this.columnHeader2.Width = 120;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "枚数";
+            this.columnHeader3.Width = 50;
             // 
             // MainForm
             // 
@@ -1772,9 +1771,9 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.groupBox4.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.groupBox13.ResumeLayout(false);
             this.groupBox13.PerformLayout();
-            this.contextMenuStrip1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tabPage7.ResumeLayout(false);

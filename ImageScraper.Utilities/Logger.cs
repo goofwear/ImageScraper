@@ -19,7 +19,7 @@ namespace ImageScraper.Utilities
         {
             if (mLoggerForm == null || mLoggerForm.IsDisposed)
             {
-                mLoggerForm = new LoggerForm(mLogList);
+                mLoggerForm = new LoggerForm(this, mLogList);
                 mLoggerForm.Show();
                 mLoggerForm.Location = location;
                 mLoggerForm.FormClosing += new FormClosingEventHandler(func);
@@ -40,6 +40,11 @@ namespace ImageScraper.Utilities
             mLogList.Add(log);
             if (mLoggerForm != null && !mLoggerForm.IsDisposed)
                 mLoggerForm.Invoke(new Action(() => mLoggerForm.Write(log)));
+        }
+
+        public void Clear()
+        {
+            mLogList.Clear();
         }
     }
 }

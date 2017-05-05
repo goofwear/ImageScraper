@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listView1 = new ListViewEx();
+            this.listView1 = new ImageScraper.Utilities.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -86,7 +86,8 @@
             // 
             this.Clear_ToolStripMenuItem.Name = "Clear_ToolStripMenuItem";
             this.Clear_ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.Clear_ToolStripMenuItem.Text = "すべて選択(&A)";
+            this.Clear_ToolStripMenuItem.Text = "すべて削除(&D)";
+            this.Clear_ToolStripMenuItem.Click += new System.EventHandler(this.Clear_ToolStripMenuItem_Click);
             // 
             // LoggerForm
             // 
