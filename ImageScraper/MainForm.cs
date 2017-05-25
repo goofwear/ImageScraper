@@ -241,5 +241,14 @@ namespace ImageScraper
         {
             groupBox13.Enabled = checkBox25.Checked;
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(comboBox1.Text);
+            }
+            catch { }
+        }
     }
 }

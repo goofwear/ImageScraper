@@ -38,6 +38,10 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.listViewEx1 = new ImageScraper.Utilities.ListViewEx();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.OpenUrl_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenDirectory_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -156,10 +160,7 @@
             this.label11 = new System.Windows.Forms.Label();
             this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
             this.label15 = new System.Windows.Forms.Label();
-            this.listViewEx1 = new ImageScraper.Utilities.ListViewEx();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.button6 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -205,7 +206,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 268);
+            this.button1.Location = new System.Drawing.Point(12, 270);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(300, 23);
             this.button1.TabIndex = 2;
@@ -217,7 +218,7 @@
             // button2
             // 
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(318, 268);
+            this.button2.Location = new System.Drawing.Point(318, 270);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(300, 23);
             this.button2.TabIndex = 4;
@@ -228,7 +229,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 31);
+            this.label1.Location = new System.Drawing.Point(12, 33);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 14);
             this.label1.TabIndex = 0;
@@ -240,9 +241,9 @@
             this.comboBox1.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.comboBox1.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(56, 28);
+            this.comboBox1.Location = new System.Drawing.Point(56, 30);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(562, 22);
+            this.comboBox1.Size = new System.Drawing.Size(524, 22);
             this.comboBox1.TabIndex = 1;
             this.comboBox1.Text = "http://";
             this.comboBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.comboBox1_DragDrop);
@@ -279,12 +280,48 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox4.Controls.Add(this.listViewEx1);
             this.groupBox4.Controls.Add(this.groupBox1);
-            this.groupBox4.Location = new System.Drawing.Point(12, 297);
+            this.groupBox4.Location = new System.Drawing.Point(12, 299);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(606, 240);
             this.groupBox4.TabIndex = 5;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "情報ウィンドウ";
+            // 
+            // listViewEx1
+            // 
+            this.listViewEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewEx1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3});
+            this.listViewEx1.ContextMenuStrip = this.contextMenuStrip1;
+            this.listViewEx1.FullRowSelect = true;
+            this.listViewEx1.GridLines = true;
+            this.listViewEx1.Location = new System.Drawing.Point(8, 20);
+            this.listViewEx1.Name = "listViewEx1";
+            this.listViewEx1.ShowItemToolTips = true;
+            this.listViewEx1.Size = new System.Drawing.Size(594, 214);
+            this.listViewEx1.TabIndex = 0;
+            this.listViewEx1.UseCompatibleStateImageBehavior = false;
+            this.listViewEx1.View = System.Windows.Forms.View.Details;
+            this.listViewEx1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewEx1_MouseDoubleClick);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "タイトル";
+            this.columnHeader1.Width = 390;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "進捗";
+            this.columnHeader2.Width = 120;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "枚数";
+            this.columnHeader3.Width = 50;
             // 
             // contextMenuStrip1
             // 
@@ -299,7 +336,7 @@
             this.toolStripSeparator3,
             this.DeleteImage_ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(227, 154);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(227, 176);
             // 
             // OpenUrl_ToolStripMenuItem
             // 
@@ -675,7 +712,7 @@
             this.tabControl1.Controls.Add(this.tabPage7);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Location = new System.Drawing.Point(12, 56);
+            this.tabControl1.Location = new System.Drawing.Point(12, 58);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(606, 206);
@@ -1710,41 +1747,16 @@
             this.label15.TabIndex = 11;
             this.label15.Text = "MB ダウンロードする";
             // 
-            // listViewEx1
+            // button6
             // 
-            this.listViewEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listViewEx1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3});
-            this.listViewEx1.ContextMenuStrip = this.contextMenuStrip1;
-            this.listViewEx1.FullRowSelect = true;
-            this.listViewEx1.GridLines = true;
-            this.listViewEx1.Location = new System.Drawing.Point(8, 20);
-            this.listViewEx1.Name = "listViewEx1";
-            this.listViewEx1.ShowItemToolTips = true;
-            this.listViewEx1.Size = new System.Drawing.Size(594, 214);
-            this.listViewEx1.TabIndex = 0;
-            this.listViewEx1.UseCompatibleStateImageBehavior = false;
-            this.listViewEx1.View = System.Windows.Forms.View.Details;
-            this.listViewEx1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewEx1_MouseDoubleClick);
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "タイトル";
-            this.columnHeader1.Width = 390;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "進捗";
-            this.columnHeader2.Width = 120;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "枚数";
-            this.columnHeader3.Width = 50;
+            this.button6.AutoSize = true;
+            this.button6.Location = new System.Drawing.Point(586, 28);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(32, 24);
+            this.button6.TabIndex = 10;
+            this.button6.Text = "...";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // MainForm
             // 
@@ -1752,6 +1764,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(630, 571);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.tabControl1);
@@ -1966,6 +1979,7 @@
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.CheckBox checkBox25;
+        private System.Windows.Forms.Button button6;
     }
 }
 
