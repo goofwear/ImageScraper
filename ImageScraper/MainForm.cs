@@ -250,5 +250,11 @@ namespace ImageScraper
             }
             catch { }
         }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(comboBox1.Text))
+                comboBox1.Items.Remove(comboBox1.Text);
+        }
     }
 }

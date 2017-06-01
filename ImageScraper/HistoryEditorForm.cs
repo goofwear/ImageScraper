@@ -215,6 +215,15 @@ namespace ImageScraper
             if (File.Exists(info.ImagePath))
                 Utilities.Common.OpenFile(info.ImagePath);
         }
+
+        private void SelectAll_ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            listViewEx1.Focus();
+            listViewEx1.BeginUpdate();
+            for (int i = 0; i < listViewEx1.Items.Count; i++)
+                listViewEx1.Items[i].Selected = true;
+            listViewEx1.EndUpdate();
+        }
     }
 
     /// <summary>

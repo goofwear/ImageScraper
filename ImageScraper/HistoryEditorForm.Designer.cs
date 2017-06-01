@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.Delete = new System.Windows.Forms.ToolStripMenuItem();
-            this.すべて選択AToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SelectAll_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Download = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.ファイルFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,7 +43,7 @@
             this.MenuDownload = new System.Windows.Forms.ToolStripMenuItem();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
-            this.listViewEx1 = new Utilities.ListViewEx();
+            this.listViewEx1 = new ImageScraper.Utilities.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -55,7 +55,7 @@
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Delete,
-            this.すべて選択AToolStripMenuItem,
+            this.SelectAll_ToolStripMenuItem,
             this.Download});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(144, 70);
@@ -67,11 +67,12 @@
             this.Delete.Text = "削除(&D)";
             this.Delete.Click += new System.EventHandler(this.Delete_Click);
             // 
-            // すべて選択AToolStripMenuItem
+            // SelectAll_ToolStripMenuItem
             // 
-            this.すべて選択AToolStripMenuItem.Name = "すべて選択AToolStripMenuItem";
-            this.すべて選択AToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
-            this.すべて選択AToolStripMenuItem.Text = "すべて選択(&A)";
+            this.SelectAll_ToolStripMenuItem.Name = "SelectAll_ToolStripMenuItem";
+            this.SelectAll_ToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.SelectAll_ToolStripMenuItem.Text = "すべて選択(&A)";
+            this.SelectAll_ToolStripMenuItem.Click += new System.EventHandler(this.SelectAll_ToolStripMenuItem_Click);
             // 
             // Download
             // 
@@ -98,7 +99,7 @@
             this.ファイルFToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuReload});
             this.ファイルFToolStripMenuItem.Name = "ファイルFToolStripMenuItem";
-            this.ファイルFToolStripMenuItem.Size = new System.Drawing.Size(66, 20);
+            this.ファイルFToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
             this.ファイルFToolStripMenuItem.Text = "ファイル(&F)";
             // 
             // MenuReload
@@ -120,14 +121,14 @@
             // MenuDelete
             // 
             this.MenuDelete.Name = "MenuDelete";
-            this.MenuDelete.Size = new System.Drawing.Size(142, 22);
+            this.MenuDelete.Size = new System.Drawing.Size(143, 22);
             this.MenuDelete.Text = "削除(&D)";
             this.MenuDelete.Click += new System.EventHandler(this.MenuDelete_Click);
             // 
             // SelectAll
             // 
             this.SelectAll.Name = "SelectAll";
-            this.SelectAll.Size = new System.Drawing.Size(142, 22);
+            this.SelectAll.Size = new System.Drawing.Size(143, 22);
             this.SelectAll.Text = "すべて選択(&A)";
             this.SelectAll.Click += new System.EventHandler(this.SelectAll_Click);
             // 
@@ -246,7 +247,7 @@
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ToolStripMenuItem Download;
-        private System.Windows.Forms.ToolStripMenuItem すべて選択AToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem SelectAll_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ファイルFToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem MenuReload;
     }
