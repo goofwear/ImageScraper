@@ -19,6 +19,7 @@ namespace ImageScraper
         private void InitializeSettings(DownloadSettings dc)
         {
             // ダウンロード設定
+            dc.Logger = mLogger;
             dc.UrlContainer = new UrlContainer.UrlContainer(comboBox1.Text);
             dc.Formats = PickImageFormats();
             dc.ParseHrefAttr = checkBox7.Checked;
@@ -56,19 +57,20 @@ namespace ImageScraper
                 (int)numericUpDown13.Value);
 
             // 保存設定
+            var sng = new Utilities.SerialNameGenerator(textBox2.Text, (int)numericUpDown9.Value, mAvailableFormats);
             dc.RootDirectory = textBox5.Text.TrimEnd('\\') + "\\";
             dc.AppendsUrl = checkBox9.Checked;
             dc.AppendsTitle = checkBox10.Checked;
             dc.OverlappedUrlFilter = new OverlappedUrlFilter(mUrlCache, checkBox13.Checked);
-            dc.FileNameGenerator = new FileNameGenerator(
-                radioButton2.Checked,
-                new Utilities.SerialNameGenerator(
-                    textBox2.Text, 
-                    (int)numericUpDown9.Value, 
-                    mAvailableFormats)
-            );
+            dc.FileNameGenerator = new FileNameGenerator(radioButton2.Checked, sng);
 
             // 終了条件設定
+            var limitStatus = new Status(
+                (int)numericUpDown3.Value,
+                (int)numericUpDown8.Value,
+                (int)numericUpDown4.Value,
+                (double)numericUpDown7.Value * 1000
+            );
             dc.StatusMonitor = new StatusMonitor(
                 new bool[] {
                     radioButton12.Checked,
@@ -77,11 +79,7 @@ namespace ImageScraper
                     radioButton6.Checked,
                     radioButton7.Checked
                 },
-                new Status((int)numericUpDown3.Value,
-                    (int)numericUpDown8.Value,
-                    (int)numericUpDown4.Value,
-                    (double)numericUpDown7.Value * 1000
-                ),
+                limitStatus,
                 (int)numericUpDown14.Value,
                 this.CountImages(dc.RootDirectory)
             );
@@ -100,9 +98,6 @@ namespace ImageScraper
                 UrlContainer.UrlContainer.Proxy = null;
                 HtmlContainer.HtmlContainer.Proxy = null;
             }
-
-            // ロガー
-            dc.Logger = mLogger;
         }
 
         private void UpdateComboBox(ComboBox cb)
@@ -145,8 +140,12 @@ namespace ImageScraper
             SwitchControls(false);
             bool result = await this.IsValidInputs();
             SwitchControls(true);
+
             if (!result)
                 return;
+
+            // フォームを無効化
+            InitializeForm();
 
             try
             {
@@ -156,13 +155,11 @@ namespace ImageScraper
                 for (int i = 0; i < mPlugins.Length; i++)
                     mPlugins[i].PreProcess();
                 mDownloader = new Downloader(mDownloadSettings, mPlugins, this);
-                InitializeForm();
 
                 // タスクの実行
                 await mDownloader.Start();
 
                 // 後処理
-                FinalizeForm();
                 MessageBox.Show("ダウンロードが完了しました", "通知",
                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 for (int i = 0; i < mPlugins.Length; i++)
@@ -175,6 +172,8 @@ namespace ImageScraper
             }
             finally
             {
+                // フォームを有効化
+                FinalizeForm();
                 mDownloader = null;
             }
         }
