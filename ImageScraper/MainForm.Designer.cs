@@ -1764,7 +1764,7 @@
             // 
             this.button7.AutoSize = true;
             this.button7.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button7.BackgroundImage")));
-            this.button7.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button7.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.button7.Location = new System.Drawing.Point(548, 28);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(32, 24);
