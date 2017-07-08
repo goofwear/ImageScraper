@@ -103,13 +103,6 @@ namespace ImageScraper
             comboBox1.Text = url;
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            var dr = folderBrowserDialog1.ShowDialog();
-            if (dr == DialogResult.OK)
-                textBox5.Text = folderBrowserDialog1.SelectedPath;
-        }
-
         private void CopyTitle_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (listViewEx1.SelectedIndices.Count == 1)
@@ -242,7 +235,13 @@ namespace ImageScraper
             groupBox13.Enabled = checkBox25.Checked;
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(comboBox1.Text))
+                comboBox1.Items.Remove(comboBox1.Text);
+        }
+
+        private void button8_Click(object sender, EventArgs e)
         {
             try
             {
@@ -251,10 +250,11 @@ namespace ImageScraper
             catch { }
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void button3_Click(object sender, EventArgs e)
         {
-            if (!String.IsNullOrEmpty(comboBox1.Text))
-                comboBox1.Items.Remove(comboBox1.Text);
+            var dr = folderBrowserDialog1.ShowDialog();
+            if (dr == DialogResult.OK)
+                textBox5.Text = folderBrowserDialog1.SelectedPath;
         }
     }
 }

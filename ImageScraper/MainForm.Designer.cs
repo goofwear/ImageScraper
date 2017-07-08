@@ -122,6 +122,7 @@
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.button3 = new System.Windows.Forms.Button();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.button4 = new System.Windows.Forms.Button();
             this.checkBox13 = new System.Windows.Forms.CheckBox();
@@ -133,7 +134,6 @@
             this.numericUpDown9 = new System.Windows.Forms.NumericUpDown();
             this.label17 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.checkBox10 = new System.Windows.Forms.CheckBox();
             this.checkBox9 = new System.Windows.Forms.CheckBox();
@@ -161,8 +161,8 @@
             this.label11 = new System.Windows.Forms.Label();
             this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
             this.label15 = new System.Windows.Forms.Label();
-            this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -1212,9 +1212,9 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.button3);
             this.tabPage2.Controls.Add(this.groupBox9);
             this.tabPage2.Controls.Add(this.groupBox6);
-            this.tabPage2.Controls.Add(this.button3);
             this.tabPage2.Controls.Add(this.groupBox3);
             this.tabPage2.Controls.Add(this.label9);
             this.tabPage2.Controls.Add(this.textBox5);
@@ -1225,6 +1225,16 @@
             this.tabPage2.TabIndex = 19;
             this.tabPage2.Text = "保存設定";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(560, 8);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(32, 23);
+            this.button3.TabIndex = 13;
+            this.button3.Text = "...";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // groupBox9
             // 
@@ -1359,17 +1369,6 @@
             this.label16.Size = new System.Drawing.Size(64, 14);
             this.label16.TabIndex = 4;
             this.label16.Text = "+ 自動連番";
-            // 
-            // button3
-            // 
-            this.button3.AutoSize = true;
-            this.button3.Location = new System.Drawing.Point(560, 7);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(32, 24);
-            this.button3.TabIndex = 2;
-            this.button3.Text = "...";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // groupBox3
             // 
@@ -1749,28 +1748,27 @@
             this.label15.TabIndex = 11;
             this.label15.Text = "MB ダウンロードする";
             // 
-            // button6
-            // 
-            this.button6.AutoSize = true;
-            this.button6.Location = new System.Drawing.Point(586, 28);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(32, 24);
-            this.button6.TabIndex = 10;
-            this.button6.Text = "...";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
-            // 
             // button7
             // 
             this.button7.AutoSize = true;
             this.button7.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("button7.BackgroundImage")));
             this.button7.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.button7.Location = new System.Drawing.Point(548, 28);
+            this.button7.Location = new System.Drawing.Point(548, 29);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(32, 24);
+            this.button7.Size = new System.Drawing.Size(32, 23);
             this.button7.TabIndex = 11;
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(586, 29);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(32, 23);
+            this.button8.TabIndex = 12;
+            this.button8.Text = "...";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // MainForm
             // 
@@ -1778,8 +1776,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(630, 571);
+            this.Controls.Add(this.button8);
             this.Controls.Add(this.button7);
-            this.Controls.Add(this.button6);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.tabControl1);
@@ -1932,7 +1930,6 @@
         private System.Windows.Forms.NumericUpDown numericUpDown9;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.CheckBox checkBox10;
         private System.Windows.Forms.CheckBox checkBox9;
@@ -1994,8 +1991,9 @@
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.CheckBox checkBox25;
-        private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button button3;
     }
 }
 
