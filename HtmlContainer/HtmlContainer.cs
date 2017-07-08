@@ -205,31 +205,5 @@ namespace HtmlContainer
             }
             AttributeUrlList = AttributeUrlList.Distinct().ToList();
         }
-
-        public string GetAttribute(string tag, string attr, Dictionary<string, string> table)
-        {
-            if (Html == null)
-                return null;
-
-            var hp = new HtmlParser();
-            hp.Source = Html;
-
-            while (!hp.Eof())
-            {
-                if (hp.Parse() == 0)
-                {
-                    var attrList = hp.GetTag();
-                    if (attrList.Name == tag && attrList[attr] != null)
-                    {
-                        bool flag = true;
-                        foreach (var pair in table)
-                            flag = flag && attrList.Contains(pair.Key, pair.Value);
-                        if (flag)
-                            return attrList[attr].Value;
-                    }
-                }
-            }
-            return null;
-        }
     }
 }

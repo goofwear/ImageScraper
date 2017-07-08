@@ -141,12 +141,10 @@ namespace ImageScraper.Plugins.PixivParser
             mEnabled = enabled;
         }
 
-        private string GetInitConfig(string key)
+        private string GetPostKey()
         {
             var hc = new HtmlContainer.HtmlContainer("https://accounts.pixiv.net/login");
-            var jsonString = hc.GetAttribute("input", "value", new Dictionary<string, string>() { { "id", "init-config" } });
-            string pat = String.Format(@"{0}.:.(?<Key>[a-f0-9]+).", key);
-            Match m = new Regex(pat).Match(jsonString);
+            Match m = new Regex("\"post_key\" value=\"(?<Key>[a-z0-9]+)\"").Match(hc.Html);
             if (m.Success)
             {
                 mUserAccount.Cookies.Add(hc.Cookies.GetCookies(mBaseUri));
@@ -166,13 +164,14 @@ namespace ImageScraper.Plugins.PixivParser
             {
                 { "pixiv_id", Uri.EscapeDataString(mUserAccount.Id) },
                 { "password", Uri.EscapeDataString(mUserAccount.Pass) },
-                { "post_key", GetInitConfig("pixivAccount.postKey") },
+                { "post_key", GetPostKey() },
+                { "source", "accounts" },
                 { "return_to", Uri.EscapeDataString(mBaseUri.OriginalString) }
             };
             foreach (var pair in content)
                 param += String.Format("{0}={1}&", pair.Key, pair.Value);
 
-            var buf = Encoding.UTF8.GetBytes(param);
+            var buf = Encoding.UTF8.GetBytes(param.TrimEnd('&'));
             var path = "https://accounts.pixiv.net/api/login?lang=jp";
             var req = (HttpWebRequest)WebRequest.CreateHttp(new Uri(path));
             req.Method = "POST";
@@ -181,6 +180,7 @@ namespace ImageScraper.Plugins.PixivParser
             req.ContentLength = buf.Length;
             req.CookieContainer = mUserAccount.Cookies;
             req.UserAgent = "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko";
+            req.Referer = "https://accounts.pixiv.net/login";
 
             using (var rs = req.GetRequestStream())
             {
