@@ -5,3 +5,16 @@
 # ImageScraper
 
 ImageScraper はディープラーニングに用いる画像を収集する目的で開発された画像ダウンローダです. 
+
+## 概要
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/tsurumeso/ImageScraper/images/images/summery.png">
+</div>
+
+## 主な機能
+
+- 認証を必要としない多くの Web ページ上の画像のダウンロード．
+- pixiv にアップロードされた画像のダウンロード (バージョン2.9現在機能停止中)．
+- ニコニコ静画にアップロードされた画像のダウンロード．
+- サーバー負荷を軽減するためリクエストごとにウェイトを設定．
