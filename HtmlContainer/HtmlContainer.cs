@@ -124,7 +124,7 @@ namespace HtmlContainer
             // HttpWebRequestを作成
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(UrlContainer.Url);
             req.Referer = UrlContainer.Referer;
-            req.UserAgent = "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36";
             req.Timeout = 10 * 1000; // 10 sec timeout
             req.CookieContainer = new CookieContainer();
             if (Proxy != null)

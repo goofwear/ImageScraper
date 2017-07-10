@@ -172,20 +172,18 @@ namespace ImageScraper.Plugins.PixivParser
                 param += String.Format("{0}={1}&", pair.Key, pair.Value);
 
             var buf = Encoding.UTF8.GetBytes(param.TrimEnd('&'));
-            var path = "https://accounts.pixiv.net/api/login?lang=jp";
-            var req = (HttpWebRequest)WebRequest.CreateHttp(new Uri(path));
+            var uri = new Uri("https://accounts.pixiv.net/api/login?lang=ja");
+            var req = (HttpWebRequest)WebRequest.CreateHttp(uri);
             req.Method = "POST";
             req.Proxy = null;
             req.ContentType = "application/x-www-form-urlencoded";
             req.ContentLength = buf.Length;
             req.CookieContainer = mUserAccount.Cookies;
-            req.UserAgent = "Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36";
             req.Referer = "https://accounts.pixiv.net/login";
 
             using (var rs = req.GetRequestStream())
-            {
                 rs.Write(buf, 0, buf.Length);
-            }
             var res = req.GetResponse();
             var ccol = req.CookieContainer.GetCookies(mBaseUri);
             req.Abort();

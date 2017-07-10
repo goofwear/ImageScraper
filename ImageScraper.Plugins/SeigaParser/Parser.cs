@@ -146,8 +146,8 @@ namespace ImageScraper.Plugins.SeigaParser
             if (IsLoggedIn && !force)
                 return true;
 
-            const string path = "https://secure.nicovideo.jp/secure/login?site=niconico";
-            var req = (HttpWebRequest)WebRequest.CreateHttp(new Uri(path));
+            var uri = new Uri("https://secure.nicovideo.jp/secure/login?site=niconico");
+            var req = (HttpWebRequest)WebRequest.CreateHttp(uri);
             var param = String.Format("nextmUrl={0}&mail={1}&password={2}", "", 
                 Uri.EscapeDataString(mUserAccount.Id), Uri.EscapeDataString(mUserAccount.Pass));
             var buf = Encoding.UTF8.GetBytes(param);
@@ -157,10 +157,10 @@ namespace ImageScraper.Plugins.SeigaParser
             req.ContentType = "application/x-www-form-urlencoded";
             req.ContentLength = buf.Length;
             req.CookieContainer = new CookieContainer();
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36";
+
             using (var rs = req.GetRequestStream())
-            {
                 rs.Write(buf, 0, buf.Length);
-            }
             var res = req.GetResponse();
             var ccol = req.CookieContainer.GetCookies(mBaseUri);
             req.Abort();
