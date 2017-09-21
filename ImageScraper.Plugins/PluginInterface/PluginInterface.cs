@@ -7,6 +7,7 @@ namespace ImageScraper.Plugins
     {
         string Name { get; }
         bool Enabled { get; }
+        bool IsExclusive { get; }
         bool IsLoggedIn { get; }
         Utilities.Logger Logger { set; }
 

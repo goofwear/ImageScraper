@@ -40,6 +40,11 @@ namespace ImageScraper.Plugins.SeigaParser
             }
         }
 
+        public bool IsExclusive
+        {
+            get { return true; }
+        }
+
         public Utilities.Logger Logger
         {
             set { mLogger = value; }

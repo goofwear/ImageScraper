@@ -303,7 +303,7 @@ namespace ImageScraper
             }
 
             mSettings.Logger.Write("Downloader", uc.Url + " を取得しました");   
-            if (plugin != null)
+            if (plugin != null && plugin.IsExclusive)
                 hc.AttributeUrlList = plugin.GetImageUrlList(uc, mSettings.Formats);
             else
             {

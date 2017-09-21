@@ -40,6 +40,11 @@ namespace ImageScraper.Plugins.PixivParser
             }
         }
 
+        public bool IsExclusive
+        {
+            get { return true; }
+        }
+
         public Utilities.Logger Logger
         {
             set { mLogger = value; }
