@@ -356,7 +356,7 @@ namespace ImageScraper
             foreach (var rootUrl in rootUrlList)
 			{
                 var hc = new HtmlContainer.HtmlContainer(rootUrl, mCookies);
-                hc.UpdateAttributeUrlList("a", "href", new string[] { "php", "html", "htm", "" });
+                hc.UpdateAttributeUrlList("a", "href", new string[] { "php", "phtml", "html", "htm", "" });
                 // ドメインのフィルタリング
                 var tmpUrlList = mSettings.DomainFilter.Filter(hc.AttributeUrlList);
 
