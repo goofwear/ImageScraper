@@ -221,7 +221,7 @@ namespace ImageScraper
             }
             else
             {
-                // ダウンロード履歴のフィルタリング
+                // 重複ダウンロードのフィルタリング
                 hc.AttributeUrlList = mSettings.OverlappedUrlFilter.Filter(hc.AttributeUrlList);
                 // 画像枚数更新
                 images = hc.AttributeUrlList.Count;
@@ -231,13 +231,15 @@ namespace ImageScraper
                     // 終了条件を満たす
                     if (HasCompleted())
                         return false;
-                    else
+                    else if (!mSettings.ImageUrlFilter.Filter(hc.AttributeUrlList[i].Url))
                     {
                         // ファイルが存在せず, パスが初期化されている
                         ImageInfo info = InitImageInfo(hc, hc.AttributeUrlList[i], dir);
                         if (!File.Exists(info.ImagePath) && info.ImagePath != null)
                             Download(hc.AttributeUrlList[i], info);
                     }
+                    else
+                        mSettings.Logger.Write("Downloader", "画像 URL フィルタが適用されました > " + hc.AttributeUrlList[i].Url);
 
                     if (mTempStatus.Images == 1)
                         OnInitProgress(hc, images);
@@ -289,10 +291,10 @@ namespace ImageScraper
             Plugins.PluginInterface plugin = FindPlugin(uc);
             var hc = new HtmlContainer.HtmlContainer(uc, mCookies);
 
-            // Htmlを取得しないで済むURLのフィルタリング
+            // Htmlを取得する必要がないURLのフィルタリング
             if (mSettings.UrlFilter.Filter(uc.Url))
             {
-                mSettings.Logger.Write("Downloader", "URLフィルタが適用されました > " + uc.Url);
+                mSettings.Logger.Write("Downloader", "URL フィルタが適用されました > " + uc.Url);
                 return hc;
             }
             // Htmlを取得する必要があるタイトルのフィルタリング

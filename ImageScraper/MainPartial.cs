@@ -48,6 +48,12 @@ namespace ImageScraper
                 checkBox23.Checked,
                 comboBox3.Text,
                 comboBox4.Text);
+            dc.ImageUrlFilter = new KeywordFilter(
+                checkBox28.Checked,
+                checkBox27.Checked,
+                checkBox26.Checked,
+                comboBox7.Text,
+                comboBox6.Text);
             dc.ResolutionFilter = new ResolutionFilter(
                 checkBox16.Checked, 
                 checkBox19.Checked,
@@ -124,6 +130,8 @@ namespace ImageScraper
             UpdateComboBox(comboBox3);
             UpdateComboBox(comboBox4);
             UpdateComboBox(comboBox5);
+            UpdateComboBox(comboBox6);
+            UpdateComboBox(comboBox7);
             ReverseControls();
             toolStripStatusLabel1.Text = "ダウンロード中...";
         }
@@ -402,27 +410,37 @@ namespace ImageScraper
             }
         }
 
+        private void SerializeFormSettings()
+        {
+            FormSettings settings = new FormSettings();
+            settings.LoggerFormEnabled = LoggerFormEnabled_ToolStripMenuItem.Checked;
+            settings.Properties = Utilities.ControlProperty.Get(this.Controls);
+
+            for (int i = comboBox1.Items.Count - 1; i >= 0; i--)
+                settings.UrlList.Insert(0, comboBox1.Items[i].ToString());
+            for (int i = comboBox2.Items.Count - 1; i >= 0; i--)
+                settings.KeyTitleList.Insert(0, comboBox2.Items[i].ToString());
+            for (int i = comboBox5.Items.Count - 1; i >= 0; i--)
+                settings.ExKeyTitleList.Insert(0, comboBox5.Items[i].ToString());
+            for (int i = comboBox3.Items.Count - 1; i >= 0; i--)
+                settings.KeyUrlList.Insert(0, comboBox3.Items[i].ToString());
+            for (int i = comboBox4.Items.Count - 1; i >= 0; i--)
+                settings.ExKeyUrlList.Insert(0, comboBox4.Items[i].ToString());
+            for (int i = comboBox7.Items.Count - 1; i >= 0; i--)
+                settings.KeyImageUrlList.Insert(0, comboBox7.Items[i].ToString());
+            for (int i = comboBox6.Items.Count - 1; i >= 0; i--)
+                settings.ExKeyImageUrlList.Insert(0, comboBox6.Items[i].ToString());
+
+            var xs = new XmlSerializer(typeof(FormSettings));
+            using (var sw = new StreamWriter("ImageScraper.xml", false, new UTF8Encoding(false)))
+                xs.Serialize(sw, settings);
+        }
+
         private void SaveSettings()
         {
             try
             {
-                FormSettings settings = new FormSettings();
-                settings.LoggerFormEnabled = LoggerFormEnabled_ToolStripMenuItem.Checked;
-                settings.Properties = Utilities.ControlProperty.Get(this.Controls);
-                for (int i = comboBox1.Items.Count - 1; i >= 0; i--)
-                    settings.UrlList.Insert(0, comboBox1.Items[i].ToString());
-                for (int i = comboBox2.Items.Count - 1; i >= 0; i--)
-                    settings.KeyTitleList.Insert(0, comboBox2.Items[i].ToString());
-                for (int i = comboBox5.Items.Count - 1; i >= 0; i--)
-                    settings.ExKeyTitleList.Insert(0, comboBox5.Items[i].ToString());
-                for (int i = comboBox3.Items.Count - 1; i >= 0; i--)
-                    settings.KeyUrlList.Insert(0, comboBox3.Items[i].ToString());
-                for (int i = comboBox4.Items.Count - 1; i >= 0; i--)
-                    settings.ExKeyUrlList.Insert(0, comboBox4.Items[i].ToString());
-                // フォーム設定のシリアライズ
-                var xs = new XmlSerializer(typeof(FormSettings));
-                using (var sw = new StreamWriter("ImageScraper.xml", false, new UTF8Encoding(false)))
-                    xs.Serialize(sw, settings);
+                SerializeFormSettings();
                 mLogger.Write("MainForm", "フォームの設定を保存しました");
             }
             catch
@@ -430,7 +448,6 @@ namespace ImageScraper
                 mLogger.Write("MainForm", "フォームの設定を正常に保存できませんでした");
             }
 
-            // プラグイン設定の保存
             foreach (var plugin in mPlugins)
             {
                 try
@@ -446,7 +463,6 @@ namespace ImageScraper
 
             try
             {
-                // 履歴のシリアライズ
                 var xs = new XmlSerializer(typeof(List<ImageInfo>));
                 var urlCache = mUrlCache.ToList();
                 using (var sw = new StreamWriter("UrlCache.xml", false, new UTF8Encoding(false)))
@@ -459,31 +475,62 @@ namespace ImageScraper
             }
         }
 
+        private void DeserializeFormSettings()
+        {
+            using (var sr = new StreamReader("ImageScraper.xml", new UTF8Encoding(false)))
+            {
+                var xs = new XmlSerializer(typeof(FormSettings));
+                var settings = xs.Deserialize(sr) as FormSettings;
+
+                if (settings.UrlList != null)
+                    comboBox1.Items.AddRange(settings.UrlList.ToArray());
+                if (settings.KeyTitleList != null)
+                    comboBox2.Items.AddRange(settings.KeyTitleList.ToArray());
+                if (settings.ExKeyTitleList != null)
+                    comboBox5.Items.AddRange(settings.ExKeyTitleList.ToArray());
+                if (settings.KeyUrlList != null)
+                    comboBox3.Items.AddRange(settings.KeyUrlList.ToArray());
+                if (settings.ExKeyUrlList != null)
+                    comboBox4.Items.AddRange(settings.ExKeyUrlList.ToArray());
+                if (settings.KeyImageUrlList != null)
+                    comboBox7.Items.AddRange(settings.KeyImageUrlList.ToArray());
+                if (settings.ExKeyImageUrlList != null)
+                    comboBox6.Items.AddRange(settings.ExKeyImageUrlList.ToArray());
+
+                Utilities.ControlProperty.Set(this.Controls, settings.Properties);
+                LoggerFormEnabled_ToolStripMenuItem.Checked = settings.LoggerFormEnabled;
+            }
+        }
+
+        private void DeserializeIncompatibleUrlCache()
+        {
+            var xs = new XmlSerializer(typeof(List<Utilities.Common.KeyAndValue<string, ImageInfo>>));
+            using (var sr = new StreamReader("UrlCache.xml", new UTF8Encoding(false)))
+            {
+                var urlCache = (List<Utilities.Common.KeyAndValue<string, ImageInfo>>)xs.Deserialize(sr);
+                var urlCacheDict = Utilities.Common.ConvertListToDictionary(urlCache);
+                mUrlCache = new HashSet<ImageInfo>();
+                foreach (var pair in urlCacheDict)
+                {
+                    var info = new ImageInfo();
+                    info.ImagePath = pair.Value.ImagePath;
+                    info.ImageUrl = pair.Key;
+                    info.TimeStamp = pair.Value.TimeStamp;
+                    info.ParentTitle = pair.Value.ParentTitle;
+                    info.ParentUrl = pair.Value.ParentUrl;
+                    mUrlCache.Add(info);
+                }
+            }
+        }
+
         private void LoadSettings()
         {
             if (File.Exists("ImageScraper.xml"))
             {
                 try
                 {
-                    using (var sr = new StreamReader("ImageScraper.xml", new UTF8Encoding(false)))
-                    {
-                        // フォーム設定のデシリアライズ
-                        var xs = new XmlSerializer(typeof(FormSettings));
-                        var settings = xs.Deserialize(sr) as FormSettings;
-                        if (settings.UrlList != null)
-                            comboBox1.Items.AddRange(settings.UrlList.ToArray());
-                        if (settings.KeyTitleList != null)
-                            comboBox2.Items.AddRange(settings.KeyTitleList.ToArray());
-                        if (settings.ExKeyTitleList != null)
-                            comboBox5.Items.AddRange(settings.ExKeyTitleList.ToArray());
-                        if (settings.KeyUrlList != null)
-                            comboBox3.Items.AddRange(settings.KeyUrlList.ToArray());
-                        if (settings.ExKeyUrlList != null)
-                            comboBox4.Items.AddRange(settings.ExKeyUrlList.ToArray());
-                        Utilities.ControlProperty.Set(this.Controls, settings.Properties);
-                        LoggerFormEnabled_ToolStripMenuItem.Checked = settings.LoggerFormEnabled;
-                        mLogger.Write("MainForm", "フォームの設定を読み込みました");
-                    }
+                    DeserializeFormSettings();
+                    mLogger.Write("MainForm", "フォームの設定を読み込みました");
                 }
                 catch
                 {
@@ -491,7 +538,6 @@ namespace ImageScraper
                 }
             }
 
-            // プラグイン設定の読み込み
             foreach (var plugin in mPlugins)
             {
                 try
@@ -509,7 +555,6 @@ namespace ImageScraper
             {
                 try
                 {
-                    // 履歴のデシリアライズ
                     var xs = new XmlSerializer(typeof(List<ImageInfo>));
                     using (var sr = new StreamReader("UrlCache.xml", new UTF8Encoding(false)))
                     {
@@ -520,24 +565,7 @@ namespace ImageScraper
                 }
                 catch
                 {
-                    // 旧バージョンの設定ファイル読み込み
-                    var xs = new XmlSerializer(typeof(List<Utilities.Common.KeyAndValue<string, ImageInfo>>));
-                    using (var sr = new StreamReader("UrlCache.xml", new UTF8Encoding(false)))
-                    {
-                        var urlCache = (List<Utilities.Common.KeyAndValue<string, ImageInfo>>)xs.Deserialize(sr);
-                        var urlCacheDict = Utilities.Common.ConvertListToDictionary(urlCache);
-                        mUrlCache = new HashSet<ImageInfo>();
-                        foreach (var pair in urlCacheDict)
-                        {
-                            var info = new ImageInfo();
-                            info.ImagePath = pair.Value.ImagePath;
-                            info.ImageUrl = pair.Key;
-                            info.TimeStamp = pair.Value.TimeStamp;
-                            info.ParentTitle = pair.Value.ParentTitle;
-                            info.ParentUrl = pair.Value.ParentUrl;
-                            mUrlCache.Add(info);
-                        }
-                    }
+                    DeserializeIncompatibleUrlCache();
                     mLogger.Write("MainForm", "旧バージョンの履歴を読み込みました");
                 }
             }
