@@ -184,7 +184,7 @@ namespace HtmlContainer
                 if (hp.Parse() == 0)
                 {
                     var attrList = hp.GetTag();
-                    if (attrList.Name == tag && attrList[attr] != null)
+                    if (attrList.Name.ToLower() == tag && attrList[attr] != null)
                     {
                         string attrValue = attrList[attr].Value;
                         if (!re.Match(attrValue).Success)
