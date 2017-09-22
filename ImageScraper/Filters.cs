@@ -184,7 +184,7 @@ namespace ImageScraper
                 if (mInEnabled)
                     flag = (mKeywords.Where(x => key.Contains(x)).Count() == 0);
                 if (mExEnabled)
-                    flag = (mExKeywords.Where(x => key.Contains(x)).Count() > 0);
+                    flag = flag || (mExKeywords.Where(x => key.Contains(x)).Count() > 0);
             }
             
             return flag;
