@@ -396,9 +396,9 @@ namespace ImageScraper
             for (int i = comboBox4.Items.Count - 1; i >= 0; i--)
                 settings.ExKeyUrlList.Insert(0, comboBox4.Items[i].ToString());
             for (int i = comboBox9.Items.Count - 1; i >= 0; i--)
-                settings.KeyRootUrlList.Insert(0, comboBox3.Items[i].ToString());
+                settings.KeyRootUrlList.Insert(0, comboBox9.Items[i].ToString());
             for (int i = comboBox8.Items.Count - 1; i >= 0; i--)
-                settings.ExKeyRootUrlList.Insert(0, comboBox4.Items[i].ToString());
+                settings.ExKeyRootUrlList.Insert(0, comboBox8.Items[i].ToString());
             for (int i = comboBox7.Items.Count - 1; i >= 0; i--)
                 settings.KeyImageUrlList.Insert(0, comboBox7.Items[i].ToString());
             for (int i = comboBox6.Items.Count - 1; i >= 0; i--)
