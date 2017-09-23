@@ -39,6 +39,10 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.listViewEx1 = new ImageScraper.Utilities.ListViewEx();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.OpenUrl_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenDirectory_ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,6 +84,13 @@
             this.comboBox4 = new System.Windows.Forms.ComboBox();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.checkBox12 = new System.Windows.Forms.CheckBox();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.groupBox14 = new System.Windows.Forms.GroupBox();
+            this.checkBox26 = new System.Windows.Forms.CheckBox();
+            this.checkBox27 = new System.Windows.Forms.CheckBox();
+            this.comboBox6 = new System.Windows.Forms.ComboBox();
+            this.comboBox7 = new System.Windows.Forms.ComboBox();
+            this.checkBox28 = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
@@ -159,17 +170,13 @@
             this.label15 = new System.Windows.Forms.Label();
             this.button7 = new System.Windows.Forms.Button();
             this.button8 = new System.Windows.Forms.Button();
-            this.tabPage6 = new System.Windows.Forms.TabPage();
-            this.groupBox14 = new System.Windows.Forms.GroupBox();
-            this.checkBox26 = new System.Windows.Forms.CheckBox();
-            this.checkBox27 = new System.Windows.Forms.CheckBox();
-            this.comboBox6 = new System.Windows.Forms.ComboBox();
-            this.comboBox7 = new System.Windows.Forms.ComboBox();
-            this.checkBox28 = new System.Windows.Forms.CheckBox();
-            this.listViewEx1 = new ImageScraper.Utilities.ListViewEx();
-            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tabPage10 = new System.Windows.Forms.TabPage();
+            this.groupBox15 = new System.Windows.Forms.GroupBox();
+            this.checkBox29 = new System.Windows.Forms.CheckBox();
+            this.checkBox30 = new System.Windows.Forms.CheckBox();
+            this.comboBox8 = new System.Windows.Forms.ComboBox();
+            this.comboBox9 = new System.Windows.Forms.ComboBox();
+            this.checkBox31 = new System.Windows.Forms.CheckBox();
             this.statusStrip1.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
@@ -182,6 +189,8 @@
             this.groupBox11.SuspendLayout();
             this.tabPage9.SuspendLayout();
             this.groupBox8.SuspendLayout();
+            this.tabPage6.SuspendLayout();
+            this.groupBox14.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox12.SuspendLayout();
@@ -211,8 +220,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).BeginInit();
-            this.tabPage6.SuspendLayout();
-            this.groupBox14.SuspendLayout();
+            this.tabPage10.SuspendLayout();
+            this.groupBox15.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
@@ -297,6 +306,42 @@
             this.groupBox4.TabIndex = 5;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "情報ウィンドウ";
+            // 
+            // listViewEx1
+            // 
+            this.listViewEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listViewEx1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3});
+            this.listViewEx1.ContextMenuStrip = this.contextMenuStrip1;
+            this.listViewEx1.FullRowSelect = true;
+            this.listViewEx1.GridLines = true;
+            this.listViewEx1.Location = new System.Drawing.Point(8, 20);
+            this.listViewEx1.Name = "listViewEx1";
+            this.listViewEx1.ShowItemToolTips = true;
+            this.listViewEx1.Size = new System.Drawing.Size(594, 214);
+            this.listViewEx1.TabIndex = 0;
+            this.listViewEx1.UseCompatibleStateImageBehavior = false;
+            this.listViewEx1.View = System.Windows.Forms.View.Details;
+            this.listViewEx1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewEx1_MouseDoubleClick);
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "タイトル";
+            this.columnHeader1.Width = 390;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "進捗";
+            this.columnHeader2.Width = 120;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "枚数";
+            this.columnHeader3.Width = 50;
             // 
             // contextMenuStrip1
             // 
@@ -490,9 +535,9 @@
             // 
             this.groupBox7.Controls.Add(this.checkBox20);
             this.groupBox7.Controls.Add(this.checkBox5);
-            this.groupBox7.Location = new System.Drawing.Point(302, 6);
+            this.groupBox7.Location = new System.Drawing.Point(418, 6);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(290, 167);
+            this.groupBox7.Size = new System.Drawing.Size(174, 167);
             this.groupBox7.TabIndex = 7;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "カラーフィルタ";
@@ -525,11 +570,12 @@
             // 
             this.tabControl3.Controls.Add(this.tabPage8);
             this.tabControl3.Controls.Add(this.tabPage9);
+            this.tabControl3.Controls.Add(this.tabPage10);
             this.tabControl3.Controls.Add(this.tabPage6);
             this.tabControl3.Location = new System.Drawing.Point(6, 6);
             this.tabControl3.Name = "tabControl3";
             this.tabControl3.SelectedIndex = 0;
-            this.tabControl3.Size = new System.Drawing.Size(290, 167);
+            this.tabControl3.Size = new System.Drawing.Size(406, 167);
             this.tabControl3.TabIndex = 6;
             // 
             // tabPage8
@@ -539,7 +585,7 @@
             this.tabPage8.Location = new System.Drawing.Point(4, 23);
             this.tabPage8.Name = "tabPage8";
             this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage8.Size = new System.Drawing.Size(282, 140);
+            this.tabPage8.Size = new System.Drawing.Size(398, 140);
             this.tabPage8.TabIndex = 0;
             this.tabPage8.Text = "タイトルフィルタ";
             this.tabPage8.UseVisualStyleBackColor = true;
@@ -552,7 +598,7 @@
             this.groupBox11.Controls.Add(this.comboBox2);
             this.groupBox11.Location = new System.Drawing.Point(6, 30);
             this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(270, 104);
+            this.groupBox11.Size = new System.Drawing.Size(386, 104);
             this.groupBox11.TabIndex = 7;
             this.groupBox11.TabStop = false;
             // 
@@ -583,7 +629,7 @@
             this.comboBox5.FormattingEnabled = true;
             this.comboBox5.Location = new System.Drawing.Point(75, 48);
             this.comboBox5.Name = "comboBox5";
-            this.comboBox5.Size = new System.Drawing.Size(189, 22);
+            this.comboBox5.Size = new System.Drawing.Size(305, 22);
             this.comboBox5.TabIndex = 6;
             // 
             // comboBox2
@@ -593,7 +639,7 @@
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Location = new System.Drawing.Point(75, 20);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(189, 22);
+            this.comboBox2.Size = new System.Drawing.Size(305, 22);
             this.comboBox2.TabIndex = 1;
             // 
             // checkBox11
@@ -614,7 +660,7 @@
             this.tabPage9.Location = new System.Drawing.Point(4, 23);
             this.tabPage9.Name = "tabPage9";
             this.tabPage9.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage9.Size = new System.Drawing.Size(282, 140);
+            this.tabPage9.Size = new System.Drawing.Size(398, 140);
             this.tabPage9.TabIndex = 1;
             this.tabPage9.Text = "URL フィルタ";
             this.tabPage9.UseVisualStyleBackColor = true;
@@ -627,7 +673,7 @@
             this.groupBox8.Controls.Add(this.comboBox3);
             this.groupBox8.Location = new System.Drawing.Point(6, 30);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(270, 104);
+            this.groupBox8.Size = new System.Drawing.Size(386, 104);
             this.groupBox8.TabIndex = 12;
             this.groupBox8.TabStop = false;
             // 
@@ -658,7 +704,7 @@
             this.comboBox4.FormattingEnabled = true;
             this.comboBox4.Location = new System.Drawing.Point(75, 48);
             this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(189, 22);
+            this.comboBox4.Size = new System.Drawing.Size(305, 22);
             this.comboBox4.TabIndex = 11;
             // 
             // comboBox3
@@ -668,7 +714,7 @@
             this.comboBox3.FormattingEnabled = true;
             this.comboBox3.Location = new System.Drawing.Point(75, 20);
             this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(189, 22);
+            this.comboBox3.Size = new System.Drawing.Size(305, 22);
             this.comboBox3.TabIndex = 7;
             // 
             // checkBox12
@@ -681,6 +727,81 @@
             this.checkBox12.Text = "URL に以下のキーワード (スペース区切り) を";
             this.checkBox12.UseVisualStyleBackColor = true;
             this.checkBox12.CheckedChanged += new System.EventHandler(this.checkBox12_CheckedChanged);
+            // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(this.groupBox14);
+            this.tabPage6.Controls.Add(this.checkBox28);
+            this.tabPage6.Location = new System.Drawing.Point(4, 23);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage6.Size = new System.Drawing.Size(398, 140);
+            this.tabPage6.TabIndex = 2;
+            this.tabPage6.Text = "画像 URL フィルタ";
+            this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // groupBox14
+            // 
+            this.groupBox14.Controls.Add(this.checkBox26);
+            this.groupBox14.Controls.Add(this.checkBox27);
+            this.groupBox14.Controls.Add(this.comboBox6);
+            this.groupBox14.Controls.Add(this.comboBox7);
+            this.groupBox14.Location = new System.Drawing.Point(6, 30);
+            this.groupBox14.Name = "groupBox14";
+            this.groupBox14.Size = new System.Drawing.Size(386, 104);
+            this.groupBox14.TabIndex = 14;
+            this.groupBox14.TabStop = false;
+            // 
+            // checkBox26
+            // 
+            this.checkBox26.AutoSize = true;
+            this.checkBox26.Location = new System.Drawing.Point(6, 50);
+            this.checkBox26.Name = "checkBox26";
+            this.checkBox26.Size = new System.Drawing.Size(63, 18);
+            this.checkBox26.TabIndex = 13;
+            this.checkBox26.Text = "含まない";
+            this.checkBox26.UseVisualStyleBackColor = true;
+            // 
+            // checkBox27
+            // 
+            this.checkBox27.AutoSize = true;
+            this.checkBox27.Location = new System.Drawing.Point(6, 22);
+            this.checkBox27.Name = "checkBox27";
+            this.checkBox27.Size = new System.Drawing.Size(46, 18);
+            this.checkBox27.TabIndex = 12;
+            this.checkBox27.Text = "含む";
+            this.checkBox27.UseVisualStyleBackColor = true;
+            // 
+            // comboBox6
+            // 
+            this.comboBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox6.FormattingEnabled = true;
+            this.comboBox6.Location = new System.Drawing.Point(75, 48);
+            this.comboBox6.Name = "comboBox6";
+            this.comboBox6.Size = new System.Drawing.Size(305, 22);
+            this.comboBox6.TabIndex = 11;
+            // 
+            // comboBox7
+            // 
+            this.comboBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox7.FormattingEnabled = true;
+            this.comboBox7.Location = new System.Drawing.Point(75, 20);
+            this.comboBox7.Name = "comboBox7";
+            this.comboBox7.Size = new System.Drawing.Size(305, 22);
+            this.comboBox7.TabIndex = 7;
+            // 
+            // checkBox28
+            // 
+            this.checkBox28.AutoSize = true;
+            this.checkBox28.Location = new System.Drawing.Point(6, 6);
+            this.checkBox28.Name = "checkBox28";
+            this.checkBox28.Size = new System.Drawing.Size(250, 18);
+            this.checkBox28.TabIndex = 13;
+            this.checkBox28.Text = "画像 URL に以下のキーワード (スペース区切り) を";
+            this.checkBox28.UseVisualStyleBackColor = true;
+            this.checkBox28.CheckedChanged += new System.EventHandler(this.checkBox28_CheckedChanged);
             // 
             // tabControl1
             // 
@@ -1744,115 +1865,80 @@
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
-            // tabPage6
+            // tabPage10
             // 
-            this.tabPage6.Controls.Add(this.groupBox14);
-            this.tabPage6.Controls.Add(this.checkBox28);
-            this.tabPage6.Location = new System.Drawing.Point(4, 23);
-            this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(282, 140);
-            this.tabPage6.TabIndex = 2;
-            this.tabPage6.Text = "画像 URL フィルタ";
-            this.tabPage6.UseVisualStyleBackColor = true;
+            this.tabPage10.Controls.Add(this.groupBox15);
+            this.tabPage10.Controls.Add(this.checkBox31);
+            this.tabPage10.Location = new System.Drawing.Point(4, 23);
+            this.tabPage10.Name = "tabPage10";
+            this.tabPage10.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage10.Size = new System.Drawing.Size(398, 140);
+            this.tabPage10.TabIndex = 3;
+            this.tabPage10.Text = "ルート URL フィルタ";
+            this.tabPage10.UseVisualStyleBackColor = true;
             // 
-            // groupBox14
+            // groupBox15
             // 
-            this.groupBox14.Controls.Add(this.checkBox26);
-            this.groupBox14.Controls.Add(this.checkBox27);
-            this.groupBox14.Controls.Add(this.comboBox6);
-            this.groupBox14.Controls.Add(this.comboBox7);
-            this.groupBox14.Location = new System.Drawing.Point(6, 30);
-            this.groupBox14.Name = "groupBox14";
-            this.groupBox14.Size = new System.Drawing.Size(270, 104);
-            this.groupBox14.TabIndex = 14;
-            this.groupBox14.TabStop = false;
+            this.groupBox15.Controls.Add(this.checkBox29);
+            this.groupBox15.Controls.Add(this.checkBox30);
+            this.groupBox15.Controls.Add(this.comboBox8);
+            this.groupBox15.Controls.Add(this.comboBox9);
+            this.groupBox15.Location = new System.Drawing.Point(6, 30);
+            this.groupBox15.Name = "groupBox15";
+            this.groupBox15.Size = new System.Drawing.Size(386, 104);
+            this.groupBox15.TabIndex = 16;
+            this.groupBox15.TabStop = false;
             // 
-            // checkBox26
+            // checkBox29
             // 
-            this.checkBox26.AutoSize = true;
-            this.checkBox26.Location = new System.Drawing.Point(6, 50);
-            this.checkBox26.Name = "checkBox26";
-            this.checkBox26.Size = new System.Drawing.Size(63, 18);
-            this.checkBox26.TabIndex = 13;
-            this.checkBox26.Text = "含まない";
-            this.checkBox26.UseVisualStyleBackColor = true;
+            this.checkBox29.AutoSize = true;
+            this.checkBox29.Location = new System.Drawing.Point(6, 50);
+            this.checkBox29.Name = "checkBox29";
+            this.checkBox29.Size = new System.Drawing.Size(63, 18);
+            this.checkBox29.TabIndex = 13;
+            this.checkBox29.Text = "含まない";
+            this.checkBox29.UseVisualStyleBackColor = true;
             // 
-            // checkBox27
+            // checkBox30
             // 
-            this.checkBox27.AutoSize = true;
-            this.checkBox27.Location = new System.Drawing.Point(6, 22);
-            this.checkBox27.Name = "checkBox27";
-            this.checkBox27.Size = new System.Drawing.Size(46, 18);
-            this.checkBox27.TabIndex = 12;
-            this.checkBox27.Text = "含む";
-            this.checkBox27.UseVisualStyleBackColor = true;
+            this.checkBox30.AutoSize = true;
+            this.checkBox30.Location = new System.Drawing.Point(6, 22);
+            this.checkBox30.Name = "checkBox30";
+            this.checkBox30.Size = new System.Drawing.Size(46, 18);
+            this.checkBox30.TabIndex = 12;
+            this.checkBox30.Text = "含む";
+            this.checkBox30.UseVisualStyleBackColor = true;
             // 
-            // comboBox6
+            // comboBox8
             // 
-            this.comboBox6.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.comboBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox6.FormattingEnabled = true;
-            this.comboBox6.Location = new System.Drawing.Point(75, 48);
-            this.comboBox6.Name = "comboBox6";
-            this.comboBox6.Size = new System.Drawing.Size(189, 22);
-            this.comboBox6.TabIndex = 11;
+            this.comboBox8.FormattingEnabled = true;
+            this.comboBox8.Location = new System.Drawing.Point(75, 48);
+            this.comboBox8.Name = "comboBox8";
+            this.comboBox8.Size = new System.Drawing.Size(305, 22);
+            this.comboBox8.TabIndex = 11;
             // 
-            // comboBox7
+            // comboBox9
             // 
-            this.comboBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.comboBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBox7.FormattingEnabled = true;
-            this.comboBox7.Location = new System.Drawing.Point(75, 20);
-            this.comboBox7.Name = "comboBox7";
-            this.comboBox7.Size = new System.Drawing.Size(189, 22);
-            this.comboBox7.TabIndex = 7;
+            this.comboBox9.FormattingEnabled = true;
+            this.comboBox9.Location = new System.Drawing.Point(75, 20);
+            this.comboBox9.Name = "comboBox9";
+            this.comboBox9.Size = new System.Drawing.Size(305, 22);
+            this.comboBox9.TabIndex = 7;
             // 
-            // checkBox28
+            // checkBox31
             // 
-            this.checkBox28.AutoSize = true;
-            this.checkBox28.Location = new System.Drawing.Point(6, 6);
-            this.checkBox28.Name = "checkBox28";
-            this.checkBox28.Size = new System.Drawing.Size(250, 18);
-            this.checkBox28.TabIndex = 13;
-            this.checkBox28.Text = "画像 URL に以下のキーワード (スペース区切り) を";
-            this.checkBox28.UseVisualStyleBackColor = true;
-            // 
-            // listViewEx1
-            // 
-            this.listViewEx1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listViewEx1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3});
-            this.listViewEx1.ContextMenuStrip = this.contextMenuStrip1;
-            this.listViewEx1.FullRowSelect = true;
-            this.listViewEx1.GridLines = true;
-            this.listViewEx1.Location = new System.Drawing.Point(8, 20);
-            this.listViewEx1.Name = "listViewEx1";
-            this.listViewEx1.ShowItemToolTips = true;
-            this.listViewEx1.Size = new System.Drawing.Size(594, 214);
-            this.listViewEx1.TabIndex = 0;
-            this.listViewEx1.UseCompatibleStateImageBehavior = false;
-            this.listViewEx1.View = System.Windows.Forms.View.Details;
-            this.listViewEx1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewEx1_MouseDoubleClick);
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "タイトル";
-            this.columnHeader1.Width = 390;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "進捗";
-            this.columnHeader2.Width = 120;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "枚数";
-            this.columnHeader3.Width = 50;
+            this.checkBox31.AutoSize = true;
+            this.checkBox31.Location = new System.Drawing.Point(6, 6);
+            this.checkBox31.Name = "checkBox31";
+            this.checkBox31.Size = new System.Drawing.Size(254, 18);
+            this.checkBox31.TabIndex = 15;
+            this.checkBox31.Text = "ルート URL に以下のキーワード (スペース区切り) を";
+            this.checkBox31.UseVisualStyleBackColor = true;
+            this.checkBox31.CheckedChanged += new System.EventHandler(this.checkBox31_CheckedChanged);
             // 
             // MainForm
             // 
@@ -1898,6 +1984,10 @@
             this.tabPage9.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
+            this.tabPage6.ResumeLayout(false);
+            this.tabPage6.PerformLayout();
+            this.groupBox14.ResumeLayout(false);
+            this.groupBox14.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
@@ -1938,10 +2028,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).EndInit();
-            this.tabPage6.ResumeLayout(false);
-            this.tabPage6.PerformLayout();
-            this.groupBox14.ResumeLayout(false);
-            this.groupBox14.PerformLayout();
+            this.tabPage10.ResumeLayout(false);
+            this.tabPage10.PerformLayout();
+            this.groupBox15.ResumeLayout(false);
+            this.groupBox15.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2089,6 +2179,13 @@
         private System.Windows.Forms.ComboBox comboBox6;
         private System.Windows.Forms.ComboBox comboBox7;
         private System.Windows.Forms.CheckBox checkBox28;
+        private System.Windows.Forms.TabPage tabPage10;
+        private System.Windows.Forms.GroupBox groupBox15;
+        private System.Windows.Forms.CheckBox checkBox29;
+        private System.Windows.Forms.CheckBox checkBox30;
+        private System.Windows.Forms.ComboBox comboBox8;
+        private System.Windows.Forms.ComboBox comboBox9;
+        private System.Windows.Forms.CheckBox checkBox31;
     }
 }
 

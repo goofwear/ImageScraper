@@ -45,6 +45,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeigaParser", "ImageScraper
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookieEditor", "ImageScraper.Plugins\CookieEditor\CookieEditor.csproj", "{5C42A51F-5B0D-4286-BB16-257356E0535C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D5234331-BC98-408A-ACCE-B62CD7B5155F} = {D5234331-BC98-408A-ACCE-B62CD7B5155F}
+		{2F95298F-0DC4-4DC5-9246-26CF244423AB} = {2F95298F-0DC4-4DC5-9246-26CF244423AB}
+		{20A25AF9-46D8-4A3A-A7FC-4FBC66179860} = {20A25AF9-46D8-4A3A-A7FC-4FBC66179860}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

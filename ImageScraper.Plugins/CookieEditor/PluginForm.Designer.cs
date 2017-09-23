@@ -116,8 +116,7 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Meiryo UI", 8.25F);
-            this.MaximumSize = new System.Drawing.Size(260, 165);
-            this.MinimumSize = new System.Drawing.Size(260, 165);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "PluginForm";
             this.Text = "CookieEditor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PluginForm_FormClosing);

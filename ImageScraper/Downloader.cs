@@ -357,13 +357,18 @@ namespace ImageScraper
 
             foreach (var rootUrl in rootUrlList)
 			{
-                var hc = new HtmlContainer.HtmlContainer(rootUrl, mCookies);
-                hc.UpdateAttributeUrlList("a", "href", new string[] { "php", "phtml", "html", "htm", "" });
-                // ドメインのフィルタリング
-                var tmpUrlList = mSettings.DomainFilter.Filter(hc.AttributeUrlList);
+                if (mSettings.RootUrlFilter.Filter(rootUrl))
+                    mSettings.Logger.Write("Downloader", "ルート URL フィルタが適用されました > " + rootUrl);
+                else
+                {
+                    var hc = new HtmlContainer.HtmlContainer(rootUrl, mCookies);
+                    hc.UpdateAttributeUrlList("a", "href", new string[] { "php", "phtml", "html", "htm", "" });
+                    // ドメインのフィルタリング
+                    var tmpUrlList = mSettings.DomainFilter.Filter(hc.AttributeUrlList);
 
-                if (!SendLink(tmpUrlList))
-                    return false;
+                    if (!SendLink(tmpUrlList))
+                        return false;
+                }
 			}
             return HasDaemonCompleted();
 		}

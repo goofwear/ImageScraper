@@ -31,6 +31,8 @@ namespace ImageScraper
             groupBox8.Enabled = checkBox12.Checked;
             groupBox11.Enabled = checkBox11.Checked;
             groupBox13.Enabled = checkBox25.Checked;
+            groupBox15.Enabled = checkBox31.Checked;
+            groupBox14.Enabled = checkBox28.Checked;
             this.FormClosing += this.Form1_FormClosing;
         }
 
@@ -221,6 +223,21 @@ namespace ImageScraper
             groupBox8.Enabled = checkBox12.Checked;
         }
 
+        private void checkBox31_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBox15.Enabled = checkBox31.Checked;
+        }
+
+        private void checkBox28_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBox14.Enabled = checkBox28.Checked;
+        }
+
+        private void checkBox25_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBox13.Enabled = checkBox25.Checked;
+        }
+
         private void SelectAll_ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             listViewEx1.Focus();
@@ -228,11 +245,6 @@ namespace ImageScraper
             for (int i = 0; i < listViewEx1.Items.Count; i++)
                 listViewEx1.Items[i].Selected = true;
             listViewEx1.EndUpdate();
-        }
-
-        private void checkBox25_CheckedChanged(object sender, EventArgs e)
-        {
-            groupBox13.Enabled = checkBox25.Checked;
         }
 
         private void button7_Click(object sender, EventArgs e)

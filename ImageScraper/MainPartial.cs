@@ -27,40 +27,19 @@ namespace ImageScraper
             dc.DomainFilter = new DomainFilter(checkBox6.Checked, dc.UrlContainer);
             dc.ColorFilter = new ColorFilter(checkBox5.Checked, checkBox20.Checked);
             dc.ImageSizeFilter = new ValueRangeFilter(
-                checkBox14.Checked, 
-                checkBox17.Checked, 
-                (int)numericUpDown1.Value, 
-                (int)numericUpDown10.Value);
+                checkBox14.Checked, checkBox17.Checked, (int)numericUpDown1.Value, (int)numericUpDown10.Value);
             dc.ImagesPerPageFilter = new ValueRangeFilter(
-                checkBox15.Checked, 
-                checkBox18.Checked, 
-                (int)numericUpDown2.Value, 
-                (int)numericUpDown11.Value);
+                checkBox15.Checked, checkBox18.Checked, (int)numericUpDown2.Value, (int)numericUpDown11.Value);
             dc.TitleFilter = new KeywordFilter(
-                checkBox11.Checked,
-                checkBox21.Checked,
-                checkBox22.Checked,
-                comboBox2.Text, 
-                comboBox5.Text);
+                checkBox11.Checked, checkBox21.Checked, checkBox22.Checked, comboBox2.Text, comboBox5.Text);
             dc.UrlFilter = new KeywordFilter(
-                checkBox12.Checked,
-                checkBox24.Checked,
-                checkBox23.Checked,
-                comboBox3.Text,
-                comboBox4.Text);
+                checkBox12.Checked, checkBox24.Checked, checkBox23.Checked, comboBox3.Text, comboBox4.Text);
+            dc.RootUrlFilter = new KeywordFilter(
+                checkBox31.Checked, checkBox30.Checked, checkBox29.Checked, comboBox9.Text, comboBox8.Text);
             dc.ImageUrlFilter = new KeywordFilter(
-                checkBox28.Checked,
-                checkBox27.Checked,
-                checkBox26.Checked,
-                comboBox7.Text,
-                comboBox6.Text);
+                checkBox28.Checked, checkBox27.Checked, checkBox26.Checked, comboBox7.Text, comboBox6.Text);
             dc.ResolutionFilter = new ResolutionFilter(
-                checkBox16.Checked, 
-                checkBox19.Checked,
-                (int)numericUpDown5.Value,
-                (int)numericUpDown6.Value, 
-                (int)numericUpDown12.Value,
-                (int)numericUpDown13.Value);
+                checkBox16.Checked, checkBox19.Checked, (int)numericUpDown5.Value, (int)numericUpDown6.Value, (int)numericUpDown12.Value, (int)numericUpDown13.Value);
 
             // 保存設定
             var sng = new Utilities.SerialNameGenerator(textBox2.Text, (int)numericUpDown9.Value, mAvailableFormats);
@@ -72,22 +51,10 @@ namespace ImageScraper
 
             // 終了条件設定
             var limitStatus = new Status(
-                (int)numericUpDown3.Value,
-                (int)numericUpDown8.Value,
-                (int)numericUpDown4.Value,
-                (double)numericUpDown7.Value * 1000
-            );
+                (int)numericUpDown3.Value, (int)numericUpDown8.Value, (int)numericUpDown4.Value, (double)numericUpDown7.Value * 1000);
             dc.StatusMonitor = new StatusMonitor(
-                new bool[] {
-                    radioButton12.Checked,
-                    radioButton10.Checked,
-                    radioButton5.Checked,
-                    radioButton6.Checked,
-                    radioButton7.Checked
-                },
-                limitStatus,
-                (int)numericUpDown14.Value,
-                this.CountImages(dc.RootDirectory)
+                new bool[] { radioButton12.Checked, radioButton10.Checked, radioButton5.Checked, radioButton6.Checked, radioButton7.Checked },
+                limitStatus, (int)numericUpDown14.Value, this.CountImages(dc.RootDirectory)
             );
 
             // 接続設定
@@ -132,6 +99,8 @@ namespace ImageScraper
             UpdateComboBox(comboBox5);
             UpdateComboBox(comboBox6);
             UpdateComboBox(comboBox7);
+            UpdateComboBox(comboBox8);
+            UpdateComboBox(comboBox9);
             ReverseControls();
             toolStripStatusLabel1.Text = "ダウンロード中...";
         }
@@ -426,6 +395,10 @@ namespace ImageScraper
                 settings.KeyUrlList.Insert(0, comboBox3.Items[i].ToString());
             for (int i = comboBox4.Items.Count - 1; i >= 0; i--)
                 settings.ExKeyUrlList.Insert(0, comboBox4.Items[i].ToString());
+            for (int i = comboBox9.Items.Count - 1; i >= 0; i--)
+                settings.KeyRootUrlList.Insert(0, comboBox3.Items[i].ToString());
+            for (int i = comboBox8.Items.Count - 1; i >= 0; i--)
+                settings.ExKeyRootUrlList.Insert(0, comboBox4.Items[i].ToString());
             for (int i = comboBox7.Items.Count - 1; i >= 0; i--)
                 settings.KeyImageUrlList.Insert(0, comboBox7.Items[i].ToString());
             for (int i = comboBox6.Items.Count - 1; i >= 0; i--)
@@ -492,6 +465,10 @@ namespace ImageScraper
                     comboBox3.Items.AddRange(settings.KeyUrlList.ToArray());
                 if (settings.ExKeyUrlList != null)
                     comboBox4.Items.AddRange(settings.ExKeyUrlList.ToArray());
+                if (settings.KeyRootUrlList != null)
+                    comboBox9.Items.AddRange(settings.KeyRootUrlList.ToArray());
+                if (settings.ExKeyRootUrlList != null)
+                    comboBox8.Items.AddRange(settings.ExKeyRootUrlList.ToArray());
                 if (settings.KeyImageUrlList != null)
                     comboBox7.Items.AddRange(settings.KeyImageUrlList.ToArray());
                 if (settings.ExKeyImageUrlList != null)

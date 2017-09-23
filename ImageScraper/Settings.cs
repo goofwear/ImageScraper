@@ -9,6 +9,8 @@ namespace ImageScraper
         public List<string> ExKeyTitleList;
         public List<string> KeyUrlList;
         public List<string> ExKeyUrlList;
+        public List<string> KeyRootUrlList;
+        public List<string> ExKeyRootUrlList;
         public List<string> KeyImageUrlList;
         public List<string> ExKeyImageUrlList;
         public bool LoggerFormEnabled;
@@ -21,6 +23,8 @@ namespace ImageScraper
             ExKeyTitleList = new List<string>();
             KeyUrlList = new List<string>();
             ExKeyUrlList = new List<string>();
+            KeyRootUrlList = new List<string>();
+            ExKeyRootUrlList = new List<string>();
             KeyImageUrlList = new List<string>();
             ExKeyImageUrlList = new List<string>();
             LoggerFormEnabled = false;
@@ -41,6 +45,7 @@ namespace ImageScraper
         public DomainFilter DomainFilter;
         public KeywordFilter TitleFilter;
         public KeywordFilter UrlFilter;
+        public KeywordFilter RootUrlFilter;
         public KeywordFilter ImageUrlFilter;
         public string RootDirectory;
         public bool AppendsUrl;
