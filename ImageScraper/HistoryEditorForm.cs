@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net;
 using System.Drawing;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -11,23 +10,23 @@ namespace ImageScraper
 {
     public partial class HistoryEditorForm : Form
     {
-        HashSet<ImageInfo> _removedUrlSet;
-        HashSet<ImageInfo> _urlCache;
-        ListViewItemComparer listViewItemSorter = new ListViewItemComparer();
+        HashSet<ImageInfo> mRemovedUrlSet;
+        HashSet<ImageInfo> mUrlCache;
+        Utilities.ListViewItemComparer listViewItemSorter = new Utilities.ListViewItemComparer();
 
         public HistoryEditorForm(HashSet<ImageInfo> urlCache)
         {
             InitializeComponent();
-            this._urlCache = urlCache;
-            this._removedUrlSet = new HashSet<ImageInfo>();
+            this.mUrlCache = urlCache;
+            this.mRemovedUrlSet = new HashSet<ImageInfo>();
             ReloadHistory();
         }
 
         private void ReloadHistory()
         {
             int i = 0;
-            var lvItems = new ListViewItem[this._urlCache.Count];
-            foreach (var info in this._urlCache)
+            var lvItems = new ListViewItem[this.mUrlCache.Count];
+            foreach (var info in this.mUrlCache)
             {
                 var lvi = new ListViewItem(
                     new string[] {
@@ -85,7 +84,7 @@ namespace ImageScraper
             {
                 // 順番注意
                 var info = listViewEx1.SelectedItems[i].Tag as ImageInfo;
-                _removedUrlSet.Add(info);
+                mRemovedUrlSet.Add(info);
                 listViewEx1.Items.RemoveAt(listViewEx1.SelectedItems[i].Index);
             }
             listViewEx1.EndUpdate();
@@ -103,8 +102,8 @@ namespace ImageScraper
 
         private void button2_Click(object sender, EventArgs e)
         {
-            foreach (var info in _removedUrlSet)
-                _urlCache.Remove(info);
+            foreach (var info in mRemovedUrlSet)
+                mUrlCache.Remove(info);
             this.Close();
         }
 
@@ -235,7 +234,7 @@ namespace ImageScraper
 
             listViewEx1.Items.Clear();
             listViewEx1.BeginUpdate();
-            foreach (var info in this._urlCache)
+            foreach (var info in this.mUrlCache)
             {
                 if (info.ParentTitle.ToLower().Contains(comboBox1.Text.ToLower()))
                 {
@@ -254,83 +253,6 @@ namespace ImageScraper
             }
             listViewEx1.EndUpdate();
             UpdateRowColor();
-        }
-    }
-
-    /// <summary>
-    /// ListViewの項目の並び替えに使用するクラス
-    /// </summary>
-    public class ListViewItemComparer : IComparer
-    {
-        private int _column;
-        private SortOrder _order;
-
-        /// <summary>
-        /// 並び替えるListView列の番号
-        /// </summary>
-        public int Column
-        {
-            set
-            {
-                //現在と同じ列の時は、昇順降順を切り替える
-                if (_column == value)
-                {
-                    if (_order == SortOrder.Ascending)
-                        _order = SortOrder.Descending;
-                    else if (_order == SortOrder.Descending)
-                        _order = SortOrder.Ascending;
-                }
-                _column = value;
-            }
-            get
-            {
-                return _column;
-            }
-        }
-        /// <summary>
-        /// 昇順か降順か
-        /// </summary>
-        public SortOrder Order
-        {
-            set
-            {
-                _order = value;
-            }
-            get
-            {
-                return _order;
-            }
-        }
-
-        /// <summary>
-        /// ListViewItemComparerクラスのコンストラクタ
-        /// </summary>
-        /// <param name="col">並び替える列番号</param>
-        public ListViewItemComparer(int col, SortOrder ord)
-        {
-            _column = col;
-            _order = ord;
-        }
-        public ListViewItemComparer()
-        {
-            _column = 2;
-            _order = SortOrder.Descending;
-        }
-
-        // xがyより小さいときはマイナスの数、大きいときはプラスの数、
-        // 同じときは0を返す
-        public int Compare(object x, object y)
-        {
-            // ListViewItemの取得
-            ListViewItem itemx = (ListViewItem)x;
-            ListViewItem itemy = (ListViewItem)y;
-
-            // xとyを文字列として比較する
-            int result = String.Compare(itemx.SubItems[_column].Text, itemy.SubItems[_column].Text);
-            if (_order == SortOrder.Descending)
-                result = -result;
-
-            return result;
         }
     }
 }
