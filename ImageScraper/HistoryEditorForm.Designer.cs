@@ -47,6 +47,7 @@
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.contextMenuStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -184,10 +185,10 @@
             this.listViewEx1.FullRowSelect = true;
             this.listViewEx1.GridLines = true;
             this.listViewEx1.HideSelection = false;
-            this.listViewEx1.Location = new System.Drawing.Point(12, 27);
+            this.listViewEx1.Location = new System.Drawing.Point(12, 55);
             this.listViewEx1.Name = "listViewEx1";
             this.listViewEx1.ShowItemToolTips = true;
-            this.listViewEx1.Size = new System.Drawing.Size(606, 503);
+            this.listViewEx1.Size = new System.Drawing.Size(606, 475);
             this.listViewEx1.TabIndex = 7;
             this.listViewEx1.UseCompatibleStateImageBehavior = false;
             this.listViewEx1.View = System.Windows.Forms.View.Details;
@@ -210,11 +211,21 @@
             this.columnHeader3.Text = "取得日時";
             this.columnHeader3.Width = 150;
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(12, 27);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(153, 22);
+            this.comboBox1.TabIndex = 8;
+            this.comboBox1.TextUpdate += new System.EventHandler(this.comboBox1_TextUpdate);
+            // 
             // HistoryEditorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(630, 571);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.listViewEx1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
@@ -250,5 +261,6 @@
         private System.Windows.Forms.ToolStripMenuItem SelectAll_ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ファイルFToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem MenuReload;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }

@@ -224,6 +224,37 @@ namespace ImageScraper
                 listViewEx1.Items[i].Selected = true;
             listViewEx1.EndUpdate();
         }
+
+        private void comboBox1_TextUpdate(object sender, EventArgs e)
+        {
+            if (String.IsNullOrEmpty(comboBox1.Text))
+            {
+                ReloadHistory();
+                return;
+            }
+
+            listViewEx1.Items.Clear();
+            listViewEx1.BeginUpdate();
+            foreach (var info in this._urlCache)
+            {
+                if (info.ParentTitle.ToLower().Contains(comboBox1.Text.ToLower()))
+                {
+                    var lvi = new ListViewItem(
+                        new string[] {
+                        Path.GetFileName(info.ImagePath),
+                        info.ParentTitle,
+                        info.TimeStamp.ToString("yyyy/MM/dd/ HH:mm:ss")
+                        }
+                    );
+                    if (!File.Exists(info.ImagePath))
+                        lvi.ForeColor = Color.Red;
+                    lvi.Tag = info;
+                    listViewEx1.Items.Add(lvi);
+                }
+            }
+            listViewEx1.EndUpdate();
+            UpdateRowColor();
+        }
     }
 
     /// <summary>
