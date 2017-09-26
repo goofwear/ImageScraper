@@ -26,10 +26,10 @@ namespace ImageScraper.Utilities
         {
             if (this.mOldDirectory != dir)
             {
-                string pattern = String.Format(@"(?i)_(\d{{{0}}})\.({1})$", mDigits, mFormatPattern);
+                string pattern = String.Format(@"(?i)(\d{{{0}}})\.({1})$", mDigits, mFormatPattern);
                 DirectoryInfo di = new DirectoryInfo(dir);
 
-                mInitialMax = di.GetFiles(mTagName + "_*.*")			// パターンに一致するファイルを取得する
+                mInitialMax = di.GetFiles(mTagName + "*.*")			    // パターンに一致するファイルを取得する
                     .Select(fi => Regex.Match(fi.Name, pattern))		// ファイルの中で数値のものを探す
                     .Where(m => m.Success)                              // 該当するファイルだけに絞り込む
                     .Select(m => Int32.Parse(m.Groups[1].Value))        // 数値を取得する
@@ -37,7 +37,7 @@ namespace ImageScraper.Utilities
                     .Max();                                             // 最大値を取得する
             }
             string serial = (++mInitialMax).ToString().PadLeft(mDigits, '0');
-            string fileName = mTagName + "_" + serial;
+            string fileName = mTagName + serial;
 
             return fileName;
         }
