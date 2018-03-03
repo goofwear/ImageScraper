@@ -29,8 +29,8 @@ namespace ImageScraper.Utilities
                 string pattern = String.Format(@"(?i)(\d{{{0}}})\.({1})$", mDigits, mFormatPattern);
                 DirectoryInfo di = new DirectoryInfo(dir);
 
-                mInitialMax = di.GetFiles(mTagName + "*.*")			    // パターンに一致するファイルを取得する
-                    .Select(fi => Regex.Match(fi.Name, pattern))		// ファイルの中で数値のものを探す
+                mInitialMax = di.GetFiles(mTagName + "*.*")                // パターンに一致するファイルを取得する
+                    .Select(fi => Regex.Match(fi.Name, pattern))        // ファイルの中で数値のものを探す
                     .Where(m => m.Success)                              // 該当するファイルだけに絞り込む
                     .Select(m => Int32.Parse(m.Groups[1].Value))        // 数値を取得する
                     .DefaultIfEmpty(0)                                  // １つも該当しなかった場合は 0 とする

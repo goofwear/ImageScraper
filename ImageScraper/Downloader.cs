@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ImageScraper
 {
-	public class Downloader
-	{
-		bool _isRunning;
+    public class Downloader
+    {
+        bool _isRunning;
         bool _isSuspend;
         DownloadSettings mSettings;
         List<string> mRootUrlList;
@@ -36,18 +36,18 @@ namespace ImageScraper
         }
 
         public Downloader(DownloadSettings settings, Plugins.PluginInterface[] plugins, MainForm parentForm)
-		{
-			mSettings = settings;
+        {
+            mSettings = settings;
             mPlugins = plugins;
             mCookies = new CookieContainer();
-			_isRunning = false;
+            _isRunning = false;
             _isSuspend = false;
-			mTempStatus = new Status(0, 0, 0, 0);
-			mSumStatus = new Status(0, 0, 0, 0);
+            mTempStatus = new Status(0, 0, 0, 0);
+            mSumStatus = new Status(0, 0, 0, 0);
             mRootUrlList = new List<string>();
             mCachedUrlSet = new HashSet<string>();
             mParentForm = parentForm;
-		}
+        }
 
         void OnUpdateStatus()
         {
@@ -80,17 +80,17 @@ namespace ImageScraper
             mParentForm.Invoke(new Action(() => mParentForm.UpdateImageInfo(info)));
         }
 
-		public async Task<bool> Start()
-		{
+        public async Task<bool> Start()
+        {
             _isRunning = true;
-			bool ret = await Task.Run(() => Mainloop());
-			return ret;
-		}
+            bool ret = await Task.Run(() => Mainloop());
+            return ret;
+        }
 
-		public void Stop()
-		{
-			_isRunning = false;
-		}
+        public void Stop()
+        {
+            _isRunning = false;
+        }
 
         public bool Suspend()
         {
@@ -209,7 +209,7 @@ namespace ImageScraper
         }
 
         bool DownloadImages(HtmlContainer.HtmlContainer hc)
-		{
+        {
             mTempStatus.Size = 0;
             mTempStatus.Images = 0;
             int images = hc.AttributeUrlList.Count;
@@ -347,8 +347,8 @@ namespace ImageScraper
             return true;
         }
 
-		bool SendRootLink()
-		{
+        bool SendRootLink()
+        {
             var rootUrlList = new List<string>(mRootUrlList);
             mRootUrlList.Clear();
 
@@ -356,7 +356,7 @@ namespace ImageScraper
                 return false;
 
             foreach (var rootUrl in rootUrlList)
-			{
+            {
                 if (mSettings.RootUrlFilter.Filter(rootUrl))
                     mSettings.Logger.Write("Downloader", "ルート URL フィルタが適用されました > " + rootUrl);
                 else
@@ -369,9 +369,9 @@ namespace ImageScraper
                     if (!SendLink(tmpUrlList))
                         return false;
                 }
-			}
+            }
             return HasDaemonCompleted();
-		}
+        }
 
         bool Mainloop()
         {
@@ -392,5 +392,5 @@ namespace ImageScraper
             }
             return true;
         }
-	}
+    }
 }
