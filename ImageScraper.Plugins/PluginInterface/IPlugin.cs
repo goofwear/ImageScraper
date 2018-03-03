@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ImageScraper.Plugins
 {
-    public interface PluginInterface
+    public interface IPlugin
     {
         string Name { get; }
         bool Enabled { get; }

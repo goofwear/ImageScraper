@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace ImageScraper.Plugins.CookieEditor
 {
-    public class Editor : Plugins.PluginInterface
+    public class Editor : Plugins.IPlugin
     {
         bool mIsLoggedIn;
         Utilities.Logger mLogger;

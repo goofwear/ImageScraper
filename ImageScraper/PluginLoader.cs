@@ -51,7 +51,7 @@ namespace ImageScraper
             ArrayList plugins = new ArrayList();
             List<string> failedPlugins = new List<string>();
             // IPlugin型の名前
-            string ipluginName = typeof(Plugins.PluginInterface).FullName;
+            string ipluginName = typeof(Plugins.IPlugin).FullName;
 
             // プラグインフォルダ
             string folder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -112,14 +112,14 @@ namespace ImageScraper
         /// プラグインクラスのインスタンスを作成する
         /// </summary>
         /// <returns>プラグインクラスのインスタンス</returns>
-        public Plugins.PluginInterface CreateInstance()
+        public Plugins.IPlugin CreateInstance()
         {
             try
             {
                 // アセンブリを読み込む
                 Assembly asm = Assembly.LoadFrom(this.Location);
                 // クラス名からインスタンスを作成する
-                Plugins.PluginInterface plugin = (Plugins.PluginInterface)asm.CreateInstance(this.ClassName);
+                Plugins.IPlugin plugin = (Plugins.IPlugin)asm.CreateInstance(this.ClassName);
                 return plugin;
             }
             catch

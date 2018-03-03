@@ -10,7 +10,7 @@ namespace ImageScraper
         const string mVersionString = "3.0";
         private Downloader mDownloader;
         private Utilities.Logger mLogger;
-        private Plugins.PluginInterface[] mPlugins;
+        private Plugins.IPlugin[] mPlugins;
         private DownloadSettings mDownloadSettings = new DownloadSettings();
         private FormSettings mFormSettings = new FormSettings();
         private HashSet<ImageInfo> mUrlCache = new HashSet<ImageInfo>();
@@ -39,7 +39,7 @@ namespace ImageScraper
         private void menuPlugin_Click(object sender, EventArgs e)
         {
             ToolStripMenuItem mi = (ToolStripMenuItem)sender;
-            foreach (Plugins.PluginInterface plugin in mPlugins)
+            foreach (Plugins.IPlugin plugin in mPlugins)
             {
                 if (mi.Text == plugin.Name)
                 {

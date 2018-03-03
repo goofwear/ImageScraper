@@ -19,7 +19,7 @@ namespace ImageScraper
         Status mSumStatus;
         CookieContainer mCookies;
         MainForm mParentForm;
-        Plugins.PluginInterface[] mPlugins;
+        Plugins.IPlugin[] mPlugins;
         char[] mInvalidCharsP = Path.GetInvalidPathChars();
         char[] mInvalidCharsF = Path.GetInvalidFileNameChars();
 
@@ -35,7 +35,7 @@ namespace ImageScraper
             get { return _isSuspend; }
         }
 
-        public Downloader(DownloadSettings settings, Plugins.PluginInterface[] plugins, MainForm parentForm)
+        public Downloader(DownloadSettings settings, Plugins.IPlugin[] plugins, MainForm parentForm)
         {
             mSettings = settings;
             mPlugins = plugins;
@@ -266,7 +266,7 @@ namespace ImageScraper
             return false;
         }
 
-        Plugins.PluginInterface FindPlugin(UrlContainer.UrlContainer uc)
+        Plugins.IPlugin FindPlugin(UrlContainer.UrlContainer uc)
         {
             foreach (var plugin in mPlugins)
             {
@@ -288,7 +288,7 @@ namespace ImageScraper
                 return null;
 
             // URLに対応するプラグインを検索，見つかればCookie取得
-            Plugins.PluginInterface plugin = FindPlugin(uc);
+            Plugins.IPlugin plugin = FindPlugin(uc);
             var hc = new HtmlContainer.HtmlContainer(uc, mCookies);
 
             // Htmlを取得する必要がないURLのフィルタリング

@@ -367,7 +367,7 @@ namespace ImageScraper
         private void LoadPlugins()
         {
             PluginInfo[] pis = PluginInfo.FindPlugins();
-            mPlugins = new Plugins.PluginInterface[pis.Length];
+            mPlugins = new Plugins.IPlugin[pis.Length];
 
             for (int i = 0; i < mPlugins.Length; i++)
             {

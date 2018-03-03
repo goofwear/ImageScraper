@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageScraper", "ImageScraper\ImageScraper.csproj", "{25FA2338-ACBF-4D43-A572-BD694A4E8B63}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -30,7 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixivParser", "ImageScraper
 		{20A25AF9-46D8-4A3A-A7FC-4FBC66179860} = {20A25AF9-46D8-4A3A-A7FC-4FBC66179860}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginInterface", "ImageScraper.Plugins\PluginInterface\PluginInterface.csproj", "{20A25AF9-46D8-4A3A-A7FC-4FBC66179860}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPlugin", "ImageScraper.Plugins\PluginInterface\IPlugin.csproj", "{20A25AF9-46D8-4A3A-A7FC-4FBC66179860}"
 	ProjectSection(ProjectDependencies) = postProject
 		{D5234331-BC98-408A-ACCE-B62CD7B5155F} = {D5234331-BC98-408A-ACCE-B62CD7B5155F}
 		{2F95298F-0DC4-4DC5-9246-26CF244423AB} = {2F95298F-0DC4-4DC5-9246-26CF244423AB}
@@ -166,5 +166,8 @@ Global
 		{20A25AF9-46D8-4A3A-A7FC-4FBC66179860} = {7B998739-777F-4BB8-83ED-B01776EDAC6F}
 		{5E624426-E526-463F-AB85-66CF40639FFF} = {7B998739-777F-4BB8-83ED-B01776EDAC6F}
 		{5C42A51F-5B0D-4286-BB16-257356E0535C} = {7B998739-777F-4BB8-83ED-B01776EDAC6F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D7A813D6-EA7C-4E3A-8ED9-5E52E7A16E61}
 	EndGlobalSection
 EndGlobal

@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace ImageScraper.Plugins.PixivParser
 {
-    public class Parser : Plugins.PluginInterface
+    public class Parser : Plugins.IPlugin
     {
         bool mEnabled;
         Utilities.Logger mLogger;
