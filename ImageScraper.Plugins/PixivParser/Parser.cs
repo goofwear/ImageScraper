@@ -14,7 +14,7 @@ namespace ImageScraper.Plugins.PixivParser
         Utilities.Logger mLogger;
         Account mUserAccount;
         PluginForm mPluginForm;
-        Uri mBaseUri = new Uri("http://www.pixiv.net/");
+        Uri mBaseUri = new Uri("https://www.pixiv.net/");
 
         delegate void WriteLogDelegate(string modele, string desc);
 
@@ -170,8 +170,7 @@ namespace ImageScraper.Plugins.PixivParser
                 { "pixiv_id", Uri.EscapeDataString(mUserAccount.Id) },
                 { "password", Uri.EscapeDataString(mUserAccount.Pass) },
                 { "post_key", GetPostKey() },
-                { "source", "accounts" },
-                { "return_to", Uri.EscapeDataString(mBaseUri.OriginalString) }
+                { "source", "pc" },
             };
             foreach (var pair in content)
                 param += String.Format("{0}={1}&", pair.Key, pair.Value);
@@ -180,7 +179,6 @@ namespace ImageScraper.Plugins.PixivParser
             var uri = new Uri("https://accounts.pixiv.net/api/login?lang=ja");
             var req = (HttpWebRequest)WebRequest.CreateHttp(uri);
             req.Method = "POST";
-            req.Proxy = null;
             req.ContentType = "application/x-www-form-urlencoded";
             req.ContentLength = buf.Length;
             req.CookieContainer = mUserAccount.Cookies;
@@ -193,7 +191,7 @@ namespace ImageScraper.Plugins.PixivParser
             var ccol = req.CookieContainer.GetCookies(mBaseUri);
             req.Abort();
 
-            if (ccol["device_token"] != null)
+            if (ccol["device_token"] != null && ccol["PHPSESSID"] != null)
             {
                 mUserAccount.Enabled = true;
                 mUserAccount.Cookies.Add(ccol);
@@ -220,27 +218,15 @@ namespace ImageScraper.Plugins.PixivParser
             return new Regex("https?://www.pixiv.net/.+").Match(url).Success;
         }
 
-        private string GetPixivDisplayMode(UrlContainer.UrlContainer uc)
+        private List<string> PixivImageUrls(string html)
         {
-            var hc = new HtmlContainer.HtmlContainer(uc, mUserAccount.Cookies);
-            Regex re = new Regex(@"\?mode=(?<Mode>[a-z]+)");
+            html = html.Replace("\\/", "/");
+            List<string> urls = new List<string>();
+            var re = new Regex(@"https?://i.pximg.net/img-original/[a-z0-9\./_]+");
+            foreach (Match m in re.Matches(html))
+                urls.Add(m.Value);
 
-            foreach (Match m in re.Matches(hc.Html))
-            {
-                if (m.Success)
-                {
-                    if (m.Groups["Mode"].Value == "manga")
-                        return "manga";
-                    else if (m.Groups["Mode"].Value == "big")
-                        return "big";
-                }
-            }
-            return "medium";
-        }
-
-        private bool IsPixivImageUrl(string url)
-        {
-            return new Regex("https?://i.pximg.net/img-(master|original)/.+$").Match(url).Success;
+            return urls;
         }
 
         public List<UrlContainer.UrlContainer> GetImageUrlList(UrlContainer.UrlContainer uc, string[] format)
@@ -251,20 +237,12 @@ namespace ImageScraper.Plugins.PixivParser
             Match m = re.Match(uc.Url);
             if (m.Success)
             {
-                string mode = GetPixivDisplayMode(uc);
-                // リファラー必須
-                uc.Referer = uc.Url;
-                uc.Url = String.Format("http://www.pixiv.net/member_illust.php?mode={0}&illust_id={1}", mode, m.Groups["Id"].Value);
                 var hc = new HtmlContainer.HtmlContainer(uc, mUserAccount.Cookies);
-                hc.UpdateAttributeUrlList("img", "src", format);
-                hc.UpdateAttributeUrlList("img", "data-src", format);
-                foreach (var cand in hc.AttributeUrlList)
+                foreach (var url in PixivImageUrls(hc.Html))
                 {
-                    if (IsPixivImageUrl(cand.RawUrl))
-                    {
-                        cand.Referer = uc.Url;
-                        ret.Add(cand);
-                    }
+                    var cand = new UrlContainer.UrlContainer(url);
+                    cand.Referer = uc.Url;
+                    ret.Add(cand);
                 }
             }
             return ret;

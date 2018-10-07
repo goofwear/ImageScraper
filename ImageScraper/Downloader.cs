@@ -291,13 +291,13 @@ namespace ImageScraper
             Plugins.IPlugin plugin = FindPlugin(uc);
             var hc = new HtmlContainer.HtmlContainer(uc, mCookies);
 
-            // Htmlを取得する必要がないURLのフィルタリング
+            // Htmlを取得しない
             if (mSettings.UrlFilter.Filter(uc.Url))
             {
                 mSettings.Logger.Write("Downloader", "URL フィルタが適用されました > " + uc.Url);
                 return hc;
             }
-            // Htmlを取得する必要があるタイトルのフィルタリング
+            // Htmlを取得する
             if (mSettings.TitleFilter.Filter(hc.Title))
             {
                 mSettings.Logger.Write("Downloader", "タイトルフィルタが適用されました > " + hc.Title);
