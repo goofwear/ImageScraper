@@ -10,7 +10,6 @@ namespace ImageScraper.Plugins.PixivParser
 {
     public class Parser : Plugins.IPlugin
     {
-        bool mEnabled;
         Utilities.Logger mLogger;
         Account mUserAccount;
         PluginForm mPluginForm;
@@ -23,10 +22,7 @@ namespace ImageScraper.Plugins.PixivParser
             get { return "PixivParser"; }
         }
 
-        public bool Enabled
-        {
-            get { return mEnabled; }
-        }
+        public bool Enabled { get; private set; }
 
         public bool IsLoggedIn
         {
@@ -52,7 +48,7 @@ namespace ImageScraper.Plugins.PixivParser
 
         public Parser()
         {
-            mEnabled = false;
+            Enabled = false;
             mLogger = null;
             mUserAccount = new Account();
         }
@@ -62,7 +58,7 @@ namespace ImageScraper.Plugins.PixivParser
             Settings settings = new Settings();
             settings.Id = mUserAccount.Id;
             settings.Pass = mUserAccount.Pass;
-            settings.Enabled = mEnabled;
+            settings.Enabled = Enabled;
             settings.IsLoggedIn = mUserAccount.Enabled;
             if (mUserAccount.Enabled)
                 settings.Cookies = Utilities.Common.CookiesToString(GetCookieCollection());
@@ -77,7 +73,7 @@ namespace ImageScraper.Plugins.PixivParser
             XmlSerializer xs = new XmlSerializer(typeof(Settings));
             using (StreamReader sr = new StreamReader("plugins/" + Name + ".xml", new UTF8Encoding(false)))
                 settings = (Settings)xs.Deserialize(sr);
-            mEnabled = settings.Enabled;
+            Enabled = settings.Enabled;
             mUserAccount.Id = settings.Id;
             mUserAccount.Pass = settings.Pass;
             mUserAccount.Enabled = settings.IsLoggedIn;
@@ -112,8 +108,8 @@ namespace ImageScraper.Plugins.PixivParser
             // フォームが開かれているとき実行されアカウント情報が反映される
             if (mPluginForm != null && !mPluginForm.IsDisposed)
             {
-                mEnabled = mPluginForm.GetEnabled();
-                if (mEnabled)
+                Enabled = mPluginForm.GetEnabled();
+                if (Enabled)
                 {
                     var userAccount = mPluginForm.GetAccount();
                     SetAccount(userAccount.Id, userAccount.Pass);
@@ -143,7 +139,7 @@ namespace ImageScraper.Plugins.PixivParser
 
         internal void SetEnabled(bool enabled)
         {
-            mEnabled = enabled;
+            Enabled = enabled;
         }
 
         private string GetPostKey()

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -8,7 +9,6 @@ namespace ImageScraper.Plugins.CookieEditor
 {
     public class Editor : Plugins.IPlugin
     {
-        bool mIsLoggedIn;
         Utilities.Logger mLogger;
         PluginForm mPluginForm;
         Settings mSettings;
@@ -18,18 +18,9 @@ namespace ImageScraper.Plugins.CookieEditor
             get { return "CookieEditor"; }
         }
 
-        public bool Enabled
-        {
-            get { return true; }
-        }
+        public bool Enabled { get; private set; }
 
-        public bool IsLoggedIn
-        {
-            get
-            {
-                return mIsLoggedIn;
-            }
-        }
+        public bool IsLoggedIn { get; private set; }
 
         public bool IsExclusive
         {
@@ -43,13 +34,15 @@ namespace ImageScraper.Plugins.CookieEditor
 
         public Editor()
         {
+            Enabled = false;
             mSettings = new Settings();
-            mIsLoggedIn = false;
+            IsLoggedIn = false;
             mLogger = null;
         }
 
         public void SaveSettings()
         {
+            mSettings.Enabled = Enabled;
             XmlSerializer xs = new XmlSerializer(typeof(Settings));
             using (StreamWriter sw = new StreamWriter("plugins/" + Name + ".xml", false, new UTF8Encoding(false)))
                 xs.Serialize(sw, mSettings);
@@ -65,7 +58,8 @@ namespace ImageScraper.Plugins.CookieEditor
         public CookieCollection GetCookieCollection()
         {
             var cc = new CookieCollection();
-            cc.Add(new Cookie(mSettings.Name, mSettings.Value, mSettings.Path, mSettings.Domain));
+            if (!String.IsNullOrEmpty(mSettings.Cookie.Name))
+                cc.Add(mSettings.Cookie);
             return cc;
         }
 
@@ -75,35 +69,40 @@ namespace ImageScraper.Plugins.CookieEditor
             {
                 mPluginForm = new PluginForm(this);
                 mPluginForm.Text = Name;
-                mPluginForm.SetCookie(mSettings.Name, mSettings.Value, mSettings.Path, mSettings.Domain);
+                mPluginForm.SetCookie(mSettings.Cookie);
                 mPluginForm.MaximizeBox = false;
                 mPluginForm.MinimizeBox = false;
                 mPluginForm.Show();
             }
         }
 
-        internal void SetCookie(string name, string value, string path, string domain)
+        internal void SetCookie(Cookie cookie)
         {
-            if (mSettings == null)
-                mSettings = new Settings();
-            mSettings.Name = name;
-            mSettings.Value = value;
-            mSettings.Path = path;
-            mSettings.Domain = domain;
+            mSettings.Cookie = cookie;
         }
 
         public void PreProcess()
         {
+            // フォームが開かれているとき実行されアカウント情報が反映される
+            if (mPluginForm != null && !mPluginForm.IsDisposed)
+            {
+                Enabled = mPluginForm.GetEnabled();
+                if (Enabled)
+                    SetCookie(mPluginForm.GetCookie());
+                mPluginForm.SetFormEnabled(false);
+            }
         }
 
         public void PostProcess()
         {
+            if (mPluginForm != null && !mPluginForm.IsDisposed)
+                mPluginForm.SetFormEnabled(true);
         }
 
         public bool Login(bool force = false)
         {
-            mIsLoggedIn = true;
-            return mIsLoggedIn;
+            IsLoggedIn = true;
+            return IsLoggedIn;
         }
 
         public bool IsIgnore(string url)
