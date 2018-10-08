@@ -82,7 +82,7 @@ namespace UrlContainer
                 req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36";
                 req.Timeout = 10 * 1000; // 10 sec timeout
                 req.CookieContainer = new CookieContainer();
-                req.CookieContainer.Add(cc.GetCookies(new Uri(this.Referer)));
+                req.CookieContainer.Add(cc.GetCookies(new Uri(this.DownloadUrl)));
                 if (Proxy != null)
                     req.Proxy = Proxy;
 

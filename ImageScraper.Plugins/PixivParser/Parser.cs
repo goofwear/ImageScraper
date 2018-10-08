@@ -5,6 +5,7 @@ using System.Text;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace ImageScraper.Plugins.PixivParser
 {
@@ -214,15 +215,60 @@ namespace ImageScraper.Plugins.PixivParser
             return new Regex("https?://www.pixiv.net/.+").Match(url).Success;
         }
 
-        private List<string> PixivImageUrls(string html)
+        private List<UrlContainer.UrlContainer> PixivImageUrls(HtmlContainer.HtmlContainer hc)
         {
-            html = html.Replace("\\/", "/");
-            List<string> urls = new List<string>();
+            var html = hc.Html.Replace("\\/", "/");
+            var urls = new List<UrlContainer.UrlContainer>();
             var re = new Regex(@"https?://i.pximg.net/img-original/[a-z0-9\./_]+");
             foreach (Match m in re.Matches(html))
-                urls.Add(m.Value);
+            {
+                if (m.Success)
+                {
+                    var uc = new UrlContainer.UrlContainer(m.Value, hc.UrlContainer.Url);
+                    urls.Add(uc);
+                }
+            }
+            return urls;
+        }
+
+        private List<UrlContainer.UrlContainer> PixivMangaUrls(HtmlContainer.HtmlContainer hc, string[] format)
+        {
+            var urls = new List<UrlContainer.UrlContainer>();
+            var re = new Regex(@"mode=manga_big");
+            var backup = HtmlContainer.HtmlContainer.RequestSpan;
+
+            HtmlContainer.HtmlContainer.RequestSpan = 0;
+            hc.UpdateAttributeUrlList("a", "href", null);
+            foreach (var uc in hc.AttributeUrlList)
+            {
+                Match m = re.Match(uc.Url);
+                if (m.Success)
+                {
+                    var tmp = new HtmlContainer.HtmlContainer(uc.Url, hc.Cookies);
+                    tmp.UpdateAttributeUrlList("img", "src", format);
+                    urls.AddRange(tmp.AttributeUrlList);
+                }
+            }
+            HtmlContainer.HtmlContainer.RequestSpan = backup;
 
             return urls;
+        }
+
+        public List<UrlContainer.UrlContainer> GetLinkList(HtmlContainer.HtmlContainer hc)
+        {
+            List<UrlContainer.UrlContainer> ret = new List<UrlContainer.UrlContainer>();
+            var re = new Regex(@"""illustId"":""(?<Id>[0-9]+)""");
+            foreach (Match m in re.Matches(hc.Html))
+            {
+                if (m.Success)
+                {
+                    var uc = new UrlContainer.UrlContainer(
+                        "https://www.pixiv.net/member_illust.php?mode=medium&illust_id=" + m.Groups["Id"].Value,
+                        hc.UrlContainer.Url);
+                    ret.Add(uc);
+                }
+            }
+            return ret;
         }
 
         public List<UrlContainer.UrlContainer> GetImageUrlList(UrlContainer.UrlContainer uc, string[] format)
@@ -234,12 +280,13 @@ namespace ImageScraper.Plugins.PixivParser
             if (m.Success)
             {
                 var hc = new HtmlContainer.HtmlContainer(uc, mUserAccount.Cookies);
-                foreach (var url in PixivImageUrls(hc.Html))
-                {
-                    var cand = new UrlContainer.UrlContainer(url);
-                    cand.Referer = uc.Url;
-                    ret.Add(cand);
-                }
+                foreach (var url in PixivImageUrls(hc))
+                    ret.Add(url);
+                hc = new HtmlContainer.HtmlContainer(
+                    new UrlContainer.UrlContainer("https://www.pixiv.net/member_illust.php?mode=manga&illust_id=" + m.Groups["Id"].Value), 
+                    mUserAccount.Cookies);
+                foreach (var url in PixivMangaUrls(hc, format))
+                    ret.Add(url);
             }
             return ret;
         }

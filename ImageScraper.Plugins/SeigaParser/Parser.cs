@@ -203,10 +203,15 @@ namespace ImageScraper.Plugins.SeigaParser
             return null;
         }
 
+        public List<UrlContainer.UrlContainer> GetLinkList(HtmlContainer.HtmlContainer hc)
+        {
+            return new List<UrlContainer.UrlContainer>();
+        }
+
         public List<UrlContainer.UrlContainer> GetImageUrlList(UrlContainer.UrlContainer uc, string[] format)
         {
             var ret = new List<UrlContainer.UrlContainer>();
-            string mode = GetSeigaDisplayMode(uc);
+            var mode = GetSeigaDisplayMode(uc);
 
             if (mode == "seiga")
             {

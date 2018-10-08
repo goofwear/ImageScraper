@@ -144,7 +144,7 @@ namespace ImageScraper
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "エラー",
+                MessageBox.Show(ex.Message + "\n\n" + ex.StackTrace, "エラー",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally

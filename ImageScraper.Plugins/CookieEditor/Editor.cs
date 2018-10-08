@@ -115,6 +115,11 @@ namespace ImageScraper.Plugins.CookieEditor
             return true;
         }
 
+        public List<UrlContainer.UrlContainer> GetLinkList(HtmlContainer.HtmlContainer hc)
+        {
+            return new List<UrlContainer.UrlContainer>();
+        }
+
         public List<UrlContainer.UrlContainer> GetImageUrlList(UrlContainer.UrlContainer uc, string[] format)
         {
             return new List<UrlContainer.UrlContainer>();

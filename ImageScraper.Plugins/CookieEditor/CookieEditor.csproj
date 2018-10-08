@@ -58,6 +58,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\HtmlContainer\HtmlContainer.csproj">
+      <Project>{4150a3a6-2081-49b4-ab5a-7a2fc3ea6994}</Project>
+      <Name>HtmlContainer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ImageScraper.Utilities\Utilities.csproj">
       <Project>{d5234331-bc98-408a-acce-b62cd7b5155f}</Project>
       <Name>Utilities</Name>

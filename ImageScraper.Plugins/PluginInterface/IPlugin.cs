@@ -20,6 +20,7 @@ namespace ImageScraper.Plugins
         CookieCollection GetCookieCollection();
         bool IsIgnore(string url);
         bool IsParse(string url);
+        List<UrlContainer.UrlContainer> GetLinkList(HtmlContainer.HtmlContainer hc);
         List<UrlContainer.UrlContainer> GetImageUrlList(UrlContainer.UrlContainer uc, string[] format);
     }
 }

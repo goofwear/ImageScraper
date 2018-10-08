@@ -9,8 +9,6 @@ namespace ImageScraper
 {
     public class Downloader
     {
-        bool _isRunning;
-        bool _isSuspend;
         DownloadSettings mSettings;
         List<string> mRootUrlList;
         HashSet<string> mCachedUrlSet;
@@ -25,23 +23,17 @@ namespace ImageScraper
 
         delegate void WriteLogDelegate(string modele, string desc);
 
-        public bool IsRunning
-        {
-            get { return _isRunning; }
-        }
+        public bool IsRunning { get; private set; }
 
-        public bool IsSuspend
-        {
-            get { return _isSuspend; }
-        }
+        public bool IsSuspend { get; private set; }
 
         public Downloader(DownloadSettings settings, Plugins.IPlugin[] plugins, MainForm parentForm)
         {
             mSettings = settings;
             mPlugins = plugins;
             mCookies = new CookieContainer();
-            _isRunning = false;
-            _isSuspend = false;
+            IsRunning = false;
+            IsSuspend = false;
             mTempStatus = new Status(0, 0, 0, 0);
             mSumStatus = new Status(0, 0, 0, 0);
             mRootUrlList = new List<string>();
@@ -82,21 +74,21 @@ namespace ImageScraper
 
         public async Task<bool> Start()
         {
-            _isRunning = true;
+            IsRunning = true;
             bool ret = await Task.Run(() => Mainloop());
             return ret;
         }
 
         public void Stop()
         {
-            _isRunning = false;
+            IsRunning = false;
         }
 
         public bool Suspend()
         {
-            if (_isRunning && !_isSuspend)
+            if (IsRunning && !IsSuspend)
             {
-                _isSuspend = true;
+                IsSuspend = true;
                 return true;
             }
             return false;
@@ -104,9 +96,9 @@ namespace ImageScraper
 
         public bool Resume()
         {
-            if (_isRunning && _isSuspend)
+            if (IsRunning && IsSuspend)
             {
-                _isSuspend = false;
+                IsSuspend = false;
                 return true;
             }
             return false;
@@ -145,10 +137,10 @@ namespace ImageScraper
         bool HasCompleted()
         {
             OnUpdateStatus();
-            if (mSettings.StatusMonitor.HasCompleted(mSumStatus) || !_isRunning)
+            if (mSettings.StatusMonitor.HasCompleted(mSumStatus) || !IsRunning)
                 return true;
 
-            while (_isSuspend)
+            while (IsSuspend)
                 System.Threading.Thread.Sleep(500);
 
             return false;
@@ -222,24 +214,24 @@ namespace ImageScraper
             else
             {
                 // 重複ダウンロードのフィルタリング
-                hc.AttributeUrlList = mSettings.OverlappedUrlFilter.Filter(hc.AttributeUrlList);
+                var urlList = mSettings.OverlappedUrlFilter.Filter(hc.AttributeUrlList);
                 // 画像枚数更新
-                images = hc.AttributeUrlList.Count;
+                images = urlList.Count;
                 string dir = InitDirectoryName(hc);
                 for (int i = 0; i < images; i++)
                 {
                     // 終了条件を満たす
                     if (HasCompleted())
                         return false;
-                    else if (!mSettings.ImageUrlFilter.Filter(hc.AttributeUrlList[i].Url))
+                    else if (!mSettings.ImageUrlFilter.Filter(urlList[i].Url))
                     {
                         // ファイルが存在せず, パスが初期化されている
-                        ImageInfo info = InitImageInfo(hc, hc.AttributeUrlList[i], dir);
+                        ImageInfo info = InitImageInfo(hc, urlList[i], dir);
                         if (!File.Exists(info.ImagePath) && info.ImagePath != null)
-                            Download(hc.AttributeUrlList[i], info);
+                            Download(urlList[i], info);
                     }
                     else
-                        mSettings.Logger.Write("Downloader", "画像 URL フィルタが適用されました > " + hc.AttributeUrlList[i].Url);
+                        mSettings.Logger.Write("Downloader", "画像 URL フィルタが適用されました > " + urlList[i].Url);
 
                     if (mTempStatus.Images == 1)
                         OnInitProgress(hc, images);
@@ -282,7 +274,7 @@ namespace ImageScraper
             return null;
         }
 
-        HtmlContainer.HtmlContainer GetHtmlContainer(UrlContainer.UrlContainer uc)
+        HtmlContainer.HtmlContainer GetHtmlContainerForImages(UrlContainer.UrlContainer uc)
         {
             if (IsIgnore(uc.Url))
                 return null;
@@ -320,6 +312,23 @@ namespace ImageScraper
             return hc;
         }
 
+
+        HtmlContainer.HtmlContainer GetHtmlContainerForLinks(UrlContainer.UrlContainer uc)
+        {
+            if (IsIgnore(uc.Url))
+                return null;
+
+            // URLに対応するプラグインを検索，見つかればCookie取得
+            Plugins.IPlugin plugin = FindPlugin(uc);
+            var hc = new HtmlContainer.HtmlContainer(uc, mCookies);
+
+            if (plugin != null && plugin.IsExclusive)
+                hc.AttributeUrlList = plugin.GetLinkList(hc);
+            if (hc.AttributeUrlList.Count == 0) 
+                hc.UpdateAttributeUrlList("a", "href", new string[] { "php", "phtml", "html", "htm", "" });
+            return hc;
+        }
+
         bool SendLink(List<UrlContainer.UrlContainer> urlList)
         {
             foreach (var url in urlList)
@@ -330,7 +339,7 @@ namespace ImageScraper
 
                 if (!mCachedUrlSet.Contains(url.RawUrl))
                 {
-                    var hc = GetHtmlContainer(url);
+                    var hc = GetHtmlContainerForImages(url);
                     if (hc != null && hc.AttributeUrlList.Count > 0)
                     {
                         if (!HasDaemonCompleted())
@@ -361,8 +370,7 @@ namespace ImageScraper
                     mSettings.Logger.Write("Downloader", "ルート URL フィルタが適用されました > " + rootUrl);
                 else
                 {
-                    var hc = new HtmlContainer.HtmlContainer(rootUrl, mCookies);
-                    hc.UpdateAttributeUrlList("a", "href", new string[] { "php", "phtml", "html", "htm", "" });
+                    var hc = GetHtmlContainerForLinks(new UrlContainer.UrlContainer(rootUrl));
                     // ドメインのフィルタリング
                     var tmpUrlList = mSettings.DomainFilter.Filter(hc.AttributeUrlList);
 
@@ -375,7 +383,7 @@ namespace ImageScraper
 
         bool Mainloop()
         {
-            var hc = GetHtmlContainer(mSettings.UrlContainer);
+            var hc = GetHtmlContainerForImages(mSettings.UrlContainer);
             if (hc == null)
                 return false;
 

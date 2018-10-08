@@ -13,7 +13,7 @@ namespace HtmlContainer
 {
     public class HtmlContainer
     {
-        public UrlContainer.UrlContainer UrlContainer;
+        public UrlContainer.UrlContainer UrlContainer { get; private set; }
         public List<UrlContainer.UrlContainer> AttributeUrlList;
         public CookieContainer Cookies;
 
