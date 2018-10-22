@@ -15,7 +15,7 @@ namespace ImageScraper
         Task<bool> mTask = null;
         Status mTempStatus;
         Status mSumStatus;
-        CookieContainer mCookies;
+        CookieContainer mCookieContainer;
         MainForm mParentForm;
         Plugins.IPlugin[] mPlugins;
         char[] mInvalidCharsP = Path.GetInvalidPathChars();
@@ -31,7 +31,7 @@ namespace ImageScraper
         {
             mSettings = settings;
             mPlugins = plugins;
-            mCookies = new CookieContainer();
+            mCookieContainer = new CookieContainer();
             IsRunning = false;
             IsSuspend = false;
             mTempStatus = new Status(0, 0, 0, 0);
@@ -159,7 +159,7 @@ namespace ImageScraper
         bool Download(UrlContainer.UrlContainer uc, ImageInfo info)
         {
             // ダウンロード
-            if (!uc.Cache(mCookies))
+            if (!uc.Cache(mCookieContainer))
                 return false;
 
             // ファイルサイズによるフィルタリング
@@ -265,7 +265,7 @@ namespace ImageScraper
                 if (plugin.Enabled && plugin.IsParse(uc.Url))
                 {
                     if (plugin.Login())
-                        mCookies.Add(plugin.GetCookieCollection());
+                        mCookieContainer.Add(plugin.GetCookieCollection());
                     else
                         throw new ApplicationException(plugin.Name + "\nログインに失敗しました");
                     return plugin;
@@ -281,7 +281,7 @@ namespace ImageScraper
 
             // URLに対応するプラグインを検索，見つかればCookie取得
             Plugins.IPlugin plugin = FindPlugin(uc);
-            var hc = new HtmlContainer.HtmlContainer(uc, mCookies);
+            var hc = new HtmlContainer.HtmlContainer(uc, mCookieContainer);
 
             // Htmlを取得しない
             if (mSettings.UrlFilter.Filter(uc.Url))
@@ -320,7 +320,7 @@ namespace ImageScraper
 
             // URLに対応するプラグインを検索，見つかればCookie取得
             Plugins.IPlugin plugin = FindPlugin(uc);
-            var hc = new HtmlContainer.HtmlContainer(uc, mCookies);
+            var hc = new HtmlContainer.HtmlContainer(uc, mCookieContainer);
 
             if (plugin != null && plugin.IsExclusive)
                 hc.AttributeUrlList = plugin.GetLinkList(hc);

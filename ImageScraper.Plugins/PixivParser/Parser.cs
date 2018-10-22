@@ -81,13 +81,13 @@ namespace ImageScraper.Plugins.PixivParser
             if (settings.IsLoggedIn)
             {
                 var ccol = Utilities.Common.StringToCookies(settings.Cookies);
-                mUserAccount.Cookies.Add(ccol);
+                mUserAccount.CookieContainer.Add(ccol);
             }
         }
 
         public CookieCollection GetCookieCollection()
         {
-            return mUserAccount.Cookies.GetCookies(mBaseUri);
+            return mUserAccount.CookieContainer.GetCookies(mBaseUri);
         }
 
         public void ShowPluginForm()
@@ -149,7 +149,7 @@ namespace ImageScraper.Plugins.PixivParser
             Match m = new Regex("\"post_key\" value=\"(?<Key>[a-z0-9]+)\"").Match(hc.Html);
             if (m.Success)
             {
-                mUserAccount.Cookies.Add(hc.Cookies.GetCookies(mBaseUri));
+                mUserAccount.CookieContainer.Add(hc.CookieContainer.GetCookies(mBaseUri));
                 return m.Groups["Key"].Value;
             }
             else
@@ -178,7 +178,7 @@ namespace ImageScraper.Plugins.PixivParser
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
             req.ContentLength = buf.Length;
-            req.CookieContainer = mUserAccount.Cookies;
+            req.CookieContainer = mUserAccount.CookieContainer;
             req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36";
             req.Referer = "https://accounts.pixiv.net/login";
 
@@ -191,7 +191,7 @@ namespace ImageScraper.Plugins.PixivParser
             if (ccol["device_token"] != null && ccol["PHPSESSID"] != null)
             {
                 mUserAccount.Enabled = true;
-                mUserAccount.Cookies.Add(ccol);
+                mUserAccount.CookieContainer.Add(ccol);
                 OnWriteLog(Name, "ログインに成功しました");
                 return true;
             }
@@ -244,7 +244,7 @@ namespace ImageScraper.Plugins.PixivParser
                 Match m = re.Match(uc.Url);
                 if (m.Success)
                 {
-                    var tmp = new HtmlContainer.HtmlContainer(uc.Url, hc.Cookies);
+                    var tmp = new HtmlContainer.HtmlContainer(uc.Url, hc.CookieContainer);
                     tmp.UpdateAttributeUrlList("img", "src", format);
                     urls.AddRange(tmp.AttributeUrlList);
                 }
@@ -279,12 +279,12 @@ namespace ImageScraper.Plugins.PixivParser
             Match m = re.Match(uc.Url);
             if (m.Success)
             {
-                var hc = new HtmlContainer.HtmlContainer(uc, mUserAccount.Cookies);
+                var hc = new HtmlContainer.HtmlContainer(uc, mUserAccount.CookieContainer);
                 foreach (var url in PixivImageUrls(hc))
                     ret.Add(url);
                 hc = new HtmlContainer.HtmlContainer(
                     new UrlContainer.UrlContainer("https://www.pixiv.net/member_illust.php?mode=manga&illust_id=" + m.Groups["Id"].Value), 
-                    mUserAccount.Cookies);
+                    mUserAccount.CookieContainer);
                 foreach (var url in PixivMangaUrls(hc, format))
                     ret.Add(url);
             }

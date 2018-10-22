@@ -15,7 +15,7 @@ namespace HtmlContainer
     {
         public UrlContainer.UrlContainer UrlContainer { get; private set; }
         public List<UrlContainer.UrlContainer> AttributeUrlList;
-        public CookieContainer Cookies;
+        public CookieContainer CookieContainer;
 
         public static int RequestSpan = 500;
         public static WebProxy Proxy = null;
@@ -47,14 +47,14 @@ namespace HtmlContainer
 
         public HtmlContainer(string url, CookieContainer cc = null)
         {
-            this.Cookies = cc;
+            this.CookieContainer = cc;
             this.UrlContainer = new UrlContainer.UrlContainer(url);
             this.AttributeUrlList = new List<UrlContainer.UrlContainer>();
         }
 
         public HtmlContainer(UrlContainer.UrlContainer uc, CookieContainer cc = null)
         {
-            this.Cookies = cc;
+            this.CookieContainer = cc;
             this.UrlContainer = uc;
             this.AttributeUrlList = new List<UrlContainer.UrlContainer>();
         }
@@ -130,10 +130,10 @@ namespace HtmlContainer
             if (Proxy != null)
                 req.Proxy = Proxy;
 
-            if (Cookies != null)
-                req.CookieContainer.Add(Cookies.GetCookies(new Uri(UrlContainer.Url)));
+            if (CookieContainer != null)
+                req.CookieContainer.Add(CookieContainer.GetCookies(new Uri(UrlContainer.Url)));
             else
-                Cookies = new CookieContainer();
+                CookieContainer = new CookieContainer();
 
             try
             {
@@ -141,7 +141,7 @@ namespace HtmlContainer
                 // サーバーからの応答を受信するためのHttpWebResponseを取得
                 HttpWebResponse res = (HttpWebResponse)req.GetResponse();
                 html = Decode(res);
-                Cookies.Add(req.CookieContainer.GetCookies(new Uri(UrlContainer.Url)));
+                CookieContainer.Add(req.CookieContainer.GetCookies(new Uri(UrlContainer.Url)));
                 task.Wait();
             }
             catch

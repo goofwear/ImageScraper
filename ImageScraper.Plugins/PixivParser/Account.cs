@@ -7,12 +7,12 @@ namespace ImageScraper.Plugins.PixivParser
         public string Id;
         public string Pass;
         public bool Enabled;
-        public CookieContainer Cookies;
+        public CookieContainer CookieContainer;
 
         public Account()
         {
             Enabled = false;
-            Cookies = new CookieContainer();
+            CookieContainer = new CookieContainer();
         }
 
         public Account(string id, string pass)
@@ -20,7 +20,7 @@ namespace ImageScraper.Plugins.PixivParser
             Id = id;
             Pass = pass;
             Enabled = false;
-            Cookies = new CookieContainer();
+            CookieContainer = new CookieContainer();
         }
     }
 }
