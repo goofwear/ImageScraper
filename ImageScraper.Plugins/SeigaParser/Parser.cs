@@ -80,13 +80,13 @@ namespace ImageScraper.Plugins.SeigaParser
             if (settings.IsLoggedIn)
             {
                 var ccol = Utilities.Common.StringToCookies(settings.Cookies);
-                mUserAccount.Cookies.Add(ccol);
+                mUserAccount.CookieContainer.Add(ccol);
             }
         }
 
         public CookieCollection GetCookieCollection()
         {
-            return mUserAccount.Cookies.GetCookies(mBaseUri);
+            return mUserAccount.CookieContainer.GetCookies(mBaseUri);
         }
 
         public void ShowPluginForm()
@@ -170,7 +170,7 @@ namespace ImageScraper.Plugins.SeigaParser
             {
                 ccol.Add(new Cookie("accept_fetish_warning", "1", "/", "seiga.nicovideo.jp"));
                 mUserAccount.Enabled = true;
-                mUserAccount.Cookies.Add(ccol);
+                mUserAccount.CookieContainer.Add(ccol);
                 OnWriteLog(Name, "ログインに成功しました");
                 return true;
             }
@@ -220,7 +220,7 @@ namespace ImageScraper.Plugins.SeigaParser
                 if (m.Success)
                 {
                     uc.Url = "http://seiga.nicovideo.jp/image/source?id=" + m.Groups["Id"].Value;
-                    string resUrl = uc.GetResponseUrl(mUserAccount.Cookies);
+                    string resUrl = uc.GetResponseUrl(mUserAccount.CookieContainer);
                     uc.DownloadUrl = resUrl.Replace("/o/", "/priv/");
                     if (!String.IsNullOrEmpty(uc.DownloadUrl))
                         ret.Add(uc);
@@ -228,7 +228,7 @@ namespace ImageScraper.Plugins.SeigaParser
             }
             else if (mode == "watch")
             {
-                var hc = new HtmlContainer.HtmlContainer(uc, mUserAccount.Cookies);
+                var hc = new HtmlContainer.HtmlContainer(uc, mUserAccount.CookieContainer);
                 hc.UpdateAttributeUrlList("img", "data-original", null);
                 ret = hc.AttributeUrlList;
             }

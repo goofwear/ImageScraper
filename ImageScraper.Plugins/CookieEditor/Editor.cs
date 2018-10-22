@@ -59,7 +59,7 @@ namespace ImageScraper.Plugins.CookieEditor
         {
             var cc = new CookieCollection();
             if (!String.IsNullOrEmpty(mSettings.Cookie.Name))
-                cc.Add(mSettings.Cookie);
+                cc.Add(mSettings.GetCookie());
             return cc;
         }
 
@@ -69,7 +69,7 @@ namespace ImageScraper.Plugins.CookieEditor
             {
                 mPluginForm = new PluginForm(this);
                 mPluginForm.Text = Name;
-                mPluginForm.SetCookie(mSettings.Cookie);
+                mPluginForm.SetCookie(mSettings.GetCookie());
                 mPluginForm.MaximizeBox = false;
                 mPluginForm.MinimizeBox = false;
                 mPluginForm.Show();
@@ -78,7 +78,7 @@ namespace ImageScraper.Plugins.CookieEditor
 
         internal void SetCookie(Cookie cookie)
         {
-            mSettings.Cookie = cookie;
+            mSettings.Cookie = new SerializableCookie(cookie.Name, cookie.Value, cookie.Path, cookie.Domain);
         }
 
         public void PreProcess()
