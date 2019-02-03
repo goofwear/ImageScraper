@@ -104,7 +104,7 @@ namespace ImageScraper
             return false;
         }
 
-        string InitDirectoryName(HtmlContainer.HtmlContainer hc)
+        string InitAndCreateDirectory(HtmlContainer.HtmlContainer hc)
         {
             string safeTitle = Utilities.Common.RemoveChars(hc.Title, mInvalidCharsF, "_");
             string safeLocalPath = Utilities.Common.RemoveChars(hc.UrlContainer.LocalPath, mInvalidCharsP, "_");
@@ -134,10 +134,10 @@ namespace ImageScraper
             return info;
         }
 
-        bool HasCompleted()
+        bool IsCompleted()
         {
             OnUpdateStatus();
-            if (mSettings.StatusMonitor.HasCompleted(mSumStatus) || !IsRunning)
+            if (mSettings.StatusMonitor.IsCompleted(mSumStatus) || !IsRunning)
                 return true;
 
             while (IsSuspend)
@@ -146,7 +146,7 @@ namespace ImageScraper
             return false;
         }
 
-        bool HasDaemonCompleted()
+        bool IsDaemonCompleted()
         {
             bool ret = true;
 
@@ -162,7 +162,7 @@ namespace ImageScraper
             if (!uc.Cache(mCookieContainer))
                 return false;
 
-            // ファイルサイズによるフィルタリング
+            // ファイルサイズのフィルタリング
             var imageSize = (int)(uc.CacheSize / 1000);
             if (mSettings.ImageSizeFilter.Filter(imageSize))
             {
@@ -172,13 +172,13 @@ namespace ImageScraper
 
             using (var cachedImage = new Bitmap(Image.FromStream(uc.CacheStream)))
             {
-                // 解像度によるフィルタリング
+                // 解像度のフィルタリング
                 if (mSettings.ResolutionFilter.Filter(cachedImage))
                 {
                     mSettings.Logger.Write("Downloader", "解像度フィルタが適用されました > " + uc.Url);
                     return false;
                 }
-                // カラーフォーマットによるフィルタリング
+                // カラーフォーマットのフィルタリング
                 if (mSettings.ColorFilter.Filter(cachedImage))
                 {
                     mSettings.Logger.Write("Downloader", "カラーフィルタが適用されました > " + uc.Url);
@@ -204,47 +204,37 @@ namespace ImageScraper
         {
             mTempStatus.Size = 0;
             mTempStatus.Images = 0;
-            int images = hc.AttributeUrlList.Count;
-            // ページあたりの画像枚数のフィルタリング
-            if (mSettings.ImagesPerPageFilter.Filter(images))
+            // 重複ダウンロードのフィルタリング
+            var urlList = mSettings.OverlappedUrlFilter.Filter(hc.AttributeUrlList);
+            // 画像枚数更新
+            var imgCount = urlList.Count;
+            string dir = InitAndCreateDirectory(hc);
+            for (int i = 0; i < imgCount; i++)
             {
-                string mes = String.Format("{0} 枚 ({1})", images, hc.UrlContainer.Url);
-                mSettings.Logger.Write("Downloader", "画像枚数フィルタが適用されました > " + mes);
-            }
-            else
-            {
-                // 重複ダウンロードのフィルタリング
-                var urlList = mSettings.OverlappedUrlFilter.Filter(hc.AttributeUrlList);
-                // 画像枚数更新
-                images = urlList.Count;
-                string dir = InitDirectoryName(hc);
-                for (int i = 0; i < images; i++)
+                // 終了条件を満たす
+                if (IsCompleted())
+                    return false;
+                else if (!mSettings.ImageUrlFilter.Filter(urlList[i].Url))
                 {
-                    // 終了条件を満たす
-                    if (HasCompleted())
-                        return false;
-                    else if (!mSettings.ImageUrlFilter.Filter(urlList[i].Url))
-                    {
-                        // ファイルが存在せず, パスが初期化されている
-                        ImageInfo info = InitImageInfo(hc, urlList[i], dir);
-                        if (!File.Exists(info.ImagePath) && info.ImagePath != null)
-                            Download(urlList[i], info);
-                    }
-                    else
-                        mSettings.Logger.Write("Downloader", "画像 URL フィルタが適用されました > " + urlList[i].Url);
+                    // ファイルが存在せず, パスが初期化されている
+                    ImageInfo info = InitImageInfo(hc, urlList[i], dir);
+                    if (!File.Exists(info.ImagePath) && info.ImagePath != null)
+                        Download(urlList[i], info);
+                }
+                else
+                    mSettings.Logger.Write("Downloader", "画像 URL フィルタが適用されました > " + urlList[i].Url);
 
-                    if (mTempStatus.Images == 1)
-                        OnInitProgress(hc, images);
-                    else if (mTempStatus.Images > 1)
-                        OnUpdateProgress(mTempStatus.Images, i);
-                }
-                if (mTempStatus.Images > 0)
-                {
-                    mSumStatus.Pages++;
-                    OnFinalizeProgress();
-                }
-                Utilities.Common.DeleteEmptyDirectory(dir);
+                if (mTempStatus.Images == 1)
+                    OnInitProgress(hc, imgCount);
+                else if (mTempStatus.Images > 1)
+                    OnUpdateProgress(mTempStatus.Images, i);
             }
+            if (mTempStatus.Images > 0)
+            {
+                mSumStatus.Pages++;
+                OnFinalizeProgress();
+            }
+            Utilities.Common.DeleteEmptyDirectory(dir);
             return true;
         }
 
@@ -334,7 +324,7 @@ namespace ImageScraper
             foreach (var url in urlList)
             {
                 // 終了条件を満たす
-                if (HasCompleted())
+                if (IsCompleted())
                     return false;
 
                 if (!mCachedUrlSet.Contains(url.RawUrl))
@@ -342,10 +332,20 @@ namespace ImageScraper
                     var hc = GetHtmlContainerForImages(url);
                     if (hc != null && hc.AttributeUrlList.Count > 0)
                     {
-                        if (!HasDaemonCompleted())
+                        if (!IsDaemonCompleted())
                             return false;
-                        mTask = new Task<bool>(() => DownloadImages(hc));
-                        mTask.Start();
+                        int imgCount = hc.AttributeUrlList.Count;
+                        // ページあたりの画像枚数のフィルタリング
+                        if (mSettings.ImagesPerPageFilter.Filter(imgCount))
+                        {
+                            string mes = String.Format("{0} 枚 ({1})", imgCount, hc.UrlContainer.Url);
+                            mSettings.Logger.Write("Downloader", "画像枚数フィルタが適用されました > " + mes);
+                        }
+                        else
+                        {
+                            mTask = new Task<bool>(() => DownloadImages(hc));
+                            mTask.Start();
+                        }
                     }
                     // 順番を保持するのでList
                     mRootUrlList.Add(url.RawUrl);
@@ -378,7 +378,7 @@ namespace ImageScraper
                         return false;
                 }
             }
-            return HasDaemonCompleted();
+            return IsDaemonCompleted();
         }
 
         bool Mainloop()

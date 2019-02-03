@@ -48,7 +48,7 @@ namespace ImageScraper
             mExistImages = exists;
         }
 
-        public bool HasCompleted(Status currentStatus)
+        public bool IsCompleted(Status currentStatus)
         {
             if (mDepthEnabled)
             {
