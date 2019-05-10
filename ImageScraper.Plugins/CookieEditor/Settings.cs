@@ -39,7 +39,10 @@ namespace ImageScraper.Plugins.CookieEditor
 
         public Cookie GetCookie()
         {
-            return new Cookie(Cookie.Name, Cookie.Value, Cookie.Path, Cookie.Domain);
+            if (Cookie.Name == "")
+                return new Cookie();
+            else
+                return new Cookie("", Cookie.Value, Cookie.Path, Cookie.Domain);
         }
     }
 }
