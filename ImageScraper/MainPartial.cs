@@ -26,20 +26,13 @@ namespace ImageScraper
             dc.ParseImgTag = checkBox8.Checked;
             dc.DomainFilter = new DomainFilter(checkBox6.Checked, dc.UrlContainer);
             dc.ColorFilter = new ColorFilter(checkBox5.Checked, checkBox20.Checked);
-            dc.ImageSizeFilter = new ValueRangeFilter(
-                checkBox14.Checked, checkBox17.Checked, (int)numericUpDown1.Value, (int)numericUpDown10.Value);
-            dc.ImagesPerPageFilter = new ValueRangeFilter(
-                checkBox15.Checked, checkBox18.Checked, (int)numericUpDown2.Value, (int)numericUpDown11.Value);
-            dc.TitleFilter = new KeywordFilter(
-                checkBox11.Checked, checkBox21.Checked, checkBox22.Checked, comboBox2.Text, comboBox5.Text);
-            dc.UrlFilter = new KeywordFilter(
-                checkBox12.Checked, checkBox24.Checked, checkBox23.Checked, comboBox3.Text, comboBox4.Text);
-            dc.RootUrlFilter = new KeywordFilter(
-                checkBox31.Checked, checkBox30.Checked, checkBox29.Checked, comboBox9.Text, comboBox8.Text);
-            dc.ImageUrlFilter = new KeywordFilter(
-                checkBox28.Checked, checkBox27.Checked, checkBox26.Checked, comboBox7.Text, comboBox6.Text);
-            dc.ResolutionFilter = new ResolutionFilter(
-                checkBox16.Checked, checkBox19.Checked, (int)numericUpDown5.Value, (int)numericUpDown6.Value, (int)numericUpDown12.Value, (int)numericUpDown13.Value);
+            dc.ImageSizeFilter = new ValueRangeFilter(checkBox14.Checked, checkBox17.Checked, (int)numericUpDown1.Value, (int)numericUpDown10.Value);
+            dc.ImagesPerPageFilter = new ValueRangeFilter(checkBox15.Checked, checkBox18.Checked, (int)numericUpDown2.Value, (int)numericUpDown11.Value);
+            dc.TitleFilter = new KeywordFilter(checkBox11.Checked, checkBox21.Checked, checkBox22.Checked, comboBox2.Text, comboBox5.Text);
+            dc.UrlFilter = new KeywordFilter(checkBox12.Checked, checkBox24.Checked, checkBox23.Checked, comboBox3.Text, comboBox4.Text);
+            dc.RootUrlFilter = new KeywordFilter(checkBox31.Checked, checkBox30.Checked, checkBox29.Checked, comboBox9.Text, comboBox8.Text);
+            dc.ImageUrlFilter = new KeywordFilter(checkBox28.Checked, checkBox27.Checked, checkBox26.Checked, comboBox7.Text, comboBox6.Text);
+            dc.ResolutionFilter = new ResolutionFilter(checkBox16.Checked, checkBox19.Checked, (int)numericUpDown5.Value, (int)numericUpDown6.Value, (int)numericUpDown12.Value, (int)numericUpDown13.Value);
 
             // 保存設定
             var sng = new Utilities.SerialNameGenerator(textBox2.Text, (int)numericUpDown9.Value, mAvailableFormats);
@@ -50,12 +43,9 @@ namespace ImageScraper
             dc.FileNameGenerator = new FileNameGenerator(radioButton2.Checked, sng);
 
             // 終了条件設定
-            var limitStatus = new Status(
-                (int)numericUpDown3.Value, (int)numericUpDown8.Value, (int)numericUpDown4.Value, (double)numericUpDown7.Value * 1000);
-            dc.StatusMonitor = new StatusMonitor(
-                new bool[] { radioButton12.Checked, radioButton10.Checked, radioButton5.Checked, radioButton6.Checked, radioButton7.Checked },
-                limitStatus, (int)numericUpDown14.Value, this.CountImages(dc.RootDirectory)
-            );
+            var limitStatus = new Status((int)numericUpDown3.Value, (int)numericUpDown8.Value, (int)numericUpDown4.Value, (double)numericUpDown7.Value * 1000);
+            var enabled = new bool[] { radioButton12.Checked, radioButton10.Checked, radioButton5.Checked, radioButton6.Checked, radioButton7.Checked };
+            dc.StatusMonitor = new StatusMonitor(enabled, limitStatus, (int)numericUpDown14.Value, this.CountImages(dc.RootDirectory));
 
             // 接続設定
             UrlContainer.UrlContainer.RequestSpan = (int)numericUpDown15.Value;
@@ -170,12 +160,13 @@ namespace ImageScraper
         {
             try
             {
-                var sw = new System.Diagnostics.Stopwatch();
                 var ch = new HttpClientHandler();
                 ch.Proxy = new WebProxy(host, port);
                 ch.UseProxy = true;
                 var client = new HttpClient(ch);
                 client.Timeout = TimeSpan.FromSeconds(20.0);
+
+                var sw = new System.Diagnostics.Stopwatch();
                 sw.Start();
                 var responseString = await client.GetStringAsync(new Uri("http://google.com/"));
                 sw.Stop();

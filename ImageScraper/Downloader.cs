@@ -146,7 +146,7 @@ namespace ImageScraper
             return false;
         }
 
-        bool IsDaemonCompleted()
+        bool IsTaskCompleted()
         {
             bool ret = true;
 
@@ -319,7 +319,7 @@ namespace ImageScraper
             return hc;
         }
 
-        bool SendLink(List<UrlContainer.UrlContainer> urlList)
+        bool ProcessLinks(List<UrlContainer.UrlContainer> urlList)
         {
             foreach (var url in urlList)
             {
@@ -332,7 +332,7 @@ namespace ImageScraper
                     var hc = GetHtmlContainerForImages(url);
                     if (hc != null && hc.AttributeUrlList.Count > 0)
                     {
-                        if (!IsDaemonCompleted())
+                        if (!IsTaskCompleted())
                             return false;
                         int imgCount = hc.AttributeUrlList.Count;
                         // ページあたりの画像枚数のフィルタリング
@@ -356,7 +356,7 @@ namespace ImageScraper
             return true;
         }
 
-        bool SendRootLink()
+        bool ProcessRootLinks()
         {
             var rootUrlList = new List<string>(mRootUrlList);
             mRootUrlList.Clear();
@@ -374,11 +374,11 @@ namespace ImageScraper
                     // ドメインのフィルタリング
                     var tmpUrlList = mSettings.DomainFilter.Filter(hc.AttributeUrlList);
 
-                    if (!SendLink(tmpUrlList))
+                    if (!ProcessLinks(tmpUrlList))
                         return false;
                 }
             }
-            return IsDaemonCompleted();
+            return IsTaskCompleted();
         }
 
         bool Mainloop()
@@ -393,7 +393,7 @@ namespace ImageScraper
                 mRootUrlList.Add(mSettings.UrlContainer.RawUrl);
                 while (true)
                 {
-                    if (!SendRootLink())
+                    if (!ProcessRootLinks())
                         break;
                     mSumStatus.Depth++;
                 }
