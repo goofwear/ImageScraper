@@ -116,7 +116,7 @@ namespace ImageScraper.Plugins.SeigaParser
                 }
                 mPluginForm.SetFormEnabled(false);
             }
-            // 設定を読み込んだあるいはフォームを閉じたときすでにアカウント情報が反映されている
+            // 設定を読み込んだかフォームを閉じたときすでにアカウント情報が反映されている
         }
 
         public void PostProcess()

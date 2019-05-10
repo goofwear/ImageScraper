@@ -117,7 +117,7 @@ namespace ImageScraper.Plugins.PixivParser
                 }
                 mPluginForm.SetFormEnabled(false);
             }
-            // 設定を読み込んだあるいはフォームを閉じたときすでにアカウント情報が反映されている
+            // 設定を読み込んだかフォームを閉じたときすでにアカウント情報が反映されている
         }
 
         public void PostProcess()
@@ -235,9 +235,7 @@ namespace ImageScraper.Plugins.PixivParser
         {
             var urls = new List<UrlContainer.UrlContainer>();
             var re = new Regex(@"mode=manga_big");
-            var backup = HtmlContainer.HtmlContainer.RequestSpan;
 
-            HtmlContainer.HtmlContainer.RequestSpan = 0;
             hc.UpdateAttributeUrlList("a", "href", null);
             foreach (var uc in hc.AttributeUrlList)
             {
@@ -249,7 +247,6 @@ namespace ImageScraper.Plugins.PixivParser
                     urls.AddRange(tmp.AttributeUrlList);
                 }
             }
-            HtmlContainer.HtmlContainer.RequestSpan = backup;
 
             return urls;
         }
