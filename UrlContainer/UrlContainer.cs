@@ -15,34 +15,34 @@ namespace UrlContainer
         public string AttributeName { get; set; }
         public MemoryStream CacheStream = null;
         public long CacheSize = 0;
-        UrlParser Parse;
+        UrlParser Parser;
 
         public static int RequestSpan = 500;
         public static WebProxy Proxy = null;
 
         public string RawUrl
         {
-            get { return Parse.RawUrl; }
+            get { return Parser.RawUrl; }
         }
 
         public string LocalPath
         {
-            get { return Parse.LocalPath; }
+            get { return Parser.LocalPath; }
         }
 
         public string FileName
         {
-            get { return Parse.FileName; }
+            get { return Parser.FileName; }
         }
 
         public string Extension
         {
-            get { return Parse.Extension; }
+            get { return Parser.Extension; }
         }
 
         public string Authority
         {
-            get { return Parse.Authority; }
+            get { return Parser.Authority; }
         }
 
         public UrlContainer(string url, string referer = null)
@@ -51,7 +51,7 @@ namespace UrlContainer
             this.ResponseUrl = "";
             this.DownloadUrl = this.Url;
             this.Referer = referer;
-            this.Parse = new UrlParser(this.Url);
+            this.Parser = new UrlParser(this.Url);
         }
 
         public override int GetHashCode()

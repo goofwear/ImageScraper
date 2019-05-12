@@ -31,48 +31,49 @@ namespace ImageScraper
         bool mLinksEnabled;
         bool mImagesEnabled;
         bool mSizeEnabled;
-        bool mExistImagesEnabled;
-        Status mLimit;
-        int mLimitExistImages;
-        int mExistImages;
+        bool mTotalImagesEnabled;
+        Status mCompleteStatus;
+        int mMaxTotalImages;
+        int mTotalImages;
 
-        public StatusMonitor(bool[] enabled, Status limit, int limExists, int exists)
+        public StatusMonitor(bool depthEnabled, bool linksEnabled, bool imagesEnabled, bool sizeEnabled, bool totalImagesEnabled,
+            Status completeStatus, int maxTotalImages, int totalImages)
         {
-            mDepthEnabled = enabled[0];
-            mLinksEnabled = enabled[1];
-            mImagesEnabled = enabled[2];
-            mSizeEnabled = enabled[3];
-            mExistImagesEnabled = enabled[4];
-            mLimit = limit;
-            mLimitExistImages = limExists;
-            mExistImages = exists;
+            mDepthEnabled = depthEnabled;
+            mLinksEnabled = linksEnabled;
+            mImagesEnabled = imagesEnabled;
+            mSizeEnabled = sizeEnabled;
+            mTotalImagesEnabled = totalImagesEnabled;
+            mCompleteStatus = completeStatus;
+            mMaxTotalImages = maxTotalImages;
+            mTotalImages = totalImages;
         }
 
         public bool IsCompleted(Status currentStatus)
         {
             if (mDepthEnabled)
             {
-                if (currentStatus.Depth >= mLimit.Depth)
+                if (currentStatus.Depth >= mCompleteStatus.Depth)
                     return true;
             }
             else if (mLinksEnabled)
             {
-                if (currentStatus.Pages >= mLimit.Pages)
+                if (currentStatus.Pages >= mCompleteStatus.Pages)
                     return true;
             }
             else if (mImagesEnabled)
             {
-                if (currentStatus.Images >= mLimit.Images)
+                if (currentStatus.Images >= mCompleteStatus.Images)
                     return true;
             }
             else if (mSizeEnabled)
             {
-                if (currentStatus.Size >= mLimit.Size)
+                if (currentStatus.Size >= mCompleteStatus.Size)
                     return true;
             }
-            else if (mExistImagesEnabled)
+            else if (mTotalImagesEnabled)
             {
-                if (mExistImages + currentStatus.Images >= mLimitExistImages)
+                if (mTotalImages + currentStatus.Images >= mMaxTotalImages)
                     return true;
             }
             return false;

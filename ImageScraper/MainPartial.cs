@@ -44,8 +44,8 @@ namespace ImageScraper
 
             // 終了条件設定
             var limitStatus = new Status((int)numericUpDown3.Value, (int)numericUpDown8.Value, (int)numericUpDown4.Value, (double)numericUpDown7.Value * 1000);
-            var enabled = new bool[] { radioButton12.Checked, radioButton10.Checked, radioButton5.Checked, radioButton6.Checked, radioButton7.Checked };
-            dc.StatusMonitor = new StatusMonitor(enabled, limitStatus, (int)numericUpDown14.Value, this.CountImages(dc.RootDirectory));
+            dc.StatusMonitor = new StatusMonitor(radioButton12.Checked, radioButton10.Checked, radioButton5.Checked, radioButton6.Checked, radioButton7.Checked,
+                limitStatus, (int)numericUpDown14.Value, this.CountImages(dc.RootDirectory));
 
             // 接続設定
             UrlContainer.UrlContainer.RequestSpan = (int)numericUpDown15.Value;
