@@ -114,7 +114,7 @@ namespace ImageScraper
                             float b = currentLine[xPor3++];
                             float g = currentLine[xPor3++];
                             float r = currentLine[xPor3];
-                            subTotals[y * imgWidth + x] = (float)(Math.Pow(r - b, 2) + Math.Pow(r - g, 2));
+                            subTotals[y * imgWidth + x] = (float)Math.Sqrt((Math.Pow(r - b, 2) + Math.Pow(r - g, 2) + Math.Pow(b - g, 2)) / 3);
                         }
                     });
                     targetBmp.UnlockBits(bitmapData);
@@ -126,9 +126,9 @@ namespace ImageScraper
         public bool Filter(Image img)
         {
             if (!this.mGreyEnabled)
-                return IsGreyscale(img, 1.0f);
+                return IsGreyscale(img, 0.1f);
             if (!this.mColorEnabled)
-                return !IsGreyscale(img, 1.0f);
+                return !IsGreyscale(img, 0.1f);
             return false;
         }
     }
